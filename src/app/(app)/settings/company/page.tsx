@@ -133,7 +133,7 @@ function Form({ initial, section, onSaved }: { initial: Settings; section: Compa
                   checked={v.employeeUploads} onChange={(c) => set("employeeUploads", c)} />
                 <Checkbox label="Show expanded gender options" description="Adds Non-binary as a gender, and a pronouns field on every profile."
                   checked={v.expandedGender} onChange={(c) => set("expandedGender", c)} />
-                <Checkbox label="Run payroll in HRMS" description="Adds Payroll and My payslips. Leave it off if you pay people elsewhere: expense claims are then paid back by bank transfer, and past payslips stay readable."
+                <Checkbox label="Run payroll in StaffPilot" description="Adds Payroll and My payslips. Leave it off if you pay people elsewhere: expense claims are then paid back by bank transfer, and past payslips stay readable."
                   checked={v.payrollEnabled} onChange={(c) => set("payrollEnabled", c)} />
               </div>
             </div>

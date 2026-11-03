@@ -1,9 +1,13 @@
+import logo from "@/assets/staffpilot-logo.png";
+
 /**
- * Marketing details for the platform homepage. Placeholders until the business decides the
- * product name and pricing (both open questions in the PRD, §13).
+ * The product's own details, for the platform homepage, sign-up and pages with no company yet.
+ * Pricing is still an open question in the PRD (§13).
  */
 export const SITE = {
-  name: "HRMS",
+  name: "StaffPilot",
+  // Imported, so its address carries a hash of the file and a new logo is never served from a cache.
+  logo,
   tagline: "HR, leave and people records for growing African companies",
   contactEmail: "hello@example.com",
 };

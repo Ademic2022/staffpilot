@@ -61,7 +61,7 @@ function Rules({ data, onSaved }: { data: ExpenseSetupQuery; onSaved: (m: string
           <Field label="Oldest expense (days)" hint="Older expenses cannot be claimed. 0 for no limit.">
             <Input type="number" min={0} max={730} value={v.maxAgeDays} onChange={(e) => setV({ ...v, maxAgeDays: e.target.value })} />
           </Field>
-          <Field label="Paid back" hint={payroll ? undefined : "Payroll is not run in HRMS (Settings → Company), so claims are paid back by transfer."}>
+          <Field label="Paid back" hint={payroll ? undefined : "Payroll is not run in StaffPilot (Settings → Company), so claims are paid back by transfer."}>
             <Select value={v.payVia} disabled={!payroll} onChange={(e) => setV({ ...v, payVia: e.target.value })}>
               {payroll && <option value="payroll">With the next payroll (not taxed)</option>}
               <option value="separately">Separately, by bank transfer</option>

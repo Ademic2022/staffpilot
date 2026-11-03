@@ -1,6 +1,6 @@
 # hrms-client
 
-Next.js (App Router) + TypeScript web app for the HRMS. Talks to `../hrms-server` over
+Next.js (App Router) + TypeScript web app for StaffPilot. Talks to `../hrms-server` over
 GraphQL with [urql](https://commerce.nearform.com/open-source/urql/).
 
 ## Run locally

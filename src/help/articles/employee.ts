@@ -82,7 +82,7 @@ Open the request and choose **Cancel**. A request that is still waiting, or appr
     audience: EVERYONE,
     paths: ["/payslips"],
     body: `
-If your company runs payroll in HRMS, open **My payslips** in the menu. Each payslip appears once payroll has approved and published that month's payroll; you get a notification when it does.
+If your company runs payroll in StaffPilot, open **My payslips** in the menu. Each payslip appears once payroll has approved and published that month's payroll; you get a notification when it does.
 
 ## Reading a payslip
 

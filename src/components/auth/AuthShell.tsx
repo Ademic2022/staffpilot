@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { createContext, useContext, useId, useState, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode } from "react";
 
 import { initials } from "@/lib/format";
@@ -29,11 +30,9 @@ interface Aside {
 /** The product's own mark, for pages on the platform's address (no company yet). */
 function ProductMark() {
   return (
-    <svg viewBox="0 0 32 32" className="h-12 w-12" aria-hidden>
-      <rect width="32" height="32" rx="8" fill="#fffcf5" />
-      <circle cx="16" cy="11" r="4" fill="#e9a23b" />
-      <path d="M8 24c.8-4.4 4-7 8-7s7.2 2.6 8 7" fill="#0f3d2e" opacity=".92" />
-    </svg>
+    <span className="grid h-12 w-12 place-items-center rounded-xl bg-white p-1">
+      <Image src={SITE.logo} alt="" width={44} height={42} className="h-auto w-full" priority />
+    </span>
   );
 }
 

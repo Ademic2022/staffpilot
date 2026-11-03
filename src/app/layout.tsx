@@ -16,7 +16,7 @@ const display = Fraunces({ subsets: ["latin"], variable: "--ff-display", style: 
 const body = Instrument_Sans({ subsets: ["latin"], variable: "--ff-body", display: "swap" });
 
 export const metadata: Metadata = {
-  title: { default: "HRMS", template: "%s · HRMS" },
+  title: { default: "StaffPilot", template: "%s · StaffPilot" },
   description: "People, leave and payroll in one place.",
 };
 

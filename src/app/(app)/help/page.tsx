@@ -31,7 +31,7 @@ function Help() {
   const filters: (Audience | "all")[] = ["all", "employee", "manager", "hr", "payroll"];
   return (
     <>
-      <PageHeader title="Help" subtitle="How to use HRMS, for everyone, managers, HR and payroll." />
+      <PageHeader title="Help" subtitle="How to use StaffPilot, for everyone, managers, HR and payroll." />
       <div className="grid gap-5">
         <SearchInput value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search the guide, e.g. “carry over” or “bank file”" aria-label="Search the guide" />
         {suggested && !results && (

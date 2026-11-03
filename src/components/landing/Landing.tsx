@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -18,11 +19,9 @@ const NAV = [
 function Logo({ light = false }: { light?: boolean }) {
   return (
     <span className="inline-flex items-center gap-2">
-      <svg viewBox="0 0 32 32" className="h-8 w-8" aria-hidden>
-        <rect width="32" height="32" rx="8" fill={light ? "#fffcf5" : "var(--lp-green)"} />
-        <circle cx="16" cy="11" r="4" fill={light ? "var(--lp-green)" : "var(--lp-saffron)"} />
-        <path d="M8 24c.8-4.4 4-7 8-7s7.2 2.6 8 7" fill={light ? "var(--lp-green)" : "#fffcf5"} opacity=".92" />
-      </svg>
+      <span className={`grid h-10 w-10 place-items-center rounded-xl ${light ? "bg-[#fffcf5] p-1" : ""}`}>
+        <Image src={SITE.logo} alt="" width={40} height={38} className="h-auto w-full" priority />
+      </span>
       <span className={`font-display text-[22px] font-semibold tracking-tight ${light ? "text-[#fffcf5]" : "text-[var(--lp-green)]"}`}>{SITE.name}</span>
     </span>
   );

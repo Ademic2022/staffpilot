@@ -267,7 +267,7 @@ function Payroll() {
       <>
         <PageHeader title="Payroll" />
         <Notice title="Payroll is switched off">
-          Your company does not run payroll in HRMS. {can(PERMS.tenantManage) ? "Switch it on in Settings → Company → General settings." : "An owner can switch it on in Settings → Company."}
+          Your company does not run payroll in StaffPilot. {can(PERMS.tenantManage) ? "Switch it on in Settings → Company → General settings." : "An owner can switch it on in Settings → Company."}
         </Notice>
       </>
     );

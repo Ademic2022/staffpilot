@@ -14,7 +14,7 @@ Payroll works for companies in **Nigeria** and **Ghana**, paying monthly or ever
 
 ## Switch it on
 
-Payroll is off until an owner switches on **Run payroll in HRMS** in **Settings** → **Company** → **General settings**. Until then, Payroll and My payslips are hidden and no payroll can be started. Switching it off later hides them again; payslips already published stay readable by their owners.
+Payroll is off until an owner switches on **Run payroll in StaffPilot** in **Settings** → **Company** → **General settings**. Until then, Payroll and My payslips are hidden and no payroll can be started. Switching it off later hides them again; payslips already published stay readable by their owners.
 
 ## Pay groups
 

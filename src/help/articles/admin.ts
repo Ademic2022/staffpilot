@@ -18,7 +18,7 @@ Everything you set up lives under **Settings** in the menu. You only see the are
 4. **Time off**: leave types, policies and public holidays. See [Setting up time off](/help/time-off-setup).
 5. **Users and access**: invite people to sign in and give them access levels. See [Users and access levels](/help/users-and-access).
 6. Then, as you need them: approvals, email alerts, onboarding checklists, benefits, training, attendance, performance and expenses.
-7. To run payroll here, switch on **Run payroll in HRMS** (Company → General settings), then see [Setting up payroll](/help/payroll-setup).
+7. To run payroll here, switch on **Run payroll in StaffPilot** (Company → General settings), then see [Setting up payroll](/help/payroll-setup).
 
 > On any settings page, the **?** button beside the bell opens its article.
 `,
@@ -45,7 +45,7 @@ How dates, amounts and names read for everyone, and what employees may do themse
 - **Let employees change their own photo**.
 - **Let employees upload files to their own record**: they land in an Employee uploads category the employee and HR can see.
 - **Show expanded gender options**: adds Non-binary and a pronouns field.
-- **Run payroll in HRMS**: adds Payroll and My payslips. Leave it off if you pay people elsewhere; expense claims are then paid back by bank transfer, and payslips already published stay readable.
+- **Run payroll in StaffPilot**: adds Payroll and My payslips. Leave it off if you pay people elsewhere; expense claims are then paid back by bank transfer, and payslips already published stay readable.
 
 ## Logo and colour
 
@@ -189,7 +189,7 @@ Add the days everyone is off, for every location or just some. Holidays are not 
 
 ## Adjusting a balance
 
-On a person's **Time off** tab, choose **Adjust leave balance** to add or remove days, with a reason. It shows in their ledger. Use it for opening balances when you start using HRMS.
+On a person's **Time off** tab, choose **Adjust leave balance** to add or remove days, with a reason. It shows in their ledger. Use it for opening balances when you start using StaffPilot.
 `,
   },
   {
@@ -344,7 +344,7 @@ Every report downloads as **CSV**, **Excel** or **PDF**.
 - **Pay approved overtime through payroll**.
 - **Treat unexplained absences as unpaid days**: working days with no clock-in and no approved leave are taken off pay.
 
-These two only take effect when your company runs payroll in HRMS.
+These two only take effect when your company runs payroll in StaffPilot.
 - **Refuse clock-ins away from the site**: only where a location has a clock-in area (Job organization → Locations). Otherwise they are just flagged.
 
 ## Shifts and roster
@@ -411,7 +411,7 @@ The **Rating spread** shows how many people sit at each rating, before and after
 - **Who approves**: the person's **manager**, then **finance** (people with the expenses permission, such as payroll officers and HR admins). Turn off either step. With both off, claims are approved as soon as they are submitted.
 - **Receipts needed above**: receipts are only needed above this amount. Leave it empty to need one for every item, in categories that ask for receipts.
 - **Oldest expense (days)**: older expenses cannot be claimed.
-- **Paid back**: **with the next payroll** (added to net pay, not taxed) or **separately, by bank transfer**. Without payroll in HRMS, claims are always paid back separately.
+- **Paid back**: **with the next payroll** (added to net pay, not taxed) or **separately, by bank transfer**. Without payroll in StaffPilot, claims are always paid back separately.
 
 ## Categories
 

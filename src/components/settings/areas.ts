@@ -12,7 +12,7 @@ export type SettingsArea = {
   label: string;
   icon: IconDefinition;
   permission: string;
-  /** Shown only when the company runs payroll in HRMS. */
+  /** Shown only when the company runs payroll in StaffPilot. */
   needsPayroll?: boolean;
   tabs?: { key: string; label: string }[];
 };
