@@ -426,6 +426,7 @@ type CompanySettings {
   employeesEditOwnPhoto: Boolean!
   expandedGender: Boolean!
   employeeUploads: Boolean!
+  payrollEnabled: Boolean!
 
   """The address this request came from, to put on the allow-list."""
   yourIp: String!
@@ -446,6 +447,7 @@ input CompanySettingsInput {
   employeesEditOwnPhoto: Boolean
   expandedGender: Boolean
   employeeUploads: Boolean
+  payrollEnabled: Boolean
 }
 
 type CompanySettingsPayload {
@@ -1712,6 +1714,9 @@ type Me {
 
   """Set while you view the app as another member."""
   viewingAs: ViewAs
+
+  """Payslips were published to you (kept when payroll is switched off)."""
+  hasPayslips: Boolean!
 }
 
 type Member {
@@ -3559,6 +3564,7 @@ type TenantPublic {
   employeesEditOwnPhoto: Boolean!
   expandedGender: Boolean!
   employeeUploads: Boolean!
+  payrollEnabled: Boolean!
   attendanceEnabled: Boolean!
   expensesEnabled: Boolean!
   timesheetsEnabled: Boolean!

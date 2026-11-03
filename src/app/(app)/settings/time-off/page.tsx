@@ -152,7 +152,7 @@ function LeaveTypeDialog({ row, onClose, onSaved }: { row: LeaveTypeRow | null; 
             checked={v.tracksBalance} onChange={(c) => set("tracksBalance", c)} />
           <Checkbox label="Paid" checked={v.isPaid} onChange={(c) => set("isPaid", c)} />
           {v.tracksBalance && v.isPaid && (
-            <Checkbox label="Pay out unused days when someone leaves" description="Added to their last payslip as part of the final settlement."
+            <Checkbox label="Pay out unused days when someone leaves" description="Added to their last payslip as part of the final settlement, when payroll runs in HRMS."
               checked={v.paidOutOnExit} onChange={(c) => set("paidOutOnExit", c)} />
           )}
           <Checkbox label="Half days allowed" checked={v.allowHalfDays} onChange={(c) => set("allowHalfDays", c)} />

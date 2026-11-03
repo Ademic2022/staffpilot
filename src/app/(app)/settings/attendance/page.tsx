@@ -36,7 +36,8 @@ type Shift = Data["shifts"][number];
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 function Rules({ data, onSaved }: { data: Data; onSaved: (m: string) => void }) {
-  const { reset } = useSession();
+  const { reset, tenant } = useSession();
+  const payroll = Boolean(tenant?.payrollEnabled);
   const s = data.attendanceSettings;
   const [v, setV] = useState({ ...s, graceMinutes: String(s.graceMinutes), overtimeAfterMinutes: String(s.overtimeAfterMinutes), overtimeMultiplier: String(s.overtimeMultiplier) });
   const [problem, setProblem] = useState<string>();
@@ -55,6 +56,7 @@ function Rules({ data, onSaved }: { data: Data; onSaved: (m: string) => void }) 
           <Field label="Overtime pay rate" hint="Times the hourly rate, e.g. 1.5."><Input inputMode="decimal" value={v.overtimeMultiplier} onChange={(e) => set("overtimeMultiplier", e.target.value)} /></Field>
         </div>
         <div className="space-y-2">
+          {!payroll && <p className="text-xs text-muted">The two options below take effect when you run payroll in HRMS (Settings → Company).</p>}
           <Checkbox label="Pay approved overtime through payroll" checked={v.payOvertime} onChange={(c) => set("payOvertime", c)} />
           <Checkbox label="Treat unexplained absences as unpaid days" description="Working days with no clock-in and no approved leave are taken off pay." checked={v.deductAbsence} onChange={(c) => set("deductAbsence", c)} />
           <Checkbox label="Refuse clock-ins away from the site" description="Only where a location has a clock-in radius (Job organization → Locations). Otherwise they are just flagged."

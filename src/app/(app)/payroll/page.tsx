@@ -255,13 +255,23 @@ function People() {
 }
 
 function Payroll() {
-  const { can } = useSession();
+  const { can, tenant } = useSession();
   const params = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
   const asked = params.get("tab");
   const tab = (asked === "people" || asked === "loans") && can(PERMS.payrollManage) ? asked : "runs";
   if (!can(PERMS.payrollManage, PERMS.payrollApprove)) return <Notice tone="warning">You do not have access to payroll.</Notice>;
+  if (!tenant?.payrollEnabled) {
+    return (
+      <>
+        <PageHeader title="Payroll" />
+        <Notice title="Payroll is switched off">
+          Your company does not run payroll in HRMS. {can(PERMS.tenantManage) ? "Switch it on in Settings → Company → General settings." : "An owner can switch it on in Settings → Company."}
+        </Notice>
+      </>
+    );
+  }
   return (
     <>
       <PageHeader title="Payroll" subtitle="Work out pay, check it, have someone else approve it, then publish payslips and pay." />

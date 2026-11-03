@@ -12,8 +12,15 @@ export type SettingsArea = {
   label: string;
   icon: IconDefinition;
   permission: string;
+  /** Shown only when the company runs payroll in HRMS. */
+  needsPayroll?: boolean;
   tabs?: { key: string; label: string }[];
 };
+
+/** The areas someone may open: their permissions, and switched-on features. */
+export function visibleAreas(can: (...p: string[]) => boolean, tenant: { payrollEnabled?: boolean } | null) {
+  return AREAS.filter((a) => can(a.permission) && (!a.needsPayroll || Boolean(tenant?.payrollEnabled)));
+}
 
 /** The areas in the Settings menu, in BambooHR's alphabetical spirit but grouped by what people look for. */
 export const AREAS: SettingsArea[] = [
@@ -63,7 +70,7 @@ export const AREAS: SettingsArea[] = [
     tabs: [{ key: "rules", label: "Rules" }, { key: "categories", label: "Categories" }],
   },
   {
-    href: "/settings/payroll", label: "Payroll", icon: faMoneyCheckDollar, permission: PERMS.payrollManage,
+    href: "/settings/payroll", label: "Payroll", icon: faMoneyCheckDollar, permission: PERMS.payrollManage, needsPayroll: true,
     tabs: [{ key: "groups", label: "Pay groups" }, { key: "components", label: "Pay components" }, { key: "rules", label: "Tax and contributions" }],
   },
   { href: "/settings/benefits", label: "Benefits", icon: faHeartPulse, permission: PERMS.employeesManage },

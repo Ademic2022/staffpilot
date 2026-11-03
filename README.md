@@ -55,6 +55,7 @@ npm test
 | `/attendance` | My time (clock in and out), weekly timesheet, team board and timesheets, overtime and timesheet approvals |
 | `/performance`, `/performance/reviews/[id]`, `/performance/cycles/[id]` | Goals, reviews, feedback, one-to-ones; HR review cycles and calibration |
 | `/expenses`, `/expenses/[id]` | Expense claims, approvals, finance payments and exports |
+| `/help`, `/help/[slug]` | The in-app user guide (articles in `src/help/articles/`); the ? button beside the bell opens the article for the current page |
 | `/files` | Company files and (for HR) employee documents |
 | `/settings/*` | Company, users and access levels, approvals, email alerts, directory, job organization, employee fields, time off, benefits, onboarding, training, payroll, attendance, performance, expenses, audit log |
 | `/account` | Password, two-step sign-in, calendar links |

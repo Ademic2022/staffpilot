@@ -11,9 +11,10 @@ import { PERMS } from "@/lib/permissions";
 import { useSession, type Tenant } from "@/lib/session";
 
 import { IconCalendarCheck, IconChart, IconCheck, IconClock, IconClose, IconFile, IconHome, IconLogout, IconMenu, IconReceipt, IconSettings, IconStar, IconUser, IconUsers, IconWallet } from "./icons";
+import { HelpButton } from "./HelpButton";
 import { NotificationBell } from "./Notifications";
 import { GlobalSearch } from "@/components/GlobalSearch";
-import { AREAS } from "@/components/settings/areas";
+import { visibleAreas } from "@/components/settings/areas";
 import { useSnapshot } from "./snapshot/Snapshot";
 import { IconButton, Loading, Notice, cx } from "./ui";
 
@@ -111,14 +112,14 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   const profileHref = me.employee ? `/employees/${me.employee.id}` : null;
   const waitingCount = (waiting?.leaveApprovals.length ?? 0) + (waiting?.pendingChanges.filter((c) => c.canDecide).length ?? 0);
-  const settingsHref = AREAS.find((a) => can(a.permission))?.href;
+  const settingsHref = visibleAreas(can, tenant)[0]?.href;
   const sections: { section: string; items: NavItem[] }[] = [
     {
       section: "",
       items: [
         { href: "/home", label: "Home", show: true, icon: IconHome },
         { href: profileHref ?? "", label: "My profile", show: !!profileHref, icon: IconUser },
-        { href: "/payslips", label: "My payslips", show: !!me.employee, icon: IconReceipt },
+        { href: "/payslips", label: "My payslips", show: !!me.employee && (Boolean(tenant?.payrollEnabled) || me.hasPayslips), icon: IconReceipt },
       ],
     },
     {
@@ -133,7 +134,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         },
         { href: "/performance", label: "Performance", show: !!me.employee || can(PERMS.performanceManage), icon: IconStar },
         { href: "/expenses", label: "Expenses", show: Boolean(tenant?.expensesEnabled) || can(PERMS.expensesManage), icon: IconReceipt },
-        { href: "/payroll", label: "Payroll", show: can(PERMS.payrollManage, PERMS.payrollApprove), icon: IconWallet },
+        { href: "/payroll", label: "Payroll", show: Boolean(tenant?.payrollEnabled) && can(PERMS.payrollManage, PERMS.payrollApprove), icon: IconWallet },
         // Company files for everyone (HR also finds employee documents there).
         { href: "/files", label: "Files", show: true, icon: IconFile },
       ],
@@ -182,7 +183,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="truncate text-sm font-semibold text-ink">{tenant?.name}</div>
           <div className="truncate text-xs text-muted">People and payroll</div>
         </div>
-        <div className="hidden lg:block"><NotificationBell /></div>
+        <div className="hidden items-center lg:flex"><HelpButton /><NotificationBell /></div>
       </div>
       <div className="px-3 pb-1 pt-1"><GlobalSearch /></div>
       <nav className="flex-1 overflow-y-auto px-3 pb-4" aria-label="Main">
@@ -266,6 +267,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <span className="truncate text-sm font-semibold text-ink">{tenant?.name}</span>
           </div>
           <GlobalSearch compact />
+          <HelpButton />
           <NotificationBell align="right" />
         </header>
 

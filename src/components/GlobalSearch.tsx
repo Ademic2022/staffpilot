@@ -7,7 +7,7 @@ import { useDeferredValue, useEffect, useRef, useState } from "react";
 import { useQuery } from "urql";
 
 import { Photo } from "@/components/home/Widgets";
-import { AREAS } from "@/components/settings/areas";
+import { visibleAreas } from "@/components/settings/areas";
 import { cx } from "@/components/ui";
 import { graphql } from "@/gql";
 import { useSession } from "@/lib/session";
@@ -27,7 +27,7 @@ const GROUPS: [string, string][] = [["person", "People"], ["file", "Files"], ["r
 
 /** Search people, files, reports and settings from anywhere. Ctrl/⌘ K opens it. */
 export function GlobalSearch({ compact = false }: { compact?: boolean }) {
-  const { can } = useSession();
+  const { can, tenant } = useSession();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
@@ -50,7 +50,7 @@ export function GlobalSearch({ compact = false }: { compact?: boolean }) {
   useEffect(() => { if (open) input.current?.focus(); }, [open]);
 
   const lower = q.toLowerCase();
-  const settings: Hit[] = q.length < 2 ? [] : AREAS.filter((a) => can(a.permission)).flatMap((a) => [
+  const settings: Hit[] = q.length < 2 ? [] : visibleAreas(can, tenant).flatMap((a) => [
     { kind: "setting", title: a.label, subtitle: "Settings", href: a.href },
     ...(a.tabs ?? []).map((t) => ({ kind: "setting", title: t.label, subtitle: `Settings · ${a.label}`, href: `${a.href}?tab=${t.key}` })),
   ]).filter((h) => h.title.toLowerCase().includes(lower)).slice(0, 5);

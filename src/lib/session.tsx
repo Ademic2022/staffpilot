@@ -16,12 +16,13 @@ export const MeDocument = graphql(`
       roles
       user { id email fullName }
       employee { id fullName jobTitle { name } }
+      hasPayslips
       mfaEnabled mfaSetupRequired recoveryCodesLeft
       viewingAs { name realName startedAt }
     }
     tenant {
       name slug primaryColor country currency logoUrl
-      dateFormat nameFormat showCurrencyCode employeesEditOwnPhoto expandedGender employeeUploads attendanceEnabled expensesEnabled timesheetsEnabled
+      dateFormat nameFormat showCurrencyCode employeesEditOwnPhoto expandedGender employeeUploads attendanceEnabled expensesEnabled timesheetsEnabled payrollEnabled
     }
   }
 `);

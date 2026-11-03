@@ -19,7 +19,7 @@ const CompanySettingsDocument = graphql(`
   query CompanySettings {
     companySettings {
       name country currency timezone primaryColor logoUrl requireAdminMfa sessionTimeoutMinutes ipAllowlist yourIp
-      dateFormat nameFormat showCurrencyCode employeesEditOwnPhoto expandedGender employeeUploads
+      dateFormat nameFormat showCurrencyCode employeesEditOwnPhoto expandedGender employeeUploads payrollEnabled
     }
   }
 `);
@@ -56,6 +56,7 @@ function Form({ initial, section, onSaved }: { initial: Settings; section: Compa
     sessionTimeoutMinutes: initial.sessionTimeoutMinutes, ipAllowlist: initial.ipAllowlist.join("\n"),
     dateFormat: initial.dateFormat, nameFormat: initial.nameFormat, showCurrencyCode: initial.showCurrencyCode,
     employeesEditOwnPhoto: initial.employeesEditOwnPhoto, expandedGender: initial.expandedGender, employeeUploads: initial.employeeUploads,
+    payrollEnabled: initial.payrollEnabled,
   });
   const [logo, setLogo] = useState(initial.logoUrl);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -132,6 +133,8 @@ function Form({ initial, section, onSaved }: { initial: Settings; section: Compa
                   checked={v.employeeUploads} onChange={(c) => set("employeeUploads", c)} />
                 <Checkbox label="Show expanded gender options" description="Adds Non-binary as a gender, and a pronouns field on every profile."
                   checked={v.expandedGender} onChange={(c) => set("expandedGender", c)} />
+                <Checkbox label="Run payroll in HRMS" description="Adds Payroll and My payslips. Leave it off if you pay people elsewhere: expense claims are then paid back by bank transfer, and past payslips stay readable."
+                  checked={v.payrollEnabled} onChange={(c) => set("payrollEnabled", c)} />
               </div>
             </div>
           </FormSection>

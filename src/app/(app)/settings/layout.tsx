@@ -5,16 +5,16 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
 
-import { AREAS } from "@/components/settings/areas";
+import { visibleAreas } from "@/components/settings/areas";
 import { Loading, Notice, cx } from "@/components/ui";
 import { useSession } from "@/lib/session";
 
 /** Settings, as BambooHR lays it out: the areas on the left, the chosen one in a panel with its own sections. */
 function Shell({ children }: { children: ReactNode }) {
-  const { can } = useSession();
+  const { can, tenant } = useSession();
   const pathname = usePathname();
   const params = useSearchParams();
-  const areas = AREAS.filter((a) => can(a.permission));
+  const areas = visibleAreas(can, tenant);
   const area = areas.find((a) => pathname.startsWith(a.href));
   const tab = params.get("tab") ?? area?.tabs?.[0].key;
 
