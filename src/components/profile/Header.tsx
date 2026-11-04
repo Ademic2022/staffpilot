@@ -8,9 +8,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { IconCamera } from "@/components/icons";
 import { Avatar, cx, statusLabel, statusTone, type BadgeTone } from "@/components/ui";
-import { postForm } from "@/lib/api";
 import { initials } from "@/lib/format";
 
+import { PhotoEditor } from "./PhotoEditor";
 import type { LayoutTab, Profile } from "./query";
 
 // Status dots that stay visible on the brand band.
@@ -22,29 +22,23 @@ const BAND_DOTS: Record<BadgeTone, string> = {
   brand: "bg-white",
 };
 
-/** Pick a photo and upload it for this employee; the server crops and re-encodes it. */
-function PhotoButton({ employeeId, onUploaded, onError }: { employeeId: string; onUploaded: () => void; onError: (m: string) => void }) {
+/** Pick a photo, frame it, and upload it for this employee; the server re-encodes it. */
+function PhotoButton({ employeeId, onUploaded }: { employeeId: string; onUploaded: () => void }) {
   const input = useRef<HTMLInputElement>(null);
-  const [busy, setBusy] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
   return (
     <>
-      <button type="button" onClick={() => input.current?.click()} disabled={busy}
+      <button type="button" onClick={() => input.current?.click()}
         className="absolute inset-0 grid place-items-center rounded-[22px] bg-black/0 text-transparent transition hover:bg-black/45 hover:text-white focus-visible:bg-black/45 focus-visible:text-white focus-visible:outline-none"
         aria-label="Change photo">
-        <span className="flex flex-col items-center gap-1 text-xs font-semibold"><IconCamera size={22} />{busy ? "Uploading…" : "Change photo"}</span>
+        <span className="flex flex-col items-center gap-1 text-xs font-semibold"><IconCamera size={22} />Change photo</span>
       </button>
-      <input ref={input} type="file" accept="image/jpeg,image/png,image/webp,image/heic" className="sr-only" onChange={async (e) => {
-        const file = e.target.files?.[0];
+      <input ref={input} type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={(e) => {
+        const picked = e.target.files?.[0];
         e.target.value = "";
-        if (!file) return;
-        setBusy(true);
-        const form = new FormData();
-        form.set("file", file);
-        const body = await postForm<{ photoUrl?: string }>(`/api/employees/${employeeId}/photo/`, form);
-        setBusy(false);
-        if (body.errors?.length) onError(body.errors[0].message);
-        else onUploaded();
+        if (picked) setFile(picked);
       }} />
+      {file && <PhotoEditor file={file} employeeId={employeeId} onClose={() => setFile(null)} onUploaded={() => { setFile(null); onUploaded(); }} />}
     </>
   );
 }
@@ -120,9 +114,9 @@ function Tabs({ tabs, active, onSelect, compact, onCustomize }: {
  * The record's header: a band in the company colour with the photo, name, actions and tabs.
  * When it scrolls out of view a slim bar with the name and tabs stays at the top.
  */
-export function ProfileHeader({ e, tabs, active, onSelect, actions, canChangePhoto, onPhoto, onError, onCustomizeTabs }: {
+export function ProfileHeader({ e, tabs, active, onSelect, actions, canChangePhoto, onPhoto, onCustomizeTabs }: {
   e: Profile; tabs: LayoutTab[]; active: string; onSelect: (key: string) => void; actions?: ReactNode; onCustomizeTabs?: () => void;
-  canChangePhoto: boolean; onPhoto: () => void; onError: (m: string) => void;
+  canChangePhoto: boolean; onPhoto: () => void;
 }) {
   const band = useRef<HTMLDivElement>(null);
   const [compact, setCompact] = useState(false);
@@ -162,7 +156,7 @@ export function ProfileHeader({ e, tabs, active, onSelect, actions, canChangePho
             ) : (
               <span className="grid h-full w-full place-items-center font-display text-[44px] text-white/90">{initials(e.fullName)}</span>
             )}
-            {canChangePhoto && <PhotoButton employeeId={e.id} onUploaded={onPhoto} onError={onError} />}
+            {canChangePhoto && <PhotoButton employeeId={e.id} onUploaded={onPhoto} />}
           </div>
           <div className="min-w-0 flex-1 pt-14 sm:pt-0">
             <div className="flex flex-wrap items-start justify-between gap-3">

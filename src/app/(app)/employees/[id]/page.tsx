@@ -218,7 +218,6 @@ function EmployeeRecord() {
       <ProfileHeader e={e} tabs={layout.tabs} active={tab.key} onSelect={select}
         onCustomizeTabs={manage ? () => setDialog("tabs") : undefined}
         canChangePhoto={(self && Boolean(tenant?.employeesEditOwnPhoto)) || manage} onPhoto={() => saved("Photo updated.")}
-        onError={(text) => setNotice({ tone: "error", text })}
         actions={!manage && !self && can(PERMS.employeesView) && e.status !== "TERMINATED" ? (
           // Managers ask for changes for their reports; HR approves them (Settings → Approvals).
           <Menu label="Request a Change">

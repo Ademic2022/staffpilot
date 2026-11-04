@@ -25,7 +25,7 @@ Keep at least one emergency contact on the **Emergency** tab, so HR knows who to
 
 ## Your photo
 
-If your company allows it, you can change or remove your photo from your profile. Otherwise ask HR.
+If your company allows it, click your photo on your profile and choose **Change photo**. Pick a JPG, PNG or WebP picture, drag it and zoom until your face fills most of the square, then **Save photo**; a bar shows the upload's progress. Otherwise ask HR.
 
 ## Documents
 

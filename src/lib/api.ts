@@ -67,3 +67,27 @@ export async function postForm<T>(path: string, form: FormData): Promise<T & { e
     };
   }
 }
+
+/**
+ * Like postForm, but reports upload progress (0 to 1) as the file goes up. fetch cannot report
+ * upload progress, so this uses XMLHttpRequest.
+ */
+export async function postFormWithProgress<T>(path: string, form: FormData, onProgress: (share: number) => void):
+  Promise<T & { errors?: { field: string | null; message: string }[] }> {
+  await ensureCsrf();
+  type Result = T & { errors?: { field: string | null; message: string }[] };
+  const offline = { errors: [{ field: null, message: "Could not reach the server. Check your connection and try again." }] } as Result;
+  return new Promise<Result>((resolve) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", path);
+    xhr.withCredentials = true;
+    const token = cookie("csrftoken");
+    if (token) xhr.setRequestHeader("X-CSRFToken", token);
+    xhr.upload.onprogress = (e) => { if (e.lengthComputable) onProgress(e.loaded / e.total); };
+    xhr.onload = () => {
+      try { resolve(JSON.parse(xhr.responseText) as Result); } catch { resolve(offline); }
+    };
+    xhr.onerror = () => resolve(offline);
+    xhr.send(form);
+  });
+}
