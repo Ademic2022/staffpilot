@@ -10,7 +10,15 @@ export function slugify(text: string) {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
 
-function inline(text: string, key: string): ReactNode[] {
+/** Where a link in an article goes: the app (default), or the public guide, where app pages are not links. */
+type LinkMode = "app" | "public";
+
+function target(href: string, mode: LinkMode): string | null {
+  if (mode === "app" || !href.startsWith("/")) return href;
+  return href.startsWith("/help/") ? `/guide/${href.slice(6)}` : null;
+}
+
+function inline(text: string, key: string, mode: LinkMode = "app"): ReactNode[] {
   const out: ReactNode[] = [];
   const pattern = /\*\*([^*]+)\*\*|\[([^\]]+)\]\(([^)\s]+)\)/g;
   let last = 0;
@@ -20,9 +28,10 @@ function inline(text: string, key: string): ReactNode[] {
     if (m.index > last) out.push(text.slice(last, m.index));
     if (m[1]) out.push(<strong key={`${key}-${i++}`} className="font-semibold text-ink">{m[1]}</strong>);
     else {
-      const href = m[3];
+      const href = target(m[3], mode);
       const cls = "font-medium text-brand-ink underline-offset-2 hover:underline";
-      out.push(href.startsWith("/")
+      if (href === null) out.push(<strong key={`${key}-${i++}`} className="font-semibold text-ink">{m[2]}</strong>);
+      else out.push(href.startsWith("/")
         ? <Link key={`${key}-${i++}`} href={href} className={cls}>{m[2]}</Link>
         : <a key={`${key}-${i++}`} href={href} className={cls} target="_blank" rel="noreferrer">{m[2]}</a>);
     }
@@ -79,7 +88,7 @@ export function headings(source: string) {
   return parse(source).filter((b): b is { kind: "h2"; text: string } => b.kind === "h2").map((b) => ({ id: slugify(b.text), text: b.text }));
 }
 
-export function Markdown({ source }: { source: string }) {
+export function Markdown({ source, mode = "app" }: { source: string; mode?: LinkMode }) {
   return (
     <div className="grid gap-4 text-[15px] leading-relaxed text-ink/90">
       {parse(source).map((b, i) => {
@@ -87,10 +96,10 @@ export function Markdown({ source }: { source: string }) {
         switch (b.kind) {
           case "h2": return <h2 key={key} id={slugify(b.text)} className="mt-4 scroll-mt-20 text-lg font-semibold text-ink">{b.text}</h2>;
           case "h3": return <h3 key={key} id={slugify(b.text)} className="mt-2 scroll-mt-20 text-[15px] font-semibold text-ink">{b.text}</h3>;
-          case "tip": return <div key={key} className="rounded-lg border border-brand/25 bg-brand/5 px-4 py-3 text-sm">{inline(b.text, key)}</div>;
-          case "ul": return <ul key={key} className="grid list-disc gap-1.5 pl-5">{b.items.map((t, j) => <li key={j}>{inline(t, `${key}-${j}`)}</li>)}</ul>;
-          case "ol": return <ol key={key} className="grid list-decimal gap-1.5 pl-5">{b.items.map((t, j) => <li key={j}>{inline(t, `${key}-${j}`)}</li>)}</ol>;
-          default: return <p key={key}>{inline(b.text, key)}</p>;
+          case "tip": return <div key={key} className="rounded-lg border border-brand/25 bg-brand/5 px-4 py-3 text-sm">{inline(b.text, key, mode)}</div>;
+          case "ul": return <ul key={key} className="grid list-disc gap-1.5 pl-5">{b.items.map((t, j) => <li key={j}>{inline(t, `${key}-${j}`, mode)}</li>)}</ul>;
+          case "ol": return <ol key={key} className="grid list-decimal gap-1.5 pl-5">{b.items.map((t, j) => <li key={j}>{inline(t, `${key}-${j}`, mode)}</li>)}</ol>;
+          default: return <p key={key}>{inline(b.text, key, mode)}</p>;
         }
       })}
     </div>

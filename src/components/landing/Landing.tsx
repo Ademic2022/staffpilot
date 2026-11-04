@@ -14,6 +14,7 @@ const NAV = [
   ["Security", "/#security"],
   ["How it works", "/#how"],
   ["FAQ", "/#faq"],
+  ["Guide", "/guide"],
 ];
 
 function Logo({ light = false }: { light?: boolean }) {
@@ -84,8 +85,8 @@ function Hero() {
       <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 pb-20 pt-14 sm:px-8 lg:grid-cols-[1.05fr_1fr] lg:pb-28 lg:pt-20">
         <div>
           <div className="lp-rise mb-6 inline-flex items-center gap-2 rounded-full border border-[var(--lp-green)]/15 bg-[var(--lp-card)] py-1 pl-1 pr-3 text-[13px] text-[var(--lp-muted)]" style={{ animationDelay: "0.05s" }}>
-            <span className="rounded-full bg-[var(--lp-green)] px-2 py-0.5 text-[11px] font-semibold text-[var(--lp-saffron)]">Next</span>
-            Payroll with PAYE, pension and NHF
+            <span className="rounded-full bg-[var(--lp-green)] px-2 py-0.5 text-[11px] font-semibold text-[var(--lp-saffron)]">New</span>
+            Payroll for Nigeria and Ghana
           </div>
           <h1 className="lp-rise font-display text-[44px] font-medium leading-[1.02] tracking-[-0.02em] text-[var(--lp-green)] sm:text-[60px] lg:text-[68px]" style={{ animationDelay: "0.12s" }}>
             Your people,<br />
@@ -93,8 +94,9 @@ function Hero() {
             paperwork.
           </h1>
           <p className="lp-rise mt-6 max-w-xl text-[18px] leading-relaxed text-[var(--lp-muted)]" style={{ animationDelay: "0.22s" }}>
-            {SITE.name} keeps every employee record, leave balance and document in one secure place. Staff request time off from their
-            phones, managers approve in a tap, and HR stops chasing spreadsheets and email threads.
+            {SITE.name} is HR software for growing African companies: employee records, leave, payroll, attendance, performance
+            reviews and expense claims in one secure place. Staff help themselves from their phones, managers approve in a tap, and
+            HR stops chasing spreadsheets and email threads.
           </p>
           <div className="lp-rise mt-8 flex flex-wrap items-center gap-3" style={{ animationDelay: "0.32s" }}>
             <CTA href="/signup">Set up your company <Arrow /></CTA>
@@ -126,8 +128,8 @@ function Strip() {
   const facts = [
     ["One record per person", "Job, pay history, contacts, bank details and documents"],
     ["Leave that adds up", "Balances, accruals, carry-over and public holidays"],
-    ["Self-service", "Staff see and update their own details"],
-    ["Reports in a click", "Headcount, joiners, attrition, leave, pay"],
+    ["Payroll that files", "PAYE, pension, NHF and SSNIT, payslips and bank files"],
+    ["Time, reviews, expenses", "Clock-in, timesheets, review cycles and receipts"],
   ];
   return (
     <section className="border-y border-[var(--lp-rule)] bg-[var(--lp-card)]">
@@ -207,10 +209,10 @@ function Features() {
     ["Manager view", "Line managers see their own team: records, leave and approvals. Nothing else."],
     ["Reports", "Headcount, joiners and leavers, attrition, leave taken, workforce make-up and pay totals. PDF, Excel or CSV."],
     ["Directory and org chart", "Everyone can find a colleague's role, team and work email. Personal details stay private."],
-    ["Invites, not passwords", "Add people by email. They choose their own password; you choose their role and reach."],
-    ["Notifications", "A bell in the app and an email for every request, decision, reminder and hand-over."],
-    ["Your brand", "Your logo and colour on the sign-in page, the app and every email."],
-    ["Payroll — coming next", "Gross-to-net with PAYE, pension and NHF, payslips in self-service and bank files."],
+    ["Payroll", "Gross-to-net for Nigeria and Ghana: PAYE, pension, NHF and SSNIT, maker-checker approval, payslips and bank files."],
+    ["Attendance and timesheets", "Clock in from a phone with an optional site check, shifts and overtime, and weekly hours by project."],
+    ["Performance", "Goals and key results, self, manager and peer reviews, calibration, feedback and one-to-ones."],
+    ["Expense claims", "Receipts from a phone camera, limits by category, manager and finance approval, paid back with pay."],
   ];
   return (
     <section className="mt-24 border-y border-[var(--lp-rule)] bg-[var(--lp-card)] lg:mt-32">
@@ -357,7 +359,7 @@ function FinalCTA() {
 
 export function Footer() {
   const cols: [string, [string, string][]][] = [
-    ["Product", [["Core HR", "/#product"], ["Leave", "/#leave"], ["Security", "/#security"], ["FAQ", "/#faq"]]],
+    ["Product", [["Core HR", "/#product"], ["Leave", "/#leave"], ["Security", "/#security"], ["FAQ", "/#faq"], ["User guide", "/guide"]]],
     ["Get started", [["Set up your company", "/signup"], ["Sign in", "/login"], ["How it works", "/#how"]]],
     ["Company", [["Contact", `mailto:${SITE.contactEmail}`]]],
   ];

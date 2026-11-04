@@ -5,13 +5,39 @@ import { redirect } from "next/navigation";
 import { Landing } from "@/components/landing/Landing";
 import "@/components/landing/landing.css";
 import { BASE_DOMAIN, hostname, isPlatformHost } from "@/lib/hosts";
-import { SEO, SITE } from "@/lib/site";
+import { FAQS } from "@/components/landing/faqs";
+import { JsonLd } from "@/components/landing/JsonLd";
+import { SEO, SITE, siteUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: { absolute: `${SEO.title} | ${SITE.name}` },
   description: SEO.description,
-  robots: { index: true, follow: true },
+  keywords: SEO.keywords,
+  robots: { index: true, follow: true, "max-image-preview": "large" },
+  alternates: { canonical: "/" },
+  openGraph: { type: "website", url: "/", title: `${SITE.name}: ${SEO.title}`, description: SEO.description },
+  twitter: { card: "summary_large_image", title: `${SITE.name}: ${SEO.title}`, description: SEO.description },
 };
+
+/** What search engines read about the product: who makes it, what it is, and the FAQ shown on the page. */
+function structuredData() {
+  const url = siteUrl();
+  return [
+    { "@context": "https://schema.org", "@type": "Organization", name: SITE.name, url, logo: `${url}/icon.png`, email: SITE.contactEmail },
+    { "@context": "https://schema.org", "@type": "WebSite", name: SITE.name, url },
+    {
+      "@context": "https://schema.org", "@type": "SoftwareApplication", name: SITE.name, url, applicationCategory: "BusinessApplication",
+      applicationSubCategory: "HR and payroll software", operatingSystem: "Web browser, any phone", description: SEO.description,
+      areaServed: ["Nigeria", "Ghana"],
+      featureList: ["Employee records", "Leave management", "Payroll with PAYE, pension, NHF and SSNIT", "Attendance and timesheets",
+        "Performance reviews and goals", "Expense claims", "Employee self-service", "Reports"],
+    },
+    {
+      "@context": "https://schema.org", "@type": "FAQPage",
+      mainEntity: FAQS.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })),
+    },
+  ];
+}
 
 const API_ORIGIN = process.env.API_ORIGIN ?? "http://127.0.0.1:8000";
 
@@ -46,5 +72,10 @@ export default async function Home() {
   // A company's own address goes straight into the app; the platform's address shows the homepage.
   const host = hostname((await headers()).get("host"));
   if (await isCompanyHost(host)) redirect("/home");
-  return <Landing companyUrl={companyUrl()} />;
+  return (
+    <>
+      <JsonLd data={structuredData()} />
+      <Landing companyUrl={companyUrl()} />
+    </>
+  );
 }

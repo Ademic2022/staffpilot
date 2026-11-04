@@ -5,6 +5,8 @@ import type { ReactNode } from "react";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 
+import { SEO, SITE, siteUrl } from "@/lib/site";
+
 import { Providers } from "./providers";
 import "./globals.css";
 
@@ -15,15 +17,22 @@ config.autoAddCss = false;
 const display = Fraunces({ subsets: ["latin"], variable: "--ff-display", style: ["normal", "italic"], display: "swap" });
 const body = Instrument_Sans({ subsets: ["latin"], variable: "--ff-body", display: "swap" });
 
+// Pages are kept out of search engines unless they say otherwise: only the homepage, sign-up and
+// the user guide are public. Company workspaces are private (see also app/robots.ts).
 export const metadata: Metadata = {
-  title: { default: "StaffPilot", template: "%s · StaffPilot" },
-  description: "People, leave and payroll in one place.",
+  metadataBase: new URL(siteUrl()),
+  title: { default: SITE.name, template: `%s · ${SITE.name}` },
+  description: SEO.description,
+  applicationName: SITE.name,
+  robots: { index: false, follow: false },
+  openGraph: { siteName: SITE.name, locale: "en_NG", type: "website" },
+  twitter: { card: "summary_large_image" },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#0f3d2e",
+  themeColor: "#7a6c2e",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
