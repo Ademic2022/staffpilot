@@ -9,7 +9,7 @@ export const SITE = {
   // Imported, so its address carries a hash of the file and a new logo is never served from a cache.
   logo,
   tagline: "HR, payroll, leave and attendance for growing African companies",
-  contactEmail: "hello@staffpilot.site",
+  contactEmail: "support@staffpilot.site",
 };
 
 export const SEO = {
