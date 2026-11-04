@@ -1,4 +1,6 @@
-# hrms-client
+# StaffPilot web app
+
+Repository: https://github.com/Ademic2022/staffpilot. Live at https://staffpilot.site.
 
 Next.js (App Router) + TypeScript web app for StaffPilot. Talks to `../hrms-server` over
 GraphQL with [urql](https://commerce.nearform.com/open-source/urql/).
@@ -21,7 +23,7 @@ Open http://acme.localhost:3000 (the subdomain picks the tenant). Next.js forwar
 The platform's address is public: the homepage, sign-up and the user guide at `/guide` (the same
 articles as the in-app Help, pre-rendered for search engines), with `robots.txt`, `sitemap.xml`,
 social cards (`src/app/opengraph-image.png`) and schema.org data. Every other page, and every
-company's own address, is `noindex` and disallowed in its `robots.txt`. Set `NEXT_PUBLIC_SITE_URL`
+company's own address, is `noindex` and disallowed in its `robots.txt`. Set `NEXT_PUBLIC_SITE_URL=https://staffpilot.site`
 in production.
 
 ## GraphQL types
