@@ -33,6 +33,7 @@ Write queries with `graphql(\`...\`)` from `@/gql`; never hand-write API types.
 npm run lint
 npm run typecheck
 npm test
+npm run help:pdf   # StaffPilot-User-Guide.pdf from the in-app Help articles (needs ../hrms-server's uv env)
 ```
 
 ## Notes

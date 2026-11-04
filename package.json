@@ -10,7 +10,8 @@
     "codegen": "graphql-codegen",
     "schema": "cp \"${SERVER_DIR:-../hrms-server}/schema.graphql\" schema.graphql && graphql-codegen",
     "typecheck": "next typegen && tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "help:pdf": "uv --directory ../hrms-server run python \"$PWD/scripts/build_help_pdf.py\""
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.3.1",
