@@ -14,7 +14,6 @@ const NAV = [
   ["Security", "/#security"],
   ["How it works", "/#how"],
   ["FAQ", "/#faq"],
-  ["Guide", "/guide"],
 ];
 
 function Logo({ light = false }: { light?: boolean }) {
@@ -359,7 +358,7 @@ function FinalCTA() {
 
 export function Footer() {
   const cols: [string, [string, string][]][] = [
-    ["Product", [["Core HR", "/#product"], ["Leave", "/#leave"], ["Security", "/#security"], ["FAQ", "/#faq"], ["User guide", "/guide"]]],
+    ["Product", [["Core HR", "/#product"], ["Leave", "/#leave"], ["Security", "/#security"], ["FAQ", "/#faq"]]],
     ["Get started", [["Set up your company", "/signup"], ["Sign in", "/login"], ["How it works", "/#how"]]],
     ["Company", [["Contact", `mailto:${SITE.contactEmail}`]]],
   ];
