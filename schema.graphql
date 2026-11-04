@@ -5,6 +5,21 @@ type AccountAccess {
   invitePending: Boolean!
 }
 
+type AccountClosure {
+  status: String!
+  closesOn: Date
+  requestedAt: DateTime
+  requestedBy: String
+  reason: String!
+  graceDays: Int!
+  backupDays: Int!
+}
+
+type AccountClosurePayload {
+  closure: AccountClosure
+  errors: [FieldError!]!
+}
+
 type AccountPayload {
   ok: Boolean!
   errors: [FieldError!]!
@@ -563,6 +578,18 @@ type CustomValue {
 type CustomValuesPayload {
   ok: Boolean!
   errors: [FieldError!]!
+}
+
+type DataExport {
+  id: ID!
+  status: String!
+  size: Int!
+  summary: JSON!
+  error: String!
+  requestedBy: String
+  createdAt: DateTime!
+  finishedAt: DateTime
+  expiresAt: DateTime
 }
 
 """Date (isoformat)"""
@@ -2096,6 +2123,22 @@ type Mutation {
 
   """Record that approved claims were paid outside payroll."""
   markExpenseClaimsPaid(ids: [ID!]!, reference: String! = ""): Int!
+
+  """
+  Start building a ZIP of everything the company keeps. You are emailed when it is ready.
+  """
+  requestDataExport: DataExport!
+
+  """
+  A ten-minute download link for a ready export. Each download is recorded in the audit log.
+  """
+  dataExportUrl(id: ID!): String!
+
+  """
+  Close the account: read-only for 30 days, then every record and file is deleted.
+  """
+  requestAccountClosure(companyName: String!, password: String!, reason: String! = ""): AccountClosurePayload!
+  cancelAccountClosure: AccountClosurePayload!
 }
 
 type MyAttendance {
@@ -2969,6 +3012,10 @@ type Query {
 
   """Every claim (finance), or your team's claims (managers)."""
   expenseClaims(status: String = null, start: Date = null, end: Date = null, search: String! = ""): [ExpenseClaim!]!
+
+  """This company's data exports, newest first."""
+  dataExports: [DataExport!]!
+  accountClosure: AccountClosure!
 }
 
 type RecoveryCodesPayload {
@@ -3568,6 +3615,8 @@ type TenantPublic {
   attendanceEnabled: Boolean!
   expensesEnabled: Boolean!
   timesheetsEnabled: Boolean!
+  status: String!
+  closesOn: Date
 }
 
 type TenureStep {

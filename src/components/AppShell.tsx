@@ -6,7 +6,7 @@ import { useEffect, useState, type ComponentType, type ReactNode } from "react";
 import { useMutation, useQuery } from "urql";
 
 import { graphql } from "@/gql";
-import { initials } from "@/lib/format";
+import { formatDate, initials } from "@/lib/format";
 import { PERMS } from "@/lib/permissions";
 import { useSession, type Tenant } from "@/lib/session";
 
@@ -63,6 +63,16 @@ function ViewAsBanner({ name, realName, onStop }: { name: string; realName: stri
       <span><strong>Viewing as {name}.</strong> This is what they see. Changes are off. You are {realName}.</span>
       <button type="button" disabled={fetching} onClick={async () => { await stop({}); onStop(); router.push("/settings/users"); }}
         className="rounded-full bg-amber-950 px-3 py-1 text-xs font-semibold text-amber-50 hover:bg-amber-900">Stop viewing</button>
+    </div>
+  );
+}
+
+/** Everyone sees this while the company is closing; owners get the way to export or cancel. */
+function ClosingBanner({ tenant, owner }: { tenant: Tenant; owner: boolean }) {
+  return (
+    <div role="status" className="sticky top-0 z-30 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 bg-red-700 px-4 py-2 text-sm text-white shadow">
+      <span><strong>{tenant.name} is closing on {formatDate(tenant.closesOn)}.</strong> StaffPilot is read-only until then; after that nobody can sign in.</span>
+      {owner && <Link href="/settings/company?tab=data" className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-red-800 hover:bg-red-50">Export or cancel</Link>}
     </div>
   );
 }
@@ -271,6 +281,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <NotificationBell align="right" />
         </header>
 
+        {tenant?.status === "closing" && <ClosingBanner tenant={tenant} owner={can(PERMS.tenantManage)} />}
         {me.viewingAs && <ViewAsBanner name={me.viewingAs.name} realName={me.viewingAs.realName} onStop={reset} />}
         <main id="main" className="mx-auto max-w-6xl space-y-5 px-4 py-6 sm:px-8 sm:py-8">
           {me.mfaSetupRequired && pathname !== "/account" && (

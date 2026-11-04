@@ -8,6 +8,7 @@ import {
   Button, Card, Checkbox, ErrorNote, Field, FormSection, Input, Loading, Notice, Select, Textarea,
 } from "@/components/ui";
 import { useSettingsTab } from "@/components/settings/areas";
+import { DataAndAccount } from "@/components/settings/DataAndAccount";
 import { graphql } from "@/gql";
 import type { CompanySettingsQuery } from "@/gql/graphql";
 import { errorMessage, postForm } from "@/lib/api";
@@ -43,7 +44,7 @@ const DATE_FORMATS = [
   ["mm/dd/yyyy", "10/25/2026 (mm/dd/yyyy)"], ["yyyy-mm-dd", "2026-10-25 (yyyy-mm-dd)"],
 ];
 const NAME_FORMATS = [["first_last", "First Last (Ada Owner)"], ["first_middle_last", "First Middle Last (Ada Ngozi Owner)"], ["last_first", "Last, First (Owner, Ada)"]];
-export type CompanySection = "info" | "general" | "branding" | "security";
+export type CompanySection = "info" | "general" | "branding" | "security" | "data";
 const ZONES = typeof Intl.supportedValuesOf === "function" ? Intl.supportedValuesOf("timeZone") : ["Africa/Lagos", "UTC"];
 
 function Form({ initial, section, onSaved }: { initial: Settings; section: CompanySection; onSaved: () => void }) {
@@ -202,8 +203,9 @@ export default function CompanySettingsPage() {
   const { can } = useSession();
   const [{ data, error }, reload] = useQuery({ query: CompanySettingsDocument });
   const [saved, setSaved] = useState(false);
-  const [section] = useSettingsTab<CompanySection>(["info", "general", "branding", "security"], "info");
+  const [section] = useSettingsTab<CompanySection>(["info", "general", "branding", "security", "data"], "info");
   if (!can(PERMS.tenantManage)) return <Notice tone="warning">Only owners can change company settings.</Notice>;
+  if (section === "data") return <DataAndAccount />;
   if (error) return <ErrorNote error={errorMessage(error)} />;
   if (!data) return <Loading />;
   return (

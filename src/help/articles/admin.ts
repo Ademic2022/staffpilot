@@ -56,6 +56,10 @@ Upload a PNG, JPG or WebP logo (up to 2 MB) and choose your colour. They appear 
 - **Admins must use two-step sign-in**: everyone with admin access must set up an authenticator app. Set it up for yourself first on Your account.
 - **Sign people out after** a period of no activity. Shorter is safer on shared computers.
 - **Only allow these networks**: restrict sign-in to your office network addresses.
+
+## Data and account
+
+Export everything your company keeps, or close the account. See [Exporting your data and closing the account](/help/data-and-closing).
 `,
   },
   {
@@ -452,6 +456,42 @@ On any profile, choose **Customize tabs**. Drag to reorder tabs and sections; bu
 ## Company directory
 
 **Settings** → **Company directory** decides whether people see the directory and org chart, and which work details they show (such as work phone, email and location).
+`,
+  },
+  {
+    slug: "data-and-closing",
+    title: "Exporting your data and closing the account",
+    summary: "Downloading everything your company keeps, and what happens when you close the account.",
+    audience: HR,
+    paths: ["/settings/company?tab=data"],
+    body: `
+Both are under **Settings** → **Company** → **Data and account**, and only owners can use them.
+
+## Export all company data
+
+Choose **Export all data**. StaffPilot prepares one ZIP file in the background and emails you when it is ready, usually within minutes. It holds:
+
+- **tables/**: a spreadsheet (CSV, opens in Excel) for every kind of record: employees, job and pay history, leave requests and balances, payroll runs and payslip lines, attendance, timesheets, reviews, goals, feedback, expense claims, documents, settings and the audit log. A **people_who_can_sign_in** file lists everyone's name, email and access level.
+- **files/**: every stored file: employee documents, company files, receipts, photos and logos.
+- **payslips/**: a PDF of every approved payslip, by month.
+- **README.txt**: what each file holds and how the tables link together.
+
+Passwords, two-step sign-in secrets, API keys and calendar links are never included.
+
+Choose **Download** when it is ready. Each download link works for 10 minutes and is recorded in the audit log. The file is deleted after 7 days; make a new export if you need it again (up to five a day).
+
+> Keep the export somewhere safe: it holds bank details, ID numbers and pay for everyone.
+
+## Close the account
+
+Choose **Close the account…**, type the company name, enter your password and, if you like, say why. Then:
+
+1. StaffPilot becomes **read-only** for everyone straight away, with a red banner saying when it closes. People can still sign in, read everything and download, and owners can still export.
+2. Owners are emailed now, and reminded 7 days and 1 day before.
+3. Any owner can **Cancel the closure** during the 30 days; everything then works as before.
+4. On the closing day the account **closes**: nobody can sign in, and your company's address shows that the account has closed. The data is kept, hidden, for **one year** in case you come back. To restore it, contact StaffPilot; everything comes back as it was.
+5. A month before the year is up, the owners are reminded. Then every record and stored file is deleted for good, logins used only for your company are removed, and the owners get a **deletion confirmation** by email to keep.
+6. Encrypted backups that still hold copies age out on their own within about five weeks after that; they are never restored for anyone.
 `,
   },
   {

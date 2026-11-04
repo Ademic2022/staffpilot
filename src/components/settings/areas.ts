@@ -29,6 +29,7 @@ export const AREAS: SettingsArea[] = [
     tabs: [
       { key: "info", label: "Company info" }, { key: "general", label: "General settings" },
       { key: "branding", label: "Logo and colour" }, { key: "security", label: "Login and security" },
+      { key: "data", label: "Data and account" },
     ],
   },
   {

@@ -280,6 +280,11 @@ type Documents = {
     "\n  mutation SaveRole($input: SaveRoleInput!) {\n    saveRole(input: $input) { role { id } errors { field message } }\n  }\n": typeof types.SaveRoleDocument,
     "\n  mutation DuplicateRole($id: ID!, $name: String!) {\n    duplicateRole(id: $id, name: $name) { role { id } errors { field message } }\n  }\n": typeof types.DuplicateRoleDocument,
     "\n  mutation DeleteRole($id: ID!) {\n    deleteRole(id: $id)\n  }\n": typeof types.DeleteRoleDocument,
+    "\n  query AccountData {\n    dataExports { id status size summary error requestedBy createdAt finishedAt expiresAt }\n    accountClosure { status closesOn requestedAt requestedBy reason graceDays backupDays }\n  }\n": typeof types.AccountDataDocument,
+    "mutation RequestDataExport { requestDataExport { id status } }": typeof types.RequestDataExportDocument,
+    "mutation DataExportUrl($id: ID!) { dataExportUrl(id: $id) }": typeof types.DataExportUrlDocument,
+    "\n  mutation RequestAccountClosure($companyName: String!, $password: String!, $reason: String) {\n    requestAccountClosure(companyName: $companyName, password: $password, reason: $reason) { closure { status closesOn } errors { field message } }\n  }\n": typeof types.RequestAccountClosureDocument,
+    "mutation CancelAccountClosure { cancelAccountClosure { closure { status } errors { message } } }": typeof types.CancelAccountClosureDocument,
     "\n  query MyCalendarFeeds { myCalendarFeeds { id kinds url lastUsedAt } }\n": typeof types.MyCalendarFeedsDocument,
     "\n  mutation CreateCalendarFeed($kinds: [String!]!) { createCalendarFeed(kinds: $kinds) { id } }\n": typeof types.CreateCalendarFeedDocument,
     "mutation DeleteCalendarFeed($id: ID!) { deleteCalendarFeed(id: $id) }": typeof types.DeleteCalendarFeedDocument,
@@ -301,7 +306,7 @@ type Documents = {
     "\n  query ReportCatalog {\n    reportCatalog { key title description usesRange groupings category favorite lastViewed }\n  }\n": typeof types.ReportCatalogDocument,
     "\n  query CustomReports {\n    customReports { id name description fields filter showing shared ownerName mine favorite lastViewed }\n  }\n": typeof types.CustomReportsDocument,
     "\n  mutation SetFavoriteReport($favorite: Boolean!, $key: String, $customId: ID) {\n    setFavoriteReport(favorite: $favorite, key: $key, customId: $customId)\n  }\n": typeof types.SetFavoriteReportDocument,
-    "\n  query Me {\n    me {\n      permissions\n      roles\n      user { id email fullName }\n      employee { id fullName jobTitle { name } }\n      hasPayslips\n      mfaEnabled mfaSetupRequired recoveryCodesLeft\n      viewingAs { name realName startedAt }\n    }\n    tenant {\n      name slug primaryColor country currency logoUrl\n      dateFormat nameFormat showCurrencyCode employeesEditOwnPhoto expandedGender employeeUploads attendanceEnabled expensesEnabled timesheetsEnabled payrollEnabled\n    }\n  }\n": typeof types.MeDocument,
+    "\n  query Me {\n    me {\n      permissions\n      roles\n      user { id email fullName }\n      employee { id fullName jobTitle { name } }\n      hasPayslips\n      mfaEnabled mfaSetupRequired recoveryCodesLeft\n      viewingAs { name realName startedAt }\n    }\n    tenant {\n      name slug primaryColor country currency logoUrl\n      dateFormat nameFormat showCurrencyCode employeesEditOwnPhoto expandedGender employeeUploads attendanceEnabled expensesEnabled timesheetsEnabled payrollEnabled status closesOn\n    }\n  }\n": typeof types.MeDocument,
 };
 const documents: Documents = {
     "\n  mutation ChangePassword($current: String!, $new: String!) {\n    changePassword(current: $current, new: $new) { ok errors { field message } }\n  }\n": types.ChangePasswordDocument,
@@ -570,6 +575,11 @@ const documents: Documents = {
     "\n  mutation SaveRole($input: SaveRoleInput!) {\n    saveRole(input: $input) { role { id } errors { field message } }\n  }\n": types.SaveRoleDocument,
     "\n  mutation DuplicateRole($id: ID!, $name: String!) {\n    duplicateRole(id: $id, name: $name) { role { id } errors { field message } }\n  }\n": types.DuplicateRoleDocument,
     "\n  mutation DeleteRole($id: ID!) {\n    deleteRole(id: $id)\n  }\n": types.DeleteRoleDocument,
+    "\n  query AccountData {\n    dataExports { id status size summary error requestedBy createdAt finishedAt expiresAt }\n    accountClosure { status closesOn requestedAt requestedBy reason graceDays backupDays }\n  }\n": types.AccountDataDocument,
+    "mutation RequestDataExport { requestDataExport { id status } }": types.RequestDataExportDocument,
+    "mutation DataExportUrl($id: ID!) { dataExportUrl(id: $id) }": types.DataExportUrlDocument,
+    "\n  mutation RequestAccountClosure($companyName: String!, $password: String!, $reason: String) {\n    requestAccountClosure(companyName: $companyName, password: $password, reason: $reason) { closure { status closesOn } errors { field message } }\n  }\n": types.RequestAccountClosureDocument,
+    "mutation CancelAccountClosure { cancelAccountClosure { closure { status } errors { message } } }": types.CancelAccountClosureDocument,
     "\n  query MyCalendarFeeds { myCalendarFeeds { id kinds url lastUsedAt } }\n": types.MyCalendarFeedsDocument,
     "\n  mutation CreateCalendarFeed($kinds: [String!]!) { createCalendarFeed(kinds: $kinds) { id } }\n": types.CreateCalendarFeedDocument,
     "mutation DeleteCalendarFeed($id: ID!) { deleteCalendarFeed(id: $id) }": types.DeleteCalendarFeedDocument,
@@ -591,7 +601,7 @@ const documents: Documents = {
     "\n  query ReportCatalog {\n    reportCatalog { key title description usesRange groupings category favorite lastViewed }\n  }\n": types.ReportCatalogDocument,
     "\n  query CustomReports {\n    customReports { id name description fields filter showing shared ownerName mine favorite lastViewed }\n  }\n": types.CustomReportsDocument,
     "\n  mutation SetFavoriteReport($favorite: Boolean!, $key: String, $customId: ID) {\n    setFavoriteReport(favorite: $favorite, key: $key, customId: $customId)\n  }\n": types.SetFavoriteReportDocument,
-    "\n  query Me {\n    me {\n      permissions\n      roles\n      user { id email fullName }\n      employee { id fullName jobTitle { name } }\n      hasPayslips\n      mfaEnabled mfaSetupRequired recoveryCodesLeft\n      viewingAs { name realName startedAt }\n    }\n    tenant {\n      name slug primaryColor country currency logoUrl\n      dateFormat nameFormat showCurrencyCode employeesEditOwnPhoto expandedGender employeeUploads attendanceEnabled expensesEnabled timesheetsEnabled payrollEnabled\n    }\n  }\n": types.MeDocument,
+    "\n  query Me {\n    me {\n      permissions\n      roles\n      user { id email fullName }\n      employee { id fullName jobTitle { name } }\n      hasPayslips\n      mfaEnabled mfaSetupRequired recoveryCodesLeft\n      viewingAs { name realName startedAt }\n    }\n    tenant {\n      name slug primaryColor country currency logoUrl\n      dateFormat nameFormat showCurrencyCode employeesEditOwnPhoto expandedGender employeeUploads attendanceEnabled expensesEnabled timesheetsEnabled payrollEnabled status closesOn\n    }\n  }\n": types.MeDocument,
 };
 
 /**
@@ -1675,6 +1685,26 @@ export function graphql(source: "\n  mutation DeleteRole($id: ID!) {\n    delete
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "\n  query AccountData {\n    dataExports { id status size summary error requestedBy createdAt finishedAt expiresAt }\n    accountClosure { status closesOn requestedAt requestedBy reason graceDays backupDays }\n  }\n"): (typeof documents)["\n  query AccountData {\n    dataExports { id status size summary error requestedBy createdAt finishedAt expiresAt }\n    accountClosure { status closesOn requestedAt requestedBy reason graceDays backupDays }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "mutation RequestDataExport { requestDataExport { id status } }"): (typeof documents)["mutation RequestDataExport { requestDataExport { id status } }"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "mutation DataExportUrl($id: ID!) { dataExportUrl(id: $id) }"): (typeof documents)["mutation DataExportUrl($id: ID!) { dataExportUrl(id: $id) }"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation RequestAccountClosure($companyName: String!, $password: String!, $reason: String) {\n    requestAccountClosure(companyName: $companyName, password: $password, reason: $reason) { closure { status closesOn } errors { field message } }\n  }\n"): (typeof documents)["\n  mutation RequestAccountClosure($companyName: String!, $password: String!, $reason: String) {\n    requestAccountClosure(companyName: $companyName, password: $password, reason: $reason) { closure { status closesOn } errors { field message } }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "mutation CancelAccountClosure { cancelAccountClosure { closure { status } errors { message } } }"): (typeof documents)["mutation CancelAccountClosure { cancelAccountClosure { closure { status } errors { message } } }"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "\n  query MyCalendarFeeds { myCalendarFeeds { id kinds url lastUsedAt } }\n"): (typeof documents)["\n  query MyCalendarFeeds { myCalendarFeeds { id kinds url lastUsedAt } }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -1759,7 +1789,7 @@ export function graphql(source: "\n  mutation SetFavoriteReport($favorite: Boole
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query Me {\n    me {\n      permissions\n      roles\n      user { id email fullName }\n      employee { id fullName jobTitle { name } }\n      hasPayslips\n      mfaEnabled mfaSetupRequired recoveryCodesLeft\n      viewingAs { name realName startedAt }\n    }\n    tenant {\n      name slug primaryColor country currency logoUrl\n      dateFormat nameFormat showCurrencyCode employeesEditOwnPhoto expandedGender employeeUploads attendanceEnabled expensesEnabled timesheetsEnabled payrollEnabled\n    }\n  }\n"): (typeof documents)["\n  query Me {\n    me {\n      permissions\n      roles\n      user { id email fullName }\n      employee { id fullName jobTitle { name } }\n      hasPayslips\n      mfaEnabled mfaSetupRequired recoveryCodesLeft\n      viewingAs { name realName startedAt }\n    }\n    tenant {\n      name slug primaryColor country currency logoUrl\n      dateFormat nameFormat showCurrencyCode employeesEditOwnPhoto expandedGender employeeUploads attendanceEnabled expensesEnabled timesheetsEnabled payrollEnabled\n    }\n  }\n"];
+export function graphql(source: "\n  query Me {\n    me {\n      permissions\n      roles\n      user { id email fullName }\n      employee { id fullName jobTitle { name } }\n      hasPayslips\n      mfaEnabled mfaSetupRequired recoveryCodesLeft\n      viewingAs { name realName startedAt }\n    }\n    tenant {\n      name slug primaryColor country currency logoUrl\n      dateFormat nameFormat showCurrencyCode employeesEditOwnPhoto expandedGender employeeUploads attendanceEnabled expensesEnabled timesheetsEnabled payrollEnabled status closesOn\n    }\n  }\n"): (typeof documents)["\n  query Me {\n    me {\n      permissions\n      roles\n      user { id email fullName }\n      employee { id fullName jobTitle { name } }\n      hasPayslips\n      mfaEnabled mfaSetupRequired recoveryCodesLeft\n      viewingAs { name realName startedAt }\n    }\n    tenant {\n      name slug primaryColor country currency logoUrl\n      dateFormat nameFormat showCurrencyCode employeesEditOwnPhoto expandedGender employeeUploads attendanceEnabled expensesEnabled timesheetsEnabled payrollEnabled status closesOn\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

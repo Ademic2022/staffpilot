@@ -21,7 +21,14 @@ async function apiFetch(input: RequestInfo | URL, init?: RequestInit) {
   const headers = new Headers(init?.headers);
   const token = cookie("csrftoken");
   if (token) headers.set("X-CSRFToken", token);
-  return fetch(input, { ...init, headers, credentials: "include" });
+  const response = await fetch(input, { ...init, headers, credentials: "include" });
+  // The company closed its account (apps/tenants/closure.py): say so instead of failing quietly.
+  if (response.status === 410 && typeof window !== "undefined" && window.location.pathname !== "/closed") {
+    // A full page load on purpose: it drops every cached record of the closed company.
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+    window.location.href = "/closed";
+  }
+  return response;
 }
 
 /** A fresh client, with an empty cache. Made again on sign-in and sign-out. */
