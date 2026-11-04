@@ -10,6 +10,9 @@ export const SITE = {
   logo,
   tagline: "HR, payroll, leave and attendance for growing African companies",
   contactEmail: "support@staffpilot.site",
+  // Who runs the service, for the privacy policy and terms.
+  legalName: "AdemicTech",
+  location: "Lagos, Nigeria",
 };
 
 export const SEO = {

@@ -360,7 +360,7 @@ export function Footer() {
   const cols: [string, [string, string][]][] = [
     ["Product", [["Core HR", "/#product"], ["Leave", "/#leave"], ["Security", "/#security"], ["FAQ", "/#faq"]]],
     ["Get started", [["Set up your company", "/signup"], ["Sign in", "/login"], ["How it works", "/#how"]]],
-    ["Company", [["Contact", `mailto:${SITE.contactEmail}`]]],
+    ["Company", [["Contact", `mailto:${SITE.contactEmail}`], ["Privacy policy", "/privacy"], ["Terms of service", "/terms"]]],
   ];
   return (
     <footer className="border-t border-[var(--lp-rule)] bg-[var(--lp-card)]">

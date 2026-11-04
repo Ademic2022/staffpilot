@@ -128,6 +128,11 @@ export function SignUpForm({ addressSuffix }: { addressSuffix: string }) {
         </AuthField>
         <AuthButton type="submit" busy={busy}>Create my company</AuthButton>
         <p className="text-center text-xs text-muted">You become its owner. Your data stays separate from every other company&apos;s.</p>
+        <p className="text-center text-xs text-muted">
+          By creating a company you agree to the{" "}
+          <Link href="/terms" target="_blank" className="font-medium text-brand-ink hover:underline">terms of service</Link> and{" "}
+          <Link href="/privacy" target="_blank" className="font-medium text-brand-ink hover:underline">privacy policy</Link>.
+        </p>
       </form>
     </AuthShell>
   );

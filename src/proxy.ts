@@ -15,7 +15,7 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Everything except sign-in, the public user guide, the closed-account page, API paths forwarded
+  // Everything except sign-in, the public user guide, the privacy policy and terms, the closed-account page, API paths forwarded
   // to Django, and static files (robots.txt, sitemap.xml, icons).
-  matcher: ["/((?!login|forgot-password|set-password|signup|welcome|guide|closed|graphql|api/|_next/|favicon\\.ico|.*\\.[a-z0-9]+$).*)"],
+  matcher: ["/((?!login|forgot-password|set-password|signup|welcome|guide|closed|privacy|terms|graphql|api/|_next/|favicon\\.ico|.*\\.[a-z0-9]+$).*)"],
 };
