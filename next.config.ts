@@ -9,6 +9,7 @@ const API_PATHS = ["/graphql", "/api/:path*"];
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["*.localhost"],
+  poweredByHeader: false,
   // Django's API paths end in "/"; let them through untouched instead of redirecting.
   skipTrailingSlashRedirect: true,
   async rewrites() {
