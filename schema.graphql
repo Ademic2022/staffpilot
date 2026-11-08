@@ -747,6 +747,16 @@ type EmailAlertPayload {
   errors: [FieldError!]!
 }
 
+type EmailCheck {
+  """Why this address cannot be used to sign up; null when it can."""
+  problem: String
+
+  """
+  A free personal mailbox such as Gmail: allowed, but a company address is better.
+  """
+  freeWebmail: Boolean!
+}
+
 type EmailPreference {
   key: String!
   label: String!
@@ -2799,6 +2809,11 @@ type Query {
   """
   slugCheck(slug: String!): String
 
+  """
+  Whether an email can be used to sign up, and whether it is a free personal mailbox.
+  """
+  signupEmailCheck(email: String!): EmailCheck!
+
   """How employee records are laid out for this company."""
   profileLayout: ProfileLayoutType!
   customTables(includeInactive: Boolean! = false): [CustomTable!]!
@@ -3495,11 +3510,22 @@ input SignUpInput {
   password: String!
   country: String! = "NG"
   currency: String! = "NGN"
+
+  """The 6-digit code emailed to a new address. Empty: send one."""
+  code: String! = ""
+
+  """Send a new code instead of checking this one."""
+  resend: Boolean! = false
 }
 
 type SignUpPayload {
   """Where to go next: the company's own address, signing the owner in."""
   url: String
+
+  """
+  Set when a code was emailed: ask for it, then send the form again with it.
+  """
+  codeSentTo: String
   errors: [FieldError!]!
 }
 

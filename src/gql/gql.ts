@@ -167,7 +167,8 @@ type Documents = {
     "\n  mutation SetPassword($input: SetPasswordInput!) {\n    setPassword(input: $input) { ok errors { field message } }\n  }\n": typeof types.SetPasswordDocument,
     "\n  mutation RedeemWelcome($token: String!) {\n    redeemWelcome(token: $token) { me { mfaSetupRequired } errors { message } }\n  }\n": typeof types.RedeemWelcomeDocument,
     "\n  query SlugCheck($slug: String!) {\n    slugCheck(slug: $slug)\n  }\n": typeof types.SlugCheckDocument,
-    "\n  mutation SignUp($input: SignUpInput!) {\n    signUp(input: $input) { url errors { field message } }\n  }\n": typeof types.SignUpDocument,
+    "\n  mutation SignUp($input: SignUpInput!) {\n    signUp(input: $input) { url codeSentTo errors { field message } }\n  }\n": typeof types.SignUpDocument,
+    "\n  query SignupEmailCheck($email: String!) {\n    signupEmailCheck(email: $email) { problem freeWebmail }\n  }\n": typeof types.SignupEmailCheckDocument,
     "\n  mutation Logout {\n    logout\n  }\n": typeof types.LogoutDocument,
     "\n  query WaitingApprovals {\n    leaveApprovals { id }\n    pendingChanges { id canDecide }\n  }\n": typeof types.WaitingApprovalsDocument,
     "\n  mutation StopViewAs { stopViewAs { permissions } }\n": typeof types.StopViewAsDocument,
@@ -462,7 +463,8 @@ const documents: Documents = {
     "\n  mutation SetPassword($input: SetPasswordInput!) {\n    setPassword(input: $input) { ok errors { field message } }\n  }\n": types.SetPasswordDocument,
     "\n  mutation RedeemWelcome($token: String!) {\n    redeemWelcome(token: $token) { me { mfaSetupRequired } errors { message } }\n  }\n": types.RedeemWelcomeDocument,
     "\n  query SlugCheck($slug: String!) {\n    slugCheck(slug: $slug)\n  }\n": types.SlugCheckDocument,
-    "\n  mutation SignUp($input: SignUpInput!) {\n    signUp(input: $input) { url errors { field message } }\n  }\n": types.SignUpDocument,
+    "\n  mutation SignUp($input: SignUpInput!) {\n    signUp(input: $input) { url codeSentTo errors { field message } }\n  }\n": types.SignUpDocument,
+    "\n  query SignupEmailCheck($email: String!) {\n    signupEmailCheck(email: $email) { problem freeWebmail }\n  }\n": types.SignupEmailCheckDocument,
     "\n  mutation Logout {\n    logout\n  }\n": types.LogoutDocument,
     "\n  query WaitingApprovals {\n    leaveApprovals { id }\n    pendingChanges { id canDecide }\n  }\n": types.WaitingApprovalsDocument,
     "\n  mutation StopViewAs { stopViewAs { permissions } }\n": types.StopViewAsDocument,
@@ -1233,7 +1235,11 @@ export function graphql(source: "\n  query SlugCheck($slug: String!) {\n    slug
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation SignUp($input: SignUpInput!) {\n    signUp(input: $input) { url errors { field message } }\n  }\n"): (typeof documents)["\n  mutation SignUp($input: SignUpInput!) {\n    signUp(input: $input) { url errors { field message } }\n  }\n"];
+export function graphql(source: "\n  mutation SignUp($input: SignUpInput!) {\n    signUp(input: $input) { url codeSentTo errors { field message } }\n  }\n"): (typeof documents)["\n  mutation SignUp($input: SignUpInput!) {\n    signUp(input: $input) { url codeSentTo errors { field message } }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query SignupEmailCheck($email: String!) {\n    signupEmailCheck(email: $email) { problem freeWebmail }\n  }\n"): (typeof documents)["\n  query SignupEmailCheck($email: String!) {\n    signupEmailCheck(email: $email) { problem freeWebmail }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
