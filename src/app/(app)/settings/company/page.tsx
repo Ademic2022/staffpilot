@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useMutation, useQuery } from "urql";
 
 import { IconUpload } from "@/components/icons";
@@ -37,6 +37,8 @@ const RemoveLogoDocument = graphql(`
 
 type Settings = CompanySettingsQuery["companySettings"];
 
+const isHex = (c: string) => /^#[0-9a-f]{6}$/i.test(c);
+
 const COLORS = ["#0F3D2E", "#1D4ED8", "#7C3AED", "#B91C1C", "#C2410C", "#0E7490", "#334155"];
 const TIMEOUTS = [15, 30, 60, 120, 240, 480, 1440];
 const DATE_FORMATS = [
@@ -65,6 +67,17 @@ function Form({ initial, section, onSaved }: { initial: Settings; section: Compa
   const [busy, setBusy] = useState(false);
   const set = <K extends keyof typeof v>(k: K, value: (typeof v)[K]) => setV((s) => ({ ...s, [k]: value }));
 
+  // Live preview: the whole app takes the colour being chosen. Leaving without saving puts the
+  // saved colour back.
+  const [savedColor, setSavedColor] = useState(initial.primaryColor || "#0F3D2E");
+  const restore = useRef(savedColor);
+  useEffect(() => {
+    restore.current = savedColor;
+    if (isHex(v.primaryColor)) document.documentElement.style.setProperty("--brand", v.primaryColor);
+  }, [v.primaryColor, savedColor]);
+  useEffect(() => () => document.documentElement.style.setProperty("--brand", restore.current), []);
+  const colorChanged = isHex(v.primaryColor) && v.primaryColor.toLowerCase() !== savedColor.toLowerCase();
+
   async function uploadLogo(file: File) {
     const form = new FormData();
     form.set("file", file);
@@ -87,7 +100,7 @@ function Form({ initial, section, onSaved }: { initial: Settings; section: Compa
       (f, m) => { found[f] = m; }, setFormError);
     setErrors(found);
     if (!failed) {
-      document.documentElement.style.setProperty("--brand", v.primaryColor);
+      if (isHex(v.primaryColor)) setSavedColor(v.primaryColor);
       reset();
       onSaved();
     }
@@ -156,17 +169,46 @@ function Form({ initial, section, onSaved }: { initial: Settings; section: Compa
                 {logo && <Button variant="ghost" onClick={async () => { await removeLogo({}); setLogo(null); reset(); }}>Remove</Button>}
               </div>
             </Field>
-            <Field label="Colour" error={errors.primaryColor}>
+            <Field label="Colour" error={errors.primaryColor}
+              hint={colorChanged ? "Previewing across the app. Save settings to keep it, or leave this page to undo." : undefined}>
               <div className="flex flex-wrap items-center gap-2">
                 {COLORS.map((c) => (
                   <button key={c} type="button" aria-label={c} aria-pressed={v.primaryColor.toLowerCase() === c.toLowerCase()} onClick={() => set("primaryColor", c)}
                     className={`h-8 w-8 rounded-full ring-offset-2 ring-offset-surface transition ${v.primaryColor.toLowerCase() === c.toLowerCase() ? "ring-2 ring-ink" : "hover:scale-110"}`}
                     style={{ backgroundColor: c }} />
                 ))}
-                <Input value={v.primaryColor} maxLength={7} className="ml-2 w-28 font-mono uppercase" aria-label="Colour code" onChange={(e) => set("primaryColor", e.target.value)} />
-                <span className="ml-1 inline-flex h-10 items-center rounded-lg px-4 text-sm font-semibold text-white" style={{ backgroundColor: /^#[0-9a-f]{6}$/i.test(v.primaryColor) ? v.primaryColor : "#0F3D2E" }}>Preview</span>
+                <label className="ml-1 inline-flex h-10 cursor-pointer items-center gap-2 rounded-lg border border-line bg-surface pl-2 pr-1">
+                  <input type="color" value={isHex(v.primaryColor) ? v.primaryColor : "#0f3d2e"} aria-label="Pick any colour"
+                    onChange={(e) => set("primaryColor", e.target.value.toUpperCase())} className="h-6 w-6 cursor-pointer rounded border-0 bg-transparent p-0" />
+                  <input value={v.primaryColor} maxLength={7} aria-label="Colour code" spellCheck={false}
+                    onChange={(e) => set("primaryColor", e.target.value)} className="w-20 bg-transparent font-mono text-sm uppercase text-ink outline-none" />
+                </label>
               </div>
             </Field>
+            <div>
+              <p className="mb-2 text-sm font-medium text-ink">Preview</p>
+              <div className="grid gap-4 rounded-xl border border-line bg-background p-4 sm:grid-cols-[180px_1fr]" aria-hidden>
+                <div className="space-y-1 rounded-lg bg-surface p-2">
+                  <div className="mb-2 flex items-center gap-2 px-2 py-1">
+                    <span className="grid h-7 w-7 place-items-center overflow-hidden rounded-md bg-brand text-xs font-semibold text-white">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      {logo ? <img src={logo} alt="" className="h-full w-full bg-white object-contain" /> : (v.name || "C").charAt(0).toUpperCase()}
+                    </span>
+                    <span className="truncate text-sm font-semibold text-ink">{v.name || "Your company"}</span>
+                  </div>
+                  <div className="rounded-md bg-brand/10 px-2 py-1.5 text-sm font-medium text-brand-ink">Home</div>
+                  <div className="px-2 py-1.5 text-sm text-muted">People</div>
+                  <div className="px-2 py-1.5 text-sm text-muted">Time off</div>
+                </div>
+                <div className="space-y-3 rounded-lg bg-surface p-4">
+                  <p className="text-sm text-ink">Ada has asked for 3 days off. <span className="font-medium text-brand-ink underline">See request</span></p>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="inline-flex h-9 items-center rounded-lg bg-brand px-4 text-sm font-semibold text-white">Approve</span>
+                    <span className="inline-flex h-9 items-center rounded-lg border border-line px-4 text-sm font-medium text-ink">Decline</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </FormSection>}
 
