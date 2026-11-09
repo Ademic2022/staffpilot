@@ -51,7 +51,8 @@ async function isCompanyHost(host: string) {
   try {
     // A GET query is read-only, so Django's CSRF check does not apply.
     const response = await fetch(`${API_ORIGIN}/graphql?${new URLSearchParams({ query: "{ tenant { slug } }" })}`, {
-      headers: { "X-Forwarded-Host": host },
+      // The API believes the company address only with the shared secret (see src/proxy.ts).
+      headers: { "X-Forwarded-Host": host, "X-StaffPilot-Host": host, ...(process.env.API_PROXY_SECRET ? { "X-StaffPilot-Proxy": process.env.API_PROXY_SECRET } : {}) },
       cache: "no-store",
       signal: AbortSignal.timeout(3000),
     });

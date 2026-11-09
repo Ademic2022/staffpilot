@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
-// The Django API. In development the browser talks only to this Next.js server, which
+// The Django API. src/proxy.ts forwards API paths to it with the company address and visitor
+// IP; these rewrites are the fallback. In development the browser talks only to this Next.js server, which
 // forwards API paths to Django with the original host in X-Forwarded-Host, so Django can
 // resolve the tenant from the subdomain. In production a load balancer does the same.
 const API_ORIGIN = process.env.API_ORIGIN ?? "http://127.0.0.1:8000";
