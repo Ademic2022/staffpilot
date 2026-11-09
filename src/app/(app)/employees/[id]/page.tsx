@@ -10,7 +10,7 @@ import { ChangeJobDialog, ChangePayDialog, ChangeStatusDialog, canChangeStatus }
 import { EmergencyContactsCard, PrivateDetailsCard } from "@/components/employees/RecordCards";
 import { MyChangeNotice } from "@/components/employees/SelfService";
 import {
-  faArrowTrendUp, faBoxArchive, faBriefcase, faCaretDown, faEllipsis, faKey, faLaptop, faLock, faMoneyBillWave,
+  faArrowTrendUp, faBell, faBoxArchive, faBriefcase, faCaretDown, faEllipsis, faKey, faLaptop, faLock, faMoneyBillWave,
   faTableColumns, faTrashCan, faUserCheck, type IconDefinition,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -28,6 +28,7 @@ import { BenefitsBlock } from "@/components/profile/BenefitsBlock";
 import { ChecklistBlock } from "@/components/profile/ChecklistBlock";
 import { RowDialog, TableSection } from "@/components/profile/TableSection";
 import { Vitals } from "@/components/profile/Vitals";
+import { PersonReminders, ReminderDialog } from "@/components/home/Reminders";
 import { CompletenessCard } from "@/components/profile/Completeness";
 import { ActionDialog, Button, ErrorNote, Loading, Notice, cx } from "@/components/ui";
 import { graphql } from "@/gql";
@@ -112,7 +113,7 @@ function TabIcon({ icon }: { icon: string }) {
   return <Icon size={24} />;
 }
 
-type Dialog = "job" | "promotion" | "status" | "pay" | "asset" | "archive" | "reset" | "layout" | "tabs"
+type Dialog = "job" | "promotion" | "status" | "pay" | "asset" | "archive" | "reset" | "layout" | "tabs" | "remind"
   | "ask-job" | "ask-promotion" | "ask-pay" | null;
 
 function EmployeeRecord() {
@@ -130,6 +131,7 @@ function EmployeeRecord() {
   const [{ data: accessData }] = useQuery({ query: EmployeeAccessDocument, variables: { id }, pause: !usersManage });
   const [dialog, setDialog] = useState<Dialog>(null);
   const [notice, setNotice] = useState<{ tone: "success" | "error"; text: string }>();
+  const [reminderVersion, setReminderVersion] = useState(0);
 
   if (error) return <ErrorNote error={errorMessage(error)} />;
   if (!data || !layoutData) return <Loading />;
@@ -251,6 +253,8 @@ function EmployeeRecord() {
                 const access = accessData?.employee?.access;
                 return (
                   <>
+                    {!self && <MenuItem icon={faBell} onClick={() => { close(); setDialog("remind"); }}>Remind me…</MenuItem>}
+                    {!self && (e.photoUrl || access || left) && <MenuDivider />}
                     {e.photoUrl && (
                       <MenuItem icon={faTrashCan} onClick={async () => { close(); await removePhoto({ employeeId: e.id }); saved("Photo removed."); }}>Remove photo</MenuItem>
                     )}
@@ -283,6 +287,7 @@ function EmployeeRecord() {
           {notice && <Notice tone={notice.tone}>{notice.text}</Notice>}
           {e.archivedAt && <Notice tone="info" title="Archived">This record is hidden from the employee list but kept for reporting and audit.</Notice>}
           {self && <MyChangeNotice key={notice?.text ?? ""} onChanged={() => saved("Change withdrawn.")} />}
+          <PersonReminders key={`r${reminderVersion}`} employeeId={e.id} name={e.firstName} onAdd={() => setDialog("remind")} />
           {e.completeness && !left && !e.archivedAt && (
             <CompletenessCard data={e.completeness} employeeId={e.id} self={self} name={`${e.firstName}'s`} compact />
           )}
@@ -314,6 +319,10 @@ function EmployeeRecord() {
       {dialog === "ask-pay" && <ChangePayDialog request employee={e} currency={tenant?.currency ?? ""} onClose={() => setDialog(null)} onSaved={(m) => saved(m ?? "Request sent.")} />}
       {dialog === "asset" && assets && (
         <RowDialog table={assets} employeeId={e.id} row={null} onClose={() => setDialog(null)} onSaved={() => saved("Asset added.")} />
+      )}
+      {dialog === "remind" && (
+        <ReminderDialog employee={{ id: e.id, name: e.fullName }} onClose={() => setDialog(null)}
+          onSaved={() => { setDialog(null); setReminderVersion((v) => v + 1); setNotice({ tone: "success", text: "Reminder set. Only you see it." }); }} />
       )}
       <ActionDialog open={dialog === "reset"} onClose={() => setDialog(null)} title={`Reset ${e.fullName}'s password?`}
         description={`We'll email ${accessData?.employee?.access?.email ?? "them"} a link to choose a new password. Their current password keeps working until they do.`}

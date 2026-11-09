@@ -17,6 +17,7 @@ import {
 import { LocationWidget, PayRaiseWidget, TimeOffRequestsWidget, TimeOffUsedWidget } from "@/components/home/Expandable";
 import { EmployeeLeaveDocument, RequestLeaveDialog } from "@/components/leave/Leave";
 import { ClockPill } from "@/components/attendance/ClockPill";
+import { RemindersWidget } from "@/components/home/Reminders";
 import { CompletenessCard, DataGapsCard } from "@/components/profile/Completeness";
 import { Button, ErrorNote, Loading, Notice, cx } from "@/components/ui";
 import { graphql } from "@/gql";
@@ -171,6 +172,7 @@ export default function HomePage() {
   // Each widget this person can have. Order and hiding come from their saved layout.
   const widgets: Record<string, ReactNode | null> = {
     time_off: employeeId && balances.length ? <TimeOffWidget balances={balances} employeeId={employeeId} onRequest={() => setDialog("request")} /> : null,
+    reminders: <RemindersWidget />,
     my_stuff: employeeId && home.myStuff ? <MyStuffWidget stuff={home.myStuff} employeeId={employeeId} /> : null,
     happening: (
       <HappeningWidget company={company} announcements={data.announcements} newHires={home.newHires} dismissed={data.dismissedFeed}

@@ -6,6 +6,7 @@ import { useMutation, useQuery } from "urql";
 
 import { ChangeJobDialog, ChangePayDialog, ChangeStatusDialog, OVERTIME, PAY_SCHEDULES, PAY_TYPES, canChangeStatus } from "@/components/employees/EmployeeDialogs";
 import { IconPlus, IconTrash } from "@/components/icons";
+import { inDays } from "@/components/home/Reminders";
 import { AdjustBalanceDialog, BalanceCards, EmployeeLeaveDocument, RequestLeaveDialog } from "@/components/leave/Leave";
 import { Badge, Button, Dialog, ErrorNote, Field, IconButton, Input, StatusBadge, Table, TD, TH, Textarea } from "@/components/ui";
 import { graphql } from "@/gql";
@@ -242,8 +243,8 @@ export function StatusHistoryBlock({ e, title, icon, onSaved, canManage }: Block
 }
 
 const AddNoteDocument = graphql(`
-  mutation AddEmployeeNote($employeeId: ID!, $body: String!) {
-    addEmployeeNote(employeeId: $employeeId, body: $body) { note { id } errors { field message } }
+  mutation AddEmployeeNote($employeeId: ID!, $body: String!, $remindOn: Date) {
+    addEmployeeNote(employeeId: $employeeId, body: $body, remindOn: $remindOn) { note { id } errors { field message } }
   }
 `);
 
@@ -256,6 +257,7 @@ const DeleteNoteDocument = graphql(`
 /** HR's dated notes on the record. Only people who manage the employee see them. */
 export function NotesBlock({ e, title, icon, onSaved, canManage }: BlockProps & { canManage: boolean }) {
   const [body, setBody] = useState("");
+  const [remindOn, setRemindOn] = useState<string | null>(null);
   const [error, setError] = useState<string>();
   const [busy, setBusy] = useState(false);
   const [, add] = useMutation(AddNoteDocument);
@@ -266,13 +268,14 @@ export function NotesBlock({ e, title, icon, onSaved, canManage }: BlockProps & 
     ev.preventDefault();
     if (!body.trim()) return;
     setBusy(true);
-    const result = await add({ employeeId: e.id, body });
+    const result = await add({ employeeId: e.id, body, remindOn });
     setBusy(false);
     const problem = errorMessage(result.error) ?? result.data?.addEmployeeNote.errors[0]?.message;
     if (problem) return setError(problem);
     setBody("");
     setError(undefined);
-    onSaved("Note added.");
+    onSaved(remindOn ? "Note added. You will be reminded to follow up." : "Note added.");
+    setRemindOn(null);
   }
 
   return (
@@ -280,7 +283,20 @@ export function NotesBlock({ e, title, icon, onSaved, canManage }: BlockProps & 
       <form onSubmit={submit} className="space-y-3">
         {error && <ErrorNote error={error} />}
         <Textarea rows={3} value={body} onChange={(ev) => setBody(ev.target.value)} placeholder="Add a note about a conversation, a commendation or a follow-up" aria-label="New note" />
-        <div className="flex justify-end"><Button type="submit" size="sm" busy={busy} disabled={!body.trim()}>Add note</Button></div>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          {remindOn === null ? (
+            <button type="button" onClick={() => setRemindOn(inDays(7))} className="text-sm font-medium text-brand-ink hover:underline">
+              + Remind me to follow up
+            </button>
+          ) : (
+            <div className="flex flex-wrap items-center gap-2 text-sm text-muted">
+              Remind me on
+              <Input type="date" value={remindOn} min={inDays(0)} onChange={(ev) => setRemindOn(ev.target.value || null)} className="h-8 w-40" aria-label="Follow-up date" />
+              <button type="button" onClick={() => setRemindOn(null)} className="text-muted hover:text-ink">No reminder</button>
+            </div>
+          )}
+          <Button type="submit" size="sm" busy={busy} disabled={!body.trim()}>Add note</Button>
+        </div>
       </form>
       {e.notes.length > 0 ? (
         <ul className="mt-5 space-y-4 border-t border-line pt-5">

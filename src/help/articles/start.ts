@@ -87,6 +87,15 @@ See time off and company dates in Google Calendar, Outlook or Apple Calendar. Un
     body: `
 Home is the first page you see after signing in.
 
+## Reminders
+
+Set yourself reminders for follow-ups, renewals and deadlines. **Only you see them**, never the person they are about.
+
+- On Home, **My reminders** → **Add**. Pick a day: tomorrow, next week, in a month or any date.
+- On someone's profile, **More actions** → **Remind me…** links the reminder to them, and your reminders about them show at the top of their record.
+- When adding an HR note, choose **Remind me to follow up** to set one from the note.
+- On the day, the reminder appears under the bell and you get an email. Tick it off when done, or move it to tomorrow or a week later.
+
 ## What is on it
 
 Home is made of widgets. Depending on your role you will see:

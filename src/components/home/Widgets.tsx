@@ -4,7 +4,7 @@ import {
   faArrowsRotate, faAward, faBoxOpen, faBriefcase, faBuilding, faBullhorn, faCakeCandles, faCalculator, faCalendarDay,
   faCalendarDays, faCalendarPlus, faCertificate, faChartSimple, faChevronRight, faClipboardCheck, faFaceFrown,
   faGraduationCap, faHandsClapping, faHeartPulse, faIdCard, faLink, faListCheck, faLocationDot, faPeopleGroup, faPen,
-  faPlaneDeparture, faSitemap, faThumbtack, faClipboardList, faChampagneGlasses, faEllipsisVertical, faEnvelope, faIdBadge, faPhone, faUser, faUmbrellaBeach, faUserCheck, faUserMinus, faUserPen, faUserPlus,
+  faBell, faPlaneDeparture, faSitemap, faThumbtack, faClipboardList, faChampagneGlasses, faEllipsisVertical, faEnvelope, faIdBadge, faPhone, faUser, faUmbrellaBeach, faUserCheck, faUserMinus, faUserPen, faUserPlus,
   faUsers, faVenusMars, faXmark, type IconDefinition,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -1135,6 +1135,7 @@ export function HolidaysWidget() {
 export const WIDGETS: Record<string, { name: string; icon: IconDefinition }> = {
   time_off: { name: "Time off", icon: faCalendarDays },
   my_stuff: { name: "My stuff", icon: faBoxOpen },
+  reminders: { name: "My reminders", icon: faBell },
   happening: { name: "What's happening", icon: faBullhorn },
   people: { name: "Headcount, direct reports and turnover", icon: faChartSimple },
   celebrations: { name: "Celebrations", icon: faCakeCandles },

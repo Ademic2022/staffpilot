@@ -2,7 +2,7 @@
  * Small drawings for empty home widgets. Drawn in the company's colour (--brand) at low
  * strength, so they suit every brand and both light and dark mode. Decorative only.
  */
-export type ArtKind = "feed" | "cake" | "sun" | "calendar" | "people" | "links";
+export type ArtKind = "feed" | "cake" | "sun" | "calendar" | "people" | "links" | "bell";
 
 const tint = (alpha: number) => `color-mix(in srgb, var(--brand) ${alpha}%, transparent)`;
 
@@ -44,6 +44,14 @@ export function EmptyArt({ kind, className }: { kind: ArtKind; className?: strin
       {kind === "people" && <>
         <circle cx="44" cy="34" r="10" fill={mid} /><path d="M26 70c0-12 8-20 18-20s18 8 18 20" fill={mid} />
         <circle cx="76" cy="30" r="12" fill={soft} stroke={strong} strokeWidth="2" /><path d="M54 72c0-14 10-24 22-24s22 10 22 24" fill={soft} stroke={strong} strokeWidth="2" />
+      </>}
+      {kind === "bell" && <>
+        <path d="M60 14c-12 0-20 9-20 21v13l-7 10h54l-7-10V35c0-12-8-21-20-21z" fill={mid} stroke={strong} strokeWidth="2" />
+        <path d="M52 62c1 5 4 8 8 8s7-3 8-8" fill={soft} stroke={strong} strokeWidth="2" />
+        <circle cx="60" cy="12" r="3" fill={strong} />
+        <path d="M30 26c-3 3-5 7-5 12M90 26c3 3 5 7 5 12" stroke={strong} strokeWidth="2" />
+        <rect x="80" y="44" width="26" height="20" rx="4" fill={soft} stroke={strong} strokeWidth="1.5" />
+        <path d="M85 51h16M85 57h10" stroke={strong} strokeWidth="1.5" />
       </>}
       {kind === "links" && <>
         <rect x="24" y="36" width="36" height="18" rx="9" fill={soft} stroke={strong} strokeWidth="2" transform="rotate(-20 42 45)" />

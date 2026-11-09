@@ -1973,7 +1973,7 @@ type Mutation {
   deleteTableRow(id: ID!): Boolean!
 
   """Add an HR note to an employee's record."""
-  addEmployeeNote(employeeId: ID!, body: String!): NotePayload!
+  addEmployeeNote(employeeId: ID!, body: String!, remindOn: Date = null): NotePayload!
   deleteEmployeeNote(id: ID!): Boolean!
 
   """Remove an employee's photo."""
@@ -2003,6 +2003,16 @@ type Mutation {
 
   """Save your home widgets: order and which are hidden."""
   saveHomeLayout(widgets: JSON!): [HomeWidget!]!
+
+  """Set yourself a reminder, optionally about someone you can see."""
+  createReminder(input: ReminderInput!): ReminderPayload!
+
+  """Change a reminder's words or move its date (snooze)."""
+  updateReminder(id: ID!, text: String = null, dueOn: Date = null): ReminderPayload!
+
+  """Tick a reminder off, or bring it back."""
+  completeReminder(id: ID!, done: Boolean! = true): ReminderPayload!
+  deleteReminder(id: ID!): Boolean!
   saveEmployeeView(input: EmployeeViewInput!): EmployeeViewPayload!
   deleteEmployeeView(id: ID!): Boolean!
 
@@ -2902,6 +2912,11 @@ type Query {
   """Feed items you cleared from What's happening."""
   dismissedFeed: [String!]!
 
+  """
+  Your own reminders: open ones soonest first, then (if asked) the last done.
+  """
+  myReminders(employeeId: ID = null, includeDone: Boolean! = false): [Reminder!]!
+
   """Saved People list views, in order."""
   employeeViews: [EmployeeView!]!
 
@@ -3080,6 +3095,26 @@ type Query {
 type RecoveryCodesPayload {
   """Shown once. Each works one time."""
   codes: [String!]!
+  errors: [FieldError!]!
+}
+
+type Reminder {
+  id: ID!
+  text: String!
+  dueOn: Date!
+  doneAt: DateTime
+  employee: HomePerson
+  noteId: ID
+}
+
+input ReminderInput {
+  text: String!
+  dueOn: Date!
+  employeeId: ID = null
+}
+
+type ReminderPayload {
+  reminder: Reminder
   errors: [FieldError!]!
 }
 
