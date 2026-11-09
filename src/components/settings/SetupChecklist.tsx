@@ -17,7 +17,6 @@ const SetupDocument = graphql(`
 `);
 
 const GROUPS: [string, string][] = [["essentials", "Essentials"], ["payroll", "Payroll"], ["attendance", "Attendance"]];
-const hideKey = (company: string) => `staffpilot:setup-hidden:${company}`;
 
 function Ring({ percent }: { percent: number }) {
   const r = 22, c = 2 * Math.PI * r;
@@ -33,11 +32,12 @@ function Ring({ percent }: { percent: number }) {
   );
 }
 
-/** On Home: the company setup checklist, steps ticked from what has been done. Hidden once complete, or for now. */
+/**
+ * On Home: the company setup checklist, steps ticked from what has been done. Gone once complete;
+ * "Hide for now" puts it away until the page is opened again, so setup is never forgotten.
+ */
 export function SetupCard({ setup, company }: { setup: Setup; company: string }) {
-  const [hidden, setHidden] = useState(() => {
-    try { return typeof window !== "undefined" && localStorage.getItem(hideKey(company)) === "1"; } catch { return false; }
-  });
+  const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
   if (hidden || setup.percent >= 100) return null;
   const next = setup.steps.find((s) => !s.done);
@@ -53,7 +53,7 @@ export function SetupCard({ setup, company }: { setup: Setup; company: string })
               <p className="mt-0.5 text-sm text-muted">{done} of {setup.steps.length} done. Each step ticks itself once it is done.</p>
             </div>
             <button type="button" className="flex-none text-sm text-muted hover:text-ink"
-              onClick={() => { try { localStorage.setItem(hideKey(company), "1"); } catch { /* hidden for this visit only */ } setHidden(true); }}>
+              onClick={() => setHidden(true)}>
               Hide for now
             </button>
           </div>
