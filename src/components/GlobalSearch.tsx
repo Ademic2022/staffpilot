@@ -7,7 +7,7 @@ import { useDeferredValue, useEffect, useRef, useState } from "react";
 import { useQuery } from "urql";
 
 import { Photo } from "@/components/home/Widgets";
-import { visibleAreas } from "@/components/settings/areas";
+import { ACCOUNT_SETTINGS, visibleAreas } from "@/components/settings/areas";
 import { cx } from "@/components/ui";
 import { graphql } from "@/gql";
 import { useSession } from "@/lib/session";
@@ -25,9 +25,27 @@ type Hit = { kind: string; title: string; subtitle: string; href: string; photoU
 const ICONS = { person: faUser, file: faFile, report: faChartColumn, setting: faGear };
 const GROUPS: [string, string][] = [["person", "People"], ["file", "Files"], ["report", "Reports"], ["setting", "Settings"]];
 
+type Entry = { hit: Hit; words: string };
+
+/**
+ * Settings that match every word typed, by name first and then by the other words people use
+ * for them ("2fa", "tax", "brand"). Each word may match the start of a word or part of one.
+ */
+export function searchSettings(query: string, entries: Entry[]): Hit[] {
+  const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
+  const scored = entries.flatMap(({ hit, words }) => {
+    const title = hit.title.toLowerCase();
+    const all = `${title} ${hit.subtitle ?? ""} ${words}`.toLowerCase();
+    if (!terms.every((t) => all.includes(t))) return [];
+    const score = title.startsWith(terms[0]) ? 0 : terms.every((t) => title.includes(t)) ? 1 : 2;
+    return [{ hit, score }];
+  });
+  return scored.sort((a, b) => a.score - b.score).slice(0, 8).map((s) => s.hit);
+}
+
 /** Search people, files, reports and settings from anywhere. Ctrl/⌘ K opens it. */
 export function GlobalSearch({ compact = false }: { compact?: boolean }) {
-  const { can, tenant } = useSession();
+  const { can, tenant, me } = useSession();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
@@ -49,11 +67,18 @@ export function GlobalSearch({ compact = false }: { compact?: boolean }) {
   }, []);
   useEffect(() => { if (open) input.current?.focus(); }, [open]);
 
-  const lower = q.toLowerCase();
-  const settings: Hit[] = q.length < 2 ? [] : visibleAreas(can, tenant).flatMap((a) => [
-    { kind: "setting", title: a.label, subtitle: "Settings", href: a.href },
-    ...(a.tabs ?? []).map((t) => ({ kind: "setting", title: t.label, subtitle: `Settings · ${a.label}`, href: `${a.href}?tab=${t.key}` })),
-  ]).filter((h) => h.title.toLowerCase().includes(lower)).slice(0, 5);
+  const settings = q.length < 2 ? [] : searchSettings(q, [
+    ...visibleAreas(can, tenant).flatMap((a) => [
+      { hit: { kind: "setting", title: a.label, subtitle: "Settings", href: a.href }, words: `settings ${a.keywords ?? ""}` },
+      ...(a.tabs ?? []).map((t) => ({
+        hit: { kind: "setting", title: t.label, subtitle: `Settings · ${a.label}`, href: `${a.href}?tab=${t.key}` },
+        words: `settings ${a.label} ${a.keywords ?? ""} ${t.keywords ?? ""}`,
+      })),
+    ]),
+    ...ACCOUNT_SETTINGS.map((s) => ({ hit: { kind: "setting", title: s.label, subtitle: "Your account", href: "/account" }, words: `account settings my ${s.keywords}` })),
+  ]);
+  // Admin settings stay hidden until two-step sign-in is on: say so rather than finding nothing.
+  const locked = q.length >= 2 && me?.mfaSetupRequired && /setting|logo|payroll|leave|user|polic|holiday|compan/i.test(q);
   const hits: Hit[] = [...(q.length >= 2 ? data?.search ?? [] : []), ...settings];
   const go = (h: Hit) => { setOpen(false); setText(""); router.push(h.href); };
 
@@ -82,7 +107,9 @@ export function GlobalSearch({ compact = false }: { compact?: boolean }) {
             </div>
             <div className="max-h-[60vh] overflow-y-auto py-2">
               {q.length < 2 ? <p className="px-4 py-6 text-center text-sm text-muted">Type at least two letters.</p>
-                : !hits.length ? <p className="px-4 py-6 text-center text-sm text-muted">{fetching ? "Searching…" : "Nothing found."}</p>
+                : !hits.length ? <p className="px-4 py-6 text-center text-sm text-muted">
+                  {fetching ? "Searching…" : locked ? "Company settings appear once you turn on two-step sign-in on your account page." : "Nothing found."}
+                </p>
                 : GROUPS.map(([kind, label]) => {
                   const group = hits.filter((h) => h.kind === kind);
                   if (!group.length) return null;
