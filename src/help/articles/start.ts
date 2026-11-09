@@ -8,6 +8,8 @@ export const START: Article[] = [
     audience: ["employee", "manager", "hr", "payroll"],
     paths: ["/notifications"],
     body: `
+> New here? The first time you open Home, a one-minute tour shows you around. Take it again any time with **Take the tour** on the [Help](/help) page.
+
 ## Signing in
 
 Your company has its own web address (HR sends it with your invitation). Sign in there with your work email and password. If you were invited, the email has a link to set your password first. Forgot it? Use **Forgot password** on the sign-in page and follow the link we email you.

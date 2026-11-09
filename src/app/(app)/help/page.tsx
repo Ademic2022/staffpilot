@@ -5,7 +5,8 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useMemo, useState } from "react";
 
 import { ARTICLES, AUDIENCE_LABEL, type Article, type Audience, articleForPath, audienceFor, search, SECTIONS } from "@/help";
-import { Badge, Card, cx, Loading, PageHeader, SearchInput } from "@/components/ui";
+import { startTour } from "@/components/Tour";
+import { Badge, Button, Card, cx, Loading, PageHeader, SearchInput } from "@/components/ui";
 import { useSession } from "@/lib/session";
 
 function ArticleLink({ a }: { a: Article }) {
@@ -31,7 +32,8 @@ function Help() {
   const filters: (Audience | "all")[] = ["all", "employee", "manager", "hr", "payroll"];
   return (
     <>
-      <PageHeader title="Help" subtitle="How to use StaffPilot, for everyone, managers, HR and payroll." />
+      <PageHeader title="Help" subtitle="How to use StaffPilot, for everyone, managers, HR and payroll."
+        actions={<Button variant="secondary" onClick={startTour}>Take the tour</Button>} />
       <div className="grid gap-5">
         <SearchInput value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search the guide, e.g. “carry over” or “bank file”" aria-label="Search the guide" />
         {suggested && !results && (

@@ -233,9 +233,9 @@ export default function HomePage() {
         </div>
         {!editing && (
           <div className="flex flex-wrap items-center gap-2">
-            {employeeId && <ClockPill />}
+            {employeeId && <span data-tour="clock"><ClockPill /></span>}
             {manage && (
-              <NewMenu>
+              <span data-tour="new"><NewMenu>
                 {(close) => (
                   <>
                     <NewItem href="/employees/new">New employee</NewItem>
@@ -243,9 +243,9 @@ export default function HomePage() {
                     <NewItem onClick={() => { close(); setEditingPost(null); setDialog("post"); }}>New announcement</NewItem>
                   </>
                 )}
-              </NewMenu>
+              </NewMenu></span>
             )}
-            <button type="button" onClick={() => { setNotice(undefined); setDraft(data.homeLayout.map((w) => ({ key: w.key, hidden: w.hidden }))); }}
+            <button type="button" data-tour="home-edit" onClick={() => { setNotice(undefined); setDraft(data.homeLayout.map((w) => ({ key: w.key, hidden: w.hidden }))); }}
               className="inline-flex h-10 items-center gap-2 rounded-full border border-line-strong bg-surface px-4 text-[15px] font-medium text-ink hover:bg-subtle">
               <FontAwesomeIcon icon={faTableCellsLarge} className="text-[14px]" /> Edit
             </button>
@@ -257,8 +257,8 @@ export default function HomePage() {
         {notice && <Notice tone="success">{notice}</Notice>}
         {!editing && (data?.home.myProfile?.missing.length || data?.home.dataGaps.length) ? (
           <div className="grid items-start gap-4 lg:grid-cols-2">
-            {employeeId && data?.home.myProfile && <CompletenessCard data={data.home.myProfile} employeeId={employeeId} self compact />}
-            {data?.home.dataGaps && <DataGapsCard gaps={data.home.dataGaps} />}
+            {employeeId && data?.home.myProfile && <div data-tour="profile-card"><CompletenessCard data={data.home.myProfile} employeeId={employeeId} self compact /></div>}
+            {data?.home.dataGaps && <div data-tour="gaps"><DataGapsCard gaps={data.home.dataGaps} /></div>}
           </div>
         ) : null}
         {expiring && expiring.expiringDocuments.length > 0 && !editing && (

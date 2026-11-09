@@ -12,6 +12,7 @@ import { useSession, type Tenant } from "@/lib/session";
 
 import { IconCalendarCheck, IconChart, IconCheck, IconClock, IconClose, IconFile, IconHome, IconLogout, IconMenu, IconReceipt, IconSettings, IconStar, IconUser, IconUsers, IconWallet } from "./icons";
 import { HelpButton } from "./HelpButton";
+import { Tour } from "./Tour";
 import { NotificationBell } from "./Notifications";
 import { GlobalSearch } from "@/components/GlobalSearch";
 import { visibleAreas } from "@/components/settings/areas";
@@ -168,7 +169,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       section: "Administration",
       items: [
         // Every setup page lives under Settings, as in BambooHR; it opens on the first area this person may change.
-        { href: settingsHref ?? "", label: "Settings", show: !!settingsHref, icon: IconSettings, match: "/settings" },
+        { href: settingsHref ?? "", label: "Settings", show: !!settingsHref, icon: IconSettings, match: "/settings", tour: "nav-settings" },
       ],
     },
   ]
@@ -193,10 +194,10 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="truncate text-sm font-semibold text-ink">{tenant?.name}</div>
           <div className="truncate text-xs text-muted">People and payroll</div>
         </div>
-        <div className="hidden items-center lg:flex"><HelpButton /><NotificationBell /></div>
+        <div className="hidden items-center lg:flex"><span data-tour="help"><HelpButton /></span><span data-tour="bell"><NotificationBell /></span></div>
       </div>
-      <div className="px-3 pb-1 pt-1"><GlobalSearch /></div>
-      <nav className="flex-1 overflow-y-auto px-3 pb-4" aria-label="Main">
+      <div className="px-3 pb-1 pt-1" data-tour="search"><GlobalSearch /></div>
+      <nav className="flex-1 overflow-y-auto px-3 pb-4" aria-label="Main" data-tour="nav">
         {sections.map((s) => (
           <div key={s.section || "main"} className="mt-5 first:mt-1">
             {s.section && <div className="mb-1.5 px-3 text-[11px] font-semibold uppercase tracking-[0.1em] text-muted/80">{s.section}</div>}
@@ -211,6 +212,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   <li key={item.href}>
                     <Link
                       href={item.href}
+                      data-tour={"tour" in item ? item.tour : undefined}
                       aria-current={active ? "page" : undefined}
                       className={cx(
                         "group relative flex h-9 items-center gap-3 rounded-lg px-3 text-sm font-medium transition",
@@ -232,7 +234,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         ))}
       </nav>
       <div className="border-t border-line p-3">
-        <div className="flex items-center gap-3 rounded-lg px-2 py-1.5">
+        <div className="flex items-center gap-3 rounded-lg px-2 py-1.5" data-tour="me">
           <Link href="/account" title="Your account and security" className="-m-1 flex min-w-0 flex-1 items-center gap-3 rounded-md p-1 transition hover:bg-subtle">
             <span className="grid h-8 w-8 flex-none place-items-center rounded-full bg-subtle text-xs font-semibold text-ink ring-1 ring-line">{initials(me.user.fullName)}</span>
             <div className="min-w-0 flex-1">
@@ -276,22 +278,23 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Crest tenant={tenant} />
             <span className="truncate text-sm font-semibold text-ink">{tenant?.name}</span>
           </div>
-          <GlobalSearch compact />
-          <HelpButton />
-          <NotificationBell align="right" />
+          <span data-tour="search"><GlobalSearch compact /></span>
+          <span data-tour="help"><HelpButton /></span>
+          <span data-tour="bell"><NotificationBell align="right" /></span>
         </header>
 
         {tenant?.status === "closing" && <ClosingBanner tenant={tenant} owner={can(PERMS.tenantManage)} />}
         {me.viewingAs && <ViewAsBanner name={me.viewingAs.name} realName={me.viewingAs.realName} onStop={reset} />}
         <main id="main" className="mx-auto max-w-6xl space-y-5 px-4 py-6 sm:px-8 sm:py-8">
           {me.mfaSetupRequired && pathname !== "/account" && (
-            <Notice tone="warning" title="Set up two-step sign-in to use your admin access">
+            <div data-tour="mfa"><Notice tone="warning" title="Set up two-step sign-in to use your admin access">
               {tenant?.name} requires it for your role. Until then you can use the app as an employee.{" "}
               <Link href="/account" className="font-semibold underline-offset-2 hover:underline">Set it up now</Link>
-            </Notice>
+            </Notice></div>
           )}
           {children}
         </main>
+        <Tour />
       </div>
     </div>
   );
