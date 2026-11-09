@@ -102,6 +102,7 @@ export function SignUpForm({ addressSuffix }: { addressSuffix: string }) {
     if (!v.company.trim()) missing.company = "Enter your company's name.";
     if (v.slug.length < 3) missing.slug = "Choose a web address of at least 3 characters.";
     if (!v.firstName.trim()) missing.firstName = "Enter your first name.";
+    if (!v.lastName.trim()) missing.lastName = "Enter your last name.";
     if (!v.email.includes("@")) missing.email = "Enter your email address.";
     else if (emailCheck?.problem) missing.email = emailCheck.problem;
     if (v.password.length < 10) missing.password = "Use at least 10 characters.";
@@ -169,8 +170,8 @@ export function SignUpForm({ addressSuffix }: { addressSuffix: string }) {
           <AuthField label="First name" error={errors.firstName}>
             <AuthInput value={v.firstName} autoComplete="given-name" aria-invalid={!!errors.firstName} onChange={(e) => set("firstName", e.target.value)} />
           </AuthField>
-          <AuthField label="Last name">
-            <AuthInput value={v.lastName} autoComplete="family-name" onChange={(e) => set("lastName", e.target.value)} />
+          <AuthField label="Last name" error={errors.lastName}>
+            <AuthInput value={v.lastName} autoComplete="family-name" aria-invalid={!!errors.lastName} onChange={(e) => set("lastName", e.target.value)} />
           </AuthField>
         </div>
         <AuthField label="Email" error={errors.email ?? emailCheck?.problem ?? undefined}>

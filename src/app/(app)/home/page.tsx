@@ -82,8 +82,15 @@ function NewItem({ onClick, href, children }: { onClick?: () => void; href?: str
     : <button role="menuitem" type="button" onClick={onClick} className={className}>{children}</button>;
 }
 
+const AddMeDocument = graphql(`
+  mutation AddMeAsEmployee { addMeAsEmployee { employee { id } errors { message } } }
+`);
+
 export default function HomePage() {
-  const { me, can, tenant } = useSession();
+  const { me, can, tenant, reset: refreshSession } = useSession();
+  const [, addMe] = useMutation(AddMeDocument);
+  const [addingMe, setAddingMe] = useState(false);
+  const [addMeError, setAddMeError] = useState<string>();
   const employeeId = me?.employee?.id;
   const manage = can(PERMS.employeesManage);
 
@@ -250,7 +257,25 @@ export default function HomePage() {
             <Link href="/files?view=employee" className="font-semibold underline-offset-2 hover:underline">See which ones</Link>
           </Notice>
         )}
-        {!employeeId && <Notice tone="info">Your account is not linked to an employee record, so there is no time off or team to show.</Notice>}
+        {!employeeId && (
+          <Notice tone="info" title="You do not have an employee record yet">
+            {manage ? <>
+              Add yourself to get your own time off, profile and place in the org chart. If you are not on the staff, you can leave this.
+              {addMeError && <div className="mt-2"><ErrorNote error={addMeError} /></div>}
+              <div className="mt-3">
+                <Button size="sm" busy={addingMe} onClick={async () => {
+                  setAddingMe(true);
+                  setAddMeError(undefined);
+                  const result = await addMe({});
+                  setAddingMe(false);
+                  const failure = result.error ? errorMessage(result.error) : result.data?.addMeAsEmployee.errors[0]?.message;
+                  if (failure) return setAddMeError(failure);
+                  refreshSession();
+                }}>Add me as an employee</Button>
+              </div>
+            </> : "Ask HR to link your account to your employee record to see your time off and team."}
+          </Notice>
+        )}
       </div>
 
       <div id="home-grid" className={cx("mt-5 grid grid-flow-row-dense gap-5 lg:grid-cols-3", editing && "rounded-3xl bg-line/40 p-4 sm:p-6")}>

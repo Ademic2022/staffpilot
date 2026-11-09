@@ -28,7 +28,7 @@ export default function LeavePage() {
 
   if (error) {
     return errorCode(error) === "no_employee"
-      ? <Notice tone="info" title="No employee record">Your account is not linked to an employee record, so there is no leave to show.</Notice>
+      ? <Notice tone="info" title="No employee record">Your account is not linked to an employee record, so there is no leave to show. If you work here, add yourself from Home.</Notice>
       : <ErrorNote error={errorMessage(error)} />;
   }
   if (!data) return <Loading />;

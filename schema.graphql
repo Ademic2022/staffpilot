@@ -1829,6 +1829,11 @@ type Mutation {
   saveJobTitle(input: SaveJobTitleInput!): JobTitlePayload!
   saveGrade(input: SaveGradeInput!): GradePayload!
   hireEmployee(input: HireEmployeeInput!): EmployeePayload!
+
+  """
+  Give the signed-in user their own employee record (or link the one with their work email).
+  """
+  addMeAsEmployee: EmployeePayload!
   updateEmployee(input: UpdateEmployeeInput!): EmployeePayload!
 
   """
