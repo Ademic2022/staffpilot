@@ -61,7 +61,8 @@ function TwoStepCard() {
   const [, confirm] = useMutation(ConfirmMfaDocument);
   const [, disable] = useMutation(DisableMfaDocument);
   const [, newCodes] = useMutation(NewCodesDocument);
-  const [setup, setSetup] = useState<{ secret: string; qrSvg: string } | null>(null);
+  const [setup, setSetup] = useState<{ secret: string; uri: string; qrSvg: string } | null>(null);
+  const [copied, setCopied] = useState(false);
   const [code, setCode] = useState("");
   const [password, setPassword] = useState("");
   const [mode, setMode] = useState<"idle" | "disable" | "codes">("idle");
@@ -134,7 +135,7 @@ function TwoStepCard() {
           </form>
         )
       ) : setup ? (
-        <form className="grid gap-6 sm:grid-cols-[200px_1fr]" onSubmit={async (e: FormEvent) => {
+        <form className="grid gap-6 sm:grid-cols-[240px_1fr]" onSubmit={async (e: FormEvent) => {
           e.preventDefault();
           const result = await run(() => confirm({ code }));
           const found: Record<string, string> = {};
@@ -146,11 +147,23 @@ function TwoStepCard() {
           setCode("");
         }}>
           {/* The SVG is our own server's rendering of the QR code, not user content. */}
-          <div className="rounded-lg bg-white p-2 [&_svg]:h-auto [&_svg]:w-full" dangerouslySetInnerHTML={{ __html: setup.qrSvg }} />
+          <div className="grid content-start justify-items-center gap-3">
+            <div className="w-full max-w-[240px] rounded-lg bg-white p-1 ring-1 ring-line [&_svg]:block [&_svg]:h-auto [&_svg]:w-full" dangerouslySetInnerHTML={{ __html: setup.qrSvg }} />
+            {/* On the phone itself there is nothing to scan: hand the key straight to the authenticator app. */}
+            <a href={setup.uri} className="text-sm font-medium text-brand-ink hover:underline sm:hidden">Open in my authenticator app</a>
+          </div>
           <div className="space-y-4">
             <ol className="list-decimal space-y-1.5 pl-5 text-sm text-muted">
               <li>Open an authenticator app (Google Authenticator, Microsoft Authenticator, 1Password…).</li>
-              <li>Scan the code, or type this key: <code className="break-all rounded bg-subtle px-1.5 py-0.5 font-mono text-xs text-ink">{setup.secret}</code></li>
+              <li>
+                Scan the code. If it will not scan, choose <strong>Enter a setup key</strong> in the app and type this key (time-based):
+                <span className="mt-1.5 flex flex-wrap items-center gap-2">
+                  <code className="rounded bg-subtle px-2 py-1 font-mono text-sm tracking-wider text-ink">{setup.secret.match(/.{1,4}/g)?.join(" ")}</code>
+                  <Button variant="ghost" size="sm" onClick={async () => {
+                    try { await navigator.clipboard.writeText(setup.secret); setCopied(true); setTimeout(() => setCopied(false), 2000); } catch { /* copying is a convenience */ }
+                  }}>{copied ? "Copied" : "Copy key"}</Button>
+                </span>
+              </li>
               <li>Enter the 6-digit code the app shows.</li>
             </ol>
             <Field label="Code from the app">
