@@ -19,6 +19,7 @@ import { EmployeeLeaveDocument, RequestLeaveDialog } from "@/components/leave/Le
 import { ClockPill } from "@/components/attendance/ClockPill";
 import { RemindersWidget } from "@/components/home/Reminders";
 import { CompletenessCard, DataGapsCard } from "@/components/profile/Completeness";
+import { SetupCard } from "@/components/settings/SetupChecklist";
 import { Button, ErrorNote, Loading, Notice, cx } from "@/components/ui";
 import { graphql } from "@/gql";
 import { errorMessage } from "@/lib/api";
@@ -257,6 +258,7 @@ export default function HomePage() {
 
       <div className="mt-6 space-y-4">
         {notice && <Notice tone="success">{notice}</Notice>}
+        {!editing && data?.home.setup && <div data-tour="setup"><SetupCard setup={data.home.setup} company={company} /></div>}
         {!editing && (data?.home.myProfile?.missing.length || data?.home.dataGaps.length) ? (
           <div className="grid items-start gap-4 lg:grid-cols-2">
             {employeeId && data?.home.myProfile && <div data-tour="profile-card"><CompletenessCard data={data.home.myProfile} employeeId={employeeId} self compact /></div>}

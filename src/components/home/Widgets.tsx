@@ -26,6 +26,7 @@ import { reportErrors, today } from "@/lib/forms";
 export const HomeDataDocument = graphql(`
   query HomeData {
     home {
+      setup { percent steps { key label why href done group } }
       myProfile { percent missing { key label tab critical why } }
       dataGaps { key label why count people { id fullName jobTitle photoUrl } }
       celebrations { kind date years person { id fullName jobTitle photoUrl } }

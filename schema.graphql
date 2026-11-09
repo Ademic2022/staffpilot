@@ -1286,6 +1286,11 @@ input HireEmployeeInput {
 }
 
 type Home {
+  """
+  Company setup checklist, for people who manage the company or its people.
+  """
+  setup: SetupProgress
+
   """Your own record's completeness; null without one."""
   myProfile: ProfileCompleteness
 
@@ -2886,6 +2891,11 @@ type Query {
   home: Home!
 
   """
+  The company setup checklist on its own (for Settings), or null if it is not for you.
+  """
+  setupProgress: SetupProgress
+
+  """
   Approved leave days per month for a leave type, last 12 months, within your scope.
   """
   timeOffUsed(leaveTypeId: ID!, filter: WidgetFilter = null): TimeOffUsedData!
@@ -3550,6 +3560,22 @@ input SetPasswordInput {
 type SetPasswordPayload {
   ok: Boolean!
   errors: [FieldError!]!
+}
+
+type SetupProgress {
+  percent: Int!
+  steps: [SetupStep!]!
+}
+
+type SetupStep {
+  key: String!
+  label: String!
+  why: String!
+  href: String!
+  done: Boolean!
+
+  """"essentials", "payroll" or "attendance"."""
+  group: String!
 }
 
 type Shift {

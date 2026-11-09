@@ -6,6 +6,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
 
 import { visibleAreas } from "@/components/settings/areas";
+import { SetupBar } from "@/components/settings/SetupChecklist";
 import { Loading, Notice, cx } from "@/components/ui";
 import { useSession } from "@/lib/session";
 
@@ -21,6 +22,7 @@ function Shell({ children }: { children: ReactNode }) {
   return (
     <>
       <h1 className="font-display text-[26px] font-medium leading-tight tracking-[-0.01em] text-ink sm:text-[30px]">Settings</h1>
+      <SetupBar />
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
         <nav aria-label="Settings" className="flex gap-1 overflow-x-auto lg:w-60 lg:flex-none lg:flex-col">
           {areas.map((a) => {

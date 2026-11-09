@@ -20,6 +20,7 @@ type Step = { target?: string; title: string; body: string };
 const STEPS: Step[] = [
   { title: "Welcome to StaffPilot", body: "A one-minute look around, so you know where everything is. You can leave at any time and take the tour again from Help." },
   { target: "mfa", title: "Turn on two-step sign-in", body: "Your role needs it. Set it up on your account page and the admin tools (Settings, payroll, reports) open straight away." },
+  { target: "setup", title: "Set up your company", body: "Your setup checklist. Each step links to the right page and ticks itself once it is done." },
   { target: "nav", title: "Your menu", body: "Everything you can use is here. You only see what your role allows, so it grows as you are given more." },
   { target: "search", title: "Search anything", body: "Find people, pages and settings by name. Press ⌘K (Ctrl K on Windows) from anywhere." },
   { target: "bell", title: "Things that need you", body: "Leave to approve, changes to review, payslips ready, documents to read. Everything also reaches you by email unless you turn it off." },
