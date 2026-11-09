@@ -12,6 +12,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState, type CSSProperties, type FormEvent, type ReactNode } from "react";
 import { useMutation, useQuery } from "urql";
 
+import { EmptyArt, type ArtKind } from "@/components/home/EmptyArt";
 import { useSnapshot } from "@/components/snapshot/Snapshot";
 import { BarList, ChartTable, DivergingStrip, Legend, MonthColumns, SERIES, TipRow, type Column, type Series } from "@/components/home/Charts";
 import type { LeaveBalanceRow } from "@/components/leave/Leave";
@@ -93,7 +94,17 @@ export function Widget({ title, icon, actions, tools, children, className, flush
   );
 }
 
-export const Empty = ({ children }: { children: ReactNode }) => <p className="text-sm text-muted">{children}</p>;
+/** A widget with nothing to show: a small drawing, a title, one helpful line and maybe an action. */
+export function Empty({ children, title, art, action }: { children: ReactNode; title?: string; art?: ArtKind; action?: ReactNode }) {
+  return (
+    <div className="flex flex-1 flex-col items-center justify-center px-4 py-6 text-center">
+      {art && <EmptyArt kind={art} className="mb-3 h-20 w-auto" />}
+      {title && <p className="text-[15px] font-semibold text-ink">{title}</p>}
+      <p className={cx("max-w-xs text-sm text-muted", title && "mt-1")}>{children}</p>
+      {action && <div className="mt-4">{action}</div>}
+    </div>
+  );
+}
 export const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 export const monthName = (month: string) => new Date(Number(month.slice(0, 4)), Number(month.slice(5, 7)) - 1, 1).toLocaleDateString(undefined, { month: "short" });
 export const longDate = (iso: string, opts: Intl.DateTimeFormatOptions = { month: "long", day: "numeric" }) => new Date(`${iso}T00:00:00`).toLocaleDateString(undefined, opts);
@@ -341,8 +352,15 @@ export function HappeningWidget({ company, announcements, newHires, dismissed, c
               </li>
             );
           })}
-          {!items.length && <li className="py-5 text-sm text-muted">You are all caught up.</li>}
         </ul>
+        {!items.length && (
+          <div className="absolute inset-0 flex">
+            <Empty art="feed" title={announcements.length || hidden.length ? "You are all caught up" : "Nothing new yet"}
+              action={canPost ? <Button size="sm" variant="secondary" className="rounded-full" onClick={onPost}>Post an announcement</Button> : undefined}>
+              Announcements, leave requests to approve and new starters show up here.
+            </Empty>
+          </div>
+        )}
       </div>
       {denying && <DenyDialog {...denying} onClose={() => setDenying(null)}
         onDone={() => { setDenying(null); reloadApprovals({ requestPolicy: "network-only" }); onChanged("Leave declined."); }} />}
@@ -841,7 +859,7 @@ export function CelebrationsWidget({ celebrations }: { celebrations: HomeData["h
             </li>
           ))}
         </ul>
-      ) : <Empty>No birthdays or work anniversaries in the next 30 days.</Empty>}
+      ) : <Empty art="cake" title="No celebrations coming up">Birthdays and work anniversaries in the next 30 days appear here. Add dates of birth to profiles so none are missed.</Empty>}
     </Widget>
   );
 }
@@ -859,8 +877,10 @@ export function WhosOutWidget() {
   const out = (data?.leaveCalendar.absences ?? []).filter((a) => a.status === "APPROVED");
   return (
     <Widget title="Who's out" icon={faPlaneDeparture}>
-      <p className="text-[16px] font-semibold text-brand-ink">{out.length ? `${plural(out.length, "person is", "people are")} out today` : "Everyone is in today"}</p>
-      <p className="text-sm text-muted">{out.length ? "On approved leave" : "No approved leave for today"}</p>
+      {out.length ? <>
+        <p className="text-[16px] font-semibold text-brand-ink">{plural(out.length, "person is", "people are")} out today</p>
+        <p className="text-sm text-muted">On approved leave</p>
+      </> : <Empty art="sun" title="Everyone is in today">No one is on approved leave.</Empty>}
       {out.length > 0 && (
         <ul className="mt-3 flex flex-wrap gap-2">
           {out.map((a) => (
@@ -909,7 +929,7 @@ export function CompanyLinksWidget({ links, canEdit, onSaved }: { links: Company
             <button type="button" onClick={() => setAll(!all)} className="text-sm text-muted hover:text-ink">{all ? "Fewer links" : `${links.length - limit} more links…`}</button>
           )}
         </div>
-      ) : <Empty>{canEdit ? "Add the links people use most: the company website, HMO portal, PFA, IT help." : "No links yet."}</Empty>}
+      ) : <Empty art="links">{canEdit ? "Add the links people use most: the company website, HMO portal, PFA, IT help." : "No links yet."}</Empty>}
       {editing && <LinksDialog links={links} onClose={() => setEditing(false)} onSaved={() => { setEditing(false); onSaved("Links saved."); }} />}
     </Widget>
   );
@@ -984,7 +1004,7 @@ export function WelcomeWidget({ hires, company }: { hires: HomeData["home"]["new
           </ul>
           {started.length > 0 && coming.length > 0 && <p className="mt-3 text-xs text-muted">{plural(coming.length, "more person", "more people")} starting soon</p>}
         </>
-      ) : <Empty>No one new in the last 30 days.</Empty>}
+      ) : <Empty art="people">No one new in the last 30 days.</Empty>}
     </Widget>
   );
 }
@@ -1103,7 +1123,7 @@ export function HolidaysWidget() {
             </li>
           ))}
         </ul>
-      ) : <Empty>No public holidays coming up.</Empty>}
+      ) : <Empty art="calendar">No public holidays coming up.</Empty>}
     </Widget>
   );
 }
