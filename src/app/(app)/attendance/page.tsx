@@ -14,6 +14,7 @@ import { formatDate } from "@/lib/format";
 import { PERMS } from "@/lib/permissions";
 import { useSession } from "@/lib/session";
 import { MyTimesheet, TeamTimesheets, TimesheetApprovals } from "@/components/attendance/Timesheet";
+import { where } from "@/components/attendance/ClockPill";
 
 const MineDocument = graphql(`
   query MyAttendance {
@@ -61,13 +62,6 @@ const BOARD: Record<string, { label: string; tone: BadgeTone }> = {
   absent: { label: "Absent", tone: "bad" }, on_leave: { label: "On leave", tone: "brand" }, off: { label: "Not working", tone: "neutral" },
 };
 
-function where(): Promise<{ lat: string; lng: string } | null> {
-  return new Promise((resolve) => {
-    if (!navigator.geolocation) return resolve(null);
-    navigator.geolocation.getCurrentPosition((p) => resolve({ lat: p.coords.latitude.toFixed(6), lng: p.coords.longitude.toFixed(6) }),
-      () => resolve(null), { enableHighAccuracy: true, timeout: 10000 });
-  });
-}
 
 function Elapsed({ since }: { since: string }) {
   const [now, setNow] = useState(() => Date.now());

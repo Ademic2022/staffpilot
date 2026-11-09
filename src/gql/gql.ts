@@ -180,6 +180,9 @@ type Documents = {
     "\n  query PendingPayJobChanges {\n    pendingChanges { id kind kindName employeeId employeeName summary status step stepCount requestedBy createdAt canDecide canCancel }\n  }\n": typeof types.PendingPayJobChangesDocument,
     "\n  mutation DecidePendingChange($id: ID!, $approve: Boolean!, $note: String) {\n    decidePendingChange(id: $id, approve: $approve, note: $note) { change { id status } errors { message } }\n  }\n": typeof types.DecidePendingChangeDocument,
     "\n  mutation CancelPendingChange($id: ID!) {\n    cancelPendingChange(id: $id) { change { id status } errors { message } }\n  }\n": typeof types.CancelPendingChangeDocument,
+    "\n  query MyClock {\n    myAttendance(days: 1) { enabled shift shiftStart shiftEnd geofenced clockedIn { id clockIn } }\n  }\n": typeof types.MyClockDocument,
+    "\n  mutation PillClockIn($lat: Decimal, $lng: Decimal) { clockIn(latitude: $lat, longitude: $lng) { entry { id } errors { message } } }\n": typeof types.PillClockInDocument,
+    "\n  mutation PillClockOut($lat: Decimal, $lng: Decimal) { clockOut(latitude: $lat, longitude: $lng) { entry { id } errors { message } } }\n": typeof types.PillClockOutDocument,
     "\n  query Projects { projects { id name code client costCentre billable employeeIds isActive } }\n": typeof types.ProjectsDocument,
     "\n  mutation SaveProject($input: ProjectInput!) { saveProject(input: $input) { project { id } errors { field message } } }\n": typeof types.SaveProjectDocument,
     "\n  fragment TimesheetFields on Timesheet {\n    id employeeId employeeName weekStart status submittedAt decidedBy decidedAt note totalMinutes mine canApprove\n    entries { projectId projectName date minutes note }\n    clocked { date minutes }\n  }\n": typeof types.TimesheetFieldsFragmentDoc,
@@ -477,6 +480,9 @@ const documents: Documents = {
     "\n  query PendingPayJobChanges {\n    pendingChanges { id kind kindName employeeId employeeName summary status step stepCount requestedBy createdAt canDecide canCancel }\n  }\n": types.PendingPayJobChangesDocument,
     "\n  mutation DecidePendingChange($id: ID!, $approve: Boolean!, $note: String) {\n    decidePendingChange(id: $id, approve: $approve, note: $note) { change { id status } errors { message } }\n  }\n": types.DecidePendingChangeDocument,
     "\n  mutation CancelPendingChange($id: ID!) {\n    cancelPendingChange(id: $id) { change { id status } errors { message } }\n  }\n": types.CancelPendingChangeDocument,
+    "\n  query MyClock {\n    myAttendance(days: 1) { enabled shift shiftStart shiftEnd geofenced clockedIn { id clockIn } }\n  }\n": types.MyClockDocument,
+    "\n  mutation PillClockIn($lat: Decimal, $lng: Decimal) { clockIn(latitude: $lat, longitude: $lng) { entry { id } errors { message } } }\n": types.PillClockInDocument,
+    "\n  mutation PillClockOut($lat: Decimal, $lng: Decimal) { clockOut(latitude: $lat, longitude: $lng) { entry { id } errors { message } } }\n": types.PillClockOutDocument,
     "\n  query Projects { projects { id name code client costCentre billable employeeIds isActive } }\n": types.ProjectsDocument,
     "\n  mutation SaveProject($input: ProjectInput!) { saveProject(input: $input) { project { id } errors { field message } } }\n": types.SaveProjectDocument,
     "\n  fragment TimesheetFields on Timesheet {\n    id employeeId employeeName weekStart status submittedAt decidedBy decidedAt note totalMinutes mine canApprove\n    entries { projectId projectName date minutes note }\n    clocked { date minutes }\n  }\n": types.TimesheetFieldsFragmentDoc,
@@ -1286,6 +1292,18 @@ export function graphql(source: "\n  mutation DecidePendingChange($id: ID!, $app
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation CancelPendingChange($id: ID!) {\n    cancelPendingChange(id: $id) { change { id status } errors { message } }\n  }\n"): (typeof documents)["\n  mutation CancelPendingChange($id: ID!) {\n    cancelPendingChange(id: $id) { change { id status } errors { message } }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query MyClock {\n    myAttendance(days: 1) { enabled shift shiftStart shiftEnd geofenced clockedIn { id clockIn } }\n  }\n"): (typeof documents)["\n  query MyClock {\n    myAttendance(days: 1) { enabled shift shiftStart shiftEnd geofenced clockedIn { id clockIn } }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation PillClockIn($lat: Decimal, $lng: Decimal) { clockIn(latitude: $lat, longitude: $lng) { entry { id } errors { message } } }\n"): (typeof documents)["\n  mutation PillClockIn($lat: Decimal, $lng: Decimal) { clockIn(latitude: $lat, longitude: $lng) { entry { id } errors { message } } }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation PillClockOut($lat: Decimal, $lng: Decimal) { clockOut(latitude: $lat, longitude: $lng) { entry { id } errors { message } } }\n"): (typeof documents)["\n  mutation PillClockOut($lat: Decimal, $lng: Decimal) { clockOut(latitude: $lat, longitude: $lng) { entry { id } errors { message } } }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

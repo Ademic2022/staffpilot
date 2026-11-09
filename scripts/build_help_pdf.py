@@ -126,6 +126,16 @@ def blocks(source):
         bullet = re.match(r"^[-*]\s+(.*)$", line)
         numbered = re.match(r"^\d+\.\s+(.*)$", line)
         tip = re.match(r"^>\s?(.*)$", line)
+        if line.startswith("|"):
+            flush()
+            if re.match(r"^\|[\s:|-]+\|?$", line):
+                continue  # the |---|---| line under the header
+            row = [c.strip() for c in line.strip("|").split("|")]
+            if result and result[-1][0] == "table":
+                result[-1][1].append(row)
+            else:
+                result.append(("table", [row]))
+            continue
         if heading:
             flush()
             result.append(("h2" if len(heading.group(1)) == 2 else "h3", heading.group(2)))
@@ -181,6 +191,27 @@ def tip_box(text, titles):
     return t
 
 
+def table_box(rows, titles):
+    cell = ParagraphStyle("cell", parent=STYLES["tip"], fontSize=9, leading=12)
+    head = ParagraphStyle("cell_head", parent=cell, fontName=FONTS["bold"])
+    numeric = re.compile(r"^[−+-]?[₦\d.,]+$")
+    data = []
+    for r, row in enumerate(rows):
+        out = []
+        for c, text in enumerate(row):
+            style = head if r == 0 else cell
+            if r and c and numeric.match(text.replace("*", "")):
+                style = ParagraphStyle(f"num{r}{c}", parent=style, alignment=2)
+            out.append(Paragraph(inline(text, titles), style))
+        data.append(out)
+    t = Table(data, repeatRows=1, hAlign="LEFT")
+    t.setStyle(TableStyle([("BACKGROUND", (0, 0), (-1, 0), TIP_BG), ("LINEBELOW", (0, 0), (-1, -1), 0.4, colors.HexColor("#d9d2bf")),
+                           ("BOX", (0, 0), (-1, -1), 0.6, colors.HexColor("#d9d2bf")), ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                           ("LEFTPADDING", (0, 0), (-1, -1), 6), ("RIGHTPADDING", (0, 0), (-1, -1), 6),
+                           ("TOPPADDING", (0, 0), (-1, -1), 4), ("BOTTOMPADDING", (0, 0), (-1, -1), 4)]))
+    return t
+
+
 def article_flowables(a, audiences, titles):
     who = ", ".join(audiences[x] for x in a["audience"])
     head = [Anchor(a["title"], 1, a["slug"]), Paragraph(html.escape(a["title"]), STYLES["article"]),
@@ -194,6 +225,8 @@ def article_flowables(a, audiences, titles):
             out.append(Paragraph(inline(value, titles), STYLES["body"]))
         elif kind == "tip":
             out += [Spacer(1, 2), tip_box(value, titles), Spacer(1, 8)]
+        elif kind == "table":
+            out += [Spacer(1, 2), table_box(value, titles), Spacer(1, 8)]
         else:
             items = [ListItem(Paragraph(inline(t, titles), STYLES["list"]), leftIndent=14) for t in value]
             out.append(ListFlowable(items, bulletType="bullet" if kind == "ul" else "1", start="•" if kind == "ul" else None,

@@ -16,6 +16,7 @@ import {
 } from "@/components/home/Widgets";
 import { LocationWidget, PayRaiseWidget, TimeOffRequestsWidget, TimeOffUsedWidget } from "@/components/home/Expandable";
 import { EmployeeLeaveDocument, RequestLeaveDialog } from "@/components/leave/Leave";
+import { ClockPill } from "@/components/attendance/ClockPill";
 import { CompletenessCard, DataGapsCard } from "@/components/profile/Completeness";
 import { Button, ErrorNote, Loading, Notice, cx } from "@/components/ui";
 import { graphql } from "@/gql";
@@ -231,7 +232,8 @@ export default function HomePage() {
           <h1 className="font-display text-[40px] font-medium leading-tight text-brand-ink sm:text-[46px]">Hi, {firstName}</h1>
         </div>
         {!editing && (
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            {employeeId && <ClockPill />}
             {manage && (
               <NewMenu>
                 {(close) => (
