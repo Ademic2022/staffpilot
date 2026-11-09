@@ -16,6 +16,7 @@ import {
 } from "@/components/home/Widgets";
 import { LocationWidget, PayRaiseWidget, TimeOffRequestsWidget, TimeOffUsedWidget } from "@/components/home/Expandable";
 import { EmployeeLeaveDocument, RequestLeaveDialog } from "@/components/leave/Leave";
+import { CompletenessCard, DataGapsCard } from "@/components/profile/Completeness";
 import { Button, ErrorNote, Loading, Notice, cx } from "@/components/ui";
 import { graphql } from "@/gql";
 import { errorMessage } from "@/lib/api";
@@ -252,6 +253,12 @@ export default function HomePage() {
 
       <div className="mt-6 space-y-4">
         {notice && <Notice tone="success">{notice}</Notice>}
+        {!editing && (data?.home.myProfile?.missing.length || data?.home.dataGaps.length) ? (
+          <div className="grid items-start gap-4 lg:grid-cols-2">
+            {employeeId && data?.home.myProfile && <CompletenessCard data={data.home.myProfile} employeeId={employeeId} self compact />}
+            {data?.home.dataGaps && <DataGapsCard gaps={data.home.dataGaps} />}
+          </div>
+        ) : null}
         {expiring && expiring.expiringDocuments.length > 0 && !editing && (
           <Notice tone="warning" title={`${expiring.expiringDocuments.length} ${expiring.expiringDocuments.length === 1 ? "document has" : "documents have"} expired or expire within 30 days`}>
             <Link href="/files?view=employee" className="font-semibold underline-offset-2 hover:underline">See which ones</Link>

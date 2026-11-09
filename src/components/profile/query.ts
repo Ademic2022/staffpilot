@@ -5,6 +5,7 @@ export const EmployeeProfileDocument = graphql(`
   query EmployeeProfile($id: ID!) {
     employee(id: $id) {
       id
+      completeness { percent missing { key label tab critical why } }
       employeeNumber
       fieldAccess
       fullName

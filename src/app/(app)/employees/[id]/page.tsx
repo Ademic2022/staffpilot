@@ -28,6 +28,7 @@ import { BenefitsBlock } from "@/components/profile/BenefitsBlock";
 import { ChecklistBlock } from "@/components/profile/ChecklistBlock";
 import { RowDialog, TableSection } from "@/components/profile/TableSection";
 import { Vitals } from "@/components/profile/Vitals";
+import { CompletenessCard } from "@/components/profile/Completeness";
 import { ActionDialog, Button, ErrorNote, Loading, Notice, cx } from "@/components/ui";
 import { graphql } from "@/gql";
 import { errorMessage } from "@/lib/api";
@@ -282,6 +283,9 @@ function EmployeeRecord() {
           {notice && <Notice tone={notice.tone}>{notice.text}</Notice>}
           {e.archivedAt && <Notice tone="info" title="Archived">This record is hidden from the employee list but kept for reporting and audit.</Notice>}
           {self && <MyChangeNotice key={notice?.text ?? ""} onChanged={() => saved("Change withdrawn.")} />}
+          {e.completeness && !left && !e.archivedAt && (
+            <CompletenessCard data={e.completeness} employeeId={e.id} self={self} name={`${e.firstName}'s`} compact />
+          )}
           <div className="flex items-center justify-between gap-3 pb-1">
             <h2 className="flex items-center gap-2.5 font-display text-[26px] font-medium text-brand-ink">
               <TabIcon icon={tab.sections[0]?.icon ?? "list"} />

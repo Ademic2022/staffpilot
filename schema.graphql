@@ -592,6 +592,16 @@ type DataExport {
   expiresAt: DateTime
 }
 
+type DataGap {
+  key: String!
+  label: String!
+  why: String!
+  count: Int!
+
+  """The first few people missing it."""
+  people: [HomePerson!]!
+}
+
 """Date (isoformat)"""
 scalar Date
 
@@ -840,6 +850,11 @@ type Employee {
   Personal details beyond name and work contact, empty unless you may see them.
   """
   personal: PersonalDetails
+
+  """
+  How complete the record is. Only for the person themself and those who manage people.
+  """
+  completeness: ProfileCompleteness
 
   """A ten-minute link to the employee's photo, or null."""
   photoUrl: String
@@ -1271,6 +1286,11 @@ input HireEmployeeInput {
 }
 
 type Home {
+  """Your own record's completeness; null without one."""
+  myProfile: ProfileCompleteness
+
+  """For people who manage employees: critical gaps across their scope."""
+  dataGaps: [DataGap!]!
   celebrations: [Celebration!]!
   newHires: [NewHire!]!
   myStuff: MyStuff
@@ -2644,6 +2664,25 @@ input PrivateDetailsInput {
 type PrivateDetailsPayload {
   details: PrivateDetails
   errors: [FieldError!]!
+}
+
+type ProfileCompleteness {
+  percent: Int!
+
+  """Critical gaps first."""
+  missing: [ProfileGap!]!
+}
+
+type ProfileGap {
+  key: String!
+  label: String!
+
+  """The profile tab where it is filled in."""
+  tab: String!
+
+  """Something stops working without it (payroll, emergencies)."""
+  critical: Boolean!
+  why: String!
 }
 
 type ProfileLayoutPayload {
