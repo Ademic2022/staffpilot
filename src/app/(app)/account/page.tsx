@@ -148,7 +148,7 @@ function TwoStepCard() {
         }}>
           {/* The SVG is our own server's rendering of the QR code, not user content. */}
           <div className="grid content-start justify-items-center gap-3">
-            <div className="w-full max-w-[240px] rounded-lg bg-white p-1 ring-1 ring-line [&_svg]:block [&_svg]:h-auto [&_svg]:w-full" dangerouslySetInnerHTML={{ __html: setup.qrSvg }} />
+            <div className="w-full max-w-[240px] rounded-lg bg-white p-1 ring-1 ring-line [&_svg]:block [&_svg]:h-auto [&_svg]:w-full [&_svg]:[shape-rendering:crispEdges]" dangerouslySetInnerHTML={{ __html: setup.qrSvg }} />
             {/* On the phone itself there is nothing to scan: hand the key straight to the authenticator app. */}
             <a href={setup.uri} className="text-sm font-medium text-brand-ink hover:underline sm:hidden">Open in my authenticator app</a>
           </div>
