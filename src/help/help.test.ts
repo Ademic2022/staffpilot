@@ -4,7 +4,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 
 import { ARTICLES, articleForPath, search } from "./index";
-import { parse } from "./render";
+import { SHOT_SIZES, parse } from "./render";
 
 const APP = path.resolve(__dirname, "../app/(app)");
 
@@ -23,6 +23,18 @@ function routeExists(route: string) {
 }
 
 describe("user guide", () => {
+  it("only shows screenshots that have been taken, in both themes", () => {
+    const shots = path.resolve(__dirname, "../../public/help/shots");
+    for (const a of ARTICLES) {
+      for (const b of parse(a.body)) {
+        if (b.kind !== "shot") continue;
+        expect(SHOT_SIZES[b.name], `${a.slug}: run npm run help:shots -- ${b.name}`).toBeDefined();
+        expect(b.caption, `${a.slug}: ${b.name} needs a caption (it is the alt text)`).not.toBe("");
+        for (const file of [`${b.name}.webp`, `${b.name}-dark.webp`]) expect(fs.existsSync(path.join(shots, file)), file).toBe(true);
+      }
+    }
+  });
+
   it("has unique slugs", () => {
     const slugs = ARTICLES.map((a) => a.slug);
     expect(new Set(slugs).size).toBe(slugs.length);

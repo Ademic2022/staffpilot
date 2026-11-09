@@ -9,6 +9,7 @@ next to this folder (hrms-client/), or the path given as the first argument.
 
 import datetime
 import html
+import io
 import json
 import re
 import subprocess
@@ -126,6 +127,11 @@ def blocks(source):
         bullet = re.match(r"^[-*]\s+(.*)$", line)
         numbered = re.match(r"^\d+\.\s+(.*)$", line)
         tip = re.match(r"^>\s?(.*)$", line)
+        shot = re.match(r"^!\[([^\]]*)\]\(shot:([a-z0-9-]+)\)$", line)
+        if shot:
+            flush()
+            result.append(("shot", (shot.group(2), shot.group(1))))
+            continue
         if line.startswith("|"):
             flush()
             if re.match(r"^\|[\s:|-]+\|?$", line):
@@ -212,6 +218,32 @@ def table_box(rows, titles):
     return t
 
 
+SHOTS = CLIENT / "public" / "help" / "shots"
+CAPTION = ParagraphStyle("caption", fontName=FONTS["regular"], fontSize=8.5, leading=11, textColor=MUTED, spaceBefore=3)
+
+
+def shot_box(name, caption, width):
+    """A help screenshot (the light one), scaled to fit the column. None when it has not been taken yet."""
+    file = SHOTS / f"{name}.webp"
+    if not file.exists():
+        return None
+    from PIL import Image as Pil
+
+    with Pil.open(file) as im:
+        w, h = im.size
+        png = io.BytesIO()  # JPEG keeps the PDF small; screenshots have no transparency worth keeping
+        im.convert("RGB").save(png, "JPEG", quality=82, optimize=True)
+    png.seek(0)
+    scale = min(1.0, width / w, (110 * mm) / h)
+    img = Image(png, width=w * scale, height=h * scale, hAlign="LEFT")
+    frame = Table([[img]], hAlign="LEFT")
+    frame.setStyle(TableStyle([("BOX", (0, 0), (-1, -1), 0.6, colors.HexColor("#d9d2bf")),
+                               ("LEFTPADDING", (0, 0), (-1, -1), 0), ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+                               ("TOPPADDING", (0, 0), (-1, -1), 0), ("BOTTOMPADDING", (0, 0), (-1, -1), 0)]))
+    parts = [frame] + ([Paragraph(html.escape(caption), CAPTION)] if caption else [])
+    return KeepTogether([Spacer(1, 2), *parts, Spacer(1, 8)])
+
+
 def article_flowables(a, audiences, titles):
     who = ", ".join(audiences[x] for x in a["audience"])
     head = [Anchor(a["title"], 1, a["slug"]), Paragraph(html.escape(a["title"]), STYLES["article"]),
@@ -227,6 +259,10 @@ def article_flowables(a, audiences, titles):
             out += [Spacer(1, 2), tip_box(value, titles), Spacer(1, 8)]
         elif kind == "table":
             out += [Spacer(1, 2), table_box(value, titles), Spacer(1, 8)]
+        elif kind == "shot":
+            box = shot_box(*value, width=A4[0] - 40 * mm - 12)  # the column, less the frame's padding
+            if box:
+                out.append(box)
         else:
             items = [ListItem(Paragraph(inline(t, titles), STYLES["list"]), leftIndent=14) for t in value]
             out.append(ListFlowable(items, bulletType="bullet" if kind == "ul" else "1", start="•" if kind == "ul" else None,

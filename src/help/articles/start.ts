@@ -33,6 +33,8 @@ On a phone, the menu opens from the button at the top left.
 
 Press **⌘K** on a Mac or **Ctrl K** on Windows, or click **Search** at the top of the menu. Type two letters or more to find people, files, reports and settings, then press Enter to open one.
 
+![Search finds people, reports and settings as you type.](shot:search)
+
 ## Notifications
 
 The bell at the top of the menu shows what needs you: requests to approve, decisions on your own requests, reviews to write and files to read. Most also arrive by email. Open the bell and choose **See all notifications** for the full list, or **Mark all read** to clear the count.
@@ -69,6 +71,8 @@ Two-step sign-in asks for a six-digit code from an app on your phone each time y
 
 Run low on recovery codes? Choose **Make new codes**; the old ones stop working.
 
+![Scan the code, or type the key into your authenticator app, then enter the code it shows.](shot:two-step-setup)
+
 ## Email preferences
 
 You always see notifications in the app. Under email preferences you can stop the email copies for groups you do not need, such as time off requests, files to read, review reminders or expense claims. Messages about your security and sign-in are always sent.
@@ -95,6 +99,8 @@ Set yourself reminders for follow-ups, renewals and deadlines. **Only you see th
 - On someone's profile, **More actions** → **Remind me…** links the reminder to them, and your reminders about them show at the top of their record.
 - When adding an HR note, choose **Remind me to follow up** to set one from the note.
 - On the day, the reminder appears under the bell and you get an email. Tick it off when done, or move it to tomorrow or a week later.
+
+![A new reminder: say what to do and pick the day.](shot:reminder-new)
 
 ## What is on it
 

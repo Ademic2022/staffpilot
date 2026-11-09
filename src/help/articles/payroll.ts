@@ -130,6 +130,8 @@ Payroll is off until an owner switches on **Run payroll in StaffPilot** in **Set
 - **How often**: monthly or every two weeks.
 - For monthly: the **first day of a period** and the **pay day** (the last day when a month is shorter). For every two weeks: the first period's start; later periods follow every 14 days, paid on the last day.
 
+![Pay groups, with how often each is paid and how many people are in it.](shot:pay-groups)
+
 ## Pay components and the salary split
 
 **Pay components** are the lines on a payslip.
@@ -165,6 +167,8 @@ Their salary comes from their **Compensation** record on their profile. Their ta
 On **Payroll**, choose **New payroll**. Pick the **pay group** and **a day in the period** (the pay period that contains it is used). Tick **Off-cycle payroll** for an extra run in the same period, for back pay or corrections.
 
 Payroll works out everyone's pay from their pay records, leave, attendance, expense claims, loans and payroll details. See [What goes into someone's pay](/help/what-goes-into-pay).
+
+![Starting a payroll: pick the pay group and a day in the period.](shot:payroll-new)
 
 ## 2. Check it
 

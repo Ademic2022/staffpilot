@@ -56,6 +56,8 @@ Open **My time off** in the menu. You see your balances for each type of leave, 
 
 Your request goes to your manager. Some leave types need more than one approval (for example your manager, then theirs); you can follow each step on the request. Some types need no approval and are booked straight away. You get a notification when it is decided.
 
+![The request form. The days are counted for you.](shot:leave-request)
+
 ## Cancel a request
 
 Open the request and choose **Cancel**. A request that is still waiting, or approved leave that has not started, can be cancelled and the days go back to your balance. Once leave has started, only HR can cancel it.
@@ -122,6 +124,8 @@ If your company uses attendance, open **Attendance** in the menu. **My time** sh
 3. Choose **Clock out** when you finish. You can clock in and out more than once a day, for example around a long break.
 
 This works on a phone too: open the same web address in your phone's browser.
+
+![On Home, the button at the top shows whether you are clocked in. Click it to clock in or out.](shot:clock-in)
 
 ## Location
 

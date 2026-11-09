@@ -1,0 +1,46 @@
+{
+  "clock-in": {
+    "w": 278,
+    "h": 72
+  },
+  "company-branding": {
+    "w": 428,
+    "h": 667
+  },
+  "employee-import": {
+    "w": 1036,
+    "h": 620
+  },
+  "leave-approvals": {
+    "w": 1036,
+    "h": 560
+  },
+  "leave-request": {
+    "w": 448,
+    "h": 480
+  },
+  "pay-groups": {
+    "w": 454,
+    "h": 260
+  },
+  "payroll-new": {
+    "w": 448,
+    "h": 518
+  },
+  "reminder-new": {
+    "w": 448,
+    "h": 395
+  },
+  "search": {
+    "w": 576,
+    "h": 496
+  },
+  "setup-checklist": {
+    "w": 984,
+    "h": 524
+  },
+  "two-step-setup": {
+    "w": 494,
+    "h": 705
+  }
+}

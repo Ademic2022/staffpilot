@@ -135,7 +135,7 @@ function TwoStepCard() {
           </form>
         )
       ) : setup ? (
-        <form className="grid gap-6 sm:grid-cols-[240px_1fr]" onSubmit={async (e: FormEvent) => {
+        <form className="@container" onSubmit={async (e: FormEvent) => {
           e.preventDefault();
           const result = await run(() => confirm({ code }));
           const found: Record<string, string> = {};
@@ -146,6 +146,8 @@ function TwoStepCard() {
           setCodes(result.data?.confirmMfaSetup.codes ?? []);
           setCode("");
         }}>
+          {/* Side by side when the card is wide enough; otherwise the code sits above the steps. */}
+          <div className="grid gap-6 @xl:grid-cols-[240px_minmax(0,1fr)]">
           {/* The SVG is our own server's rendering of the QR code, not user content. */}
           <div className="grid content-start justify-items-center gap-3">
             <div className="w-full max-w-[240px] rounded-lg bg-white p-1 ring-1 ring-line [&_svg]:block [&_svg]:h-auto [&_svg]:w-full [&_svg]:[shape-rendering:crispEdges]" dangerouslySetInnerHTML={{ __html: setup.qrSvg }} />
@@ -171,6 +173,7 @@ function TwoStepCard() {
                 onChange={(e) => setCode(e.target.value)} autoFocus />
             </Field>
             <div className="flex gap-2"><Button type="submit" busy={busy} icon={<IconCheck size={16} />}>Turn on</Button><Button variant="ghost" onClick={() => setSetup(null)}>Cancel</Button></div>
+          </div>
           </div>
         </form>
       ) : (

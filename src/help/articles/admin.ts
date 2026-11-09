@@ -20,6 +20,8 @@ Everything you set up lives under **Settings** in the menu. You only see the are
 6. Then, as you need them: approvals, email alerts, onboarding checklists, benefits, training, attendance, performance and expenses.
 7. To run payroll here, switch on **Run payroll in StaffPilot** (Company → General settings), then see [Setting up payroll](/help/payroll-setup).
 
+![The setup checklist at the top of Settings. Each step ticks itself when it is done.](shot:setup-checklist)
+
 > On any settings page, the **?** button beside the bell opens its article.
 `,
   },
@@ -50,6 +52,8 @@ How dates, amounts and names read for everyone, and what employees may do themse
 ## Logo and colour
 
 Upload a PNG, JPG or WebP logo (up to 2 MB) and choose your colour. They appear on the sign-in page, the menu and emails.
+
+![Upload your logo (1) and pick your colour (2). The preview shows how it will look.](shot:company-branding)
 
 ## Login and security
 
@@ -112,6 +116,8 @@ From **People**, choose **New employee**. Fill in their legal name, hire date, l
 ## Import many at once
 
 From the **…** menu on People, choose **Import employees**. **Download template** (it has a column for every field, with notes), fill in one row per person, and upload it as Excel or CSV. Legal entities, departments and job titles must match the names under Job organization. Every row is checked first: if any row has a problem, nothing is imported and you get a list to fix.
+
+![Download the template, fill in one row per person, then upload it.](shot:employee-import)
 
 ## Change many at once
 

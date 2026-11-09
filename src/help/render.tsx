@@ -1,14 +1,19 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import SHOTS from "./shots.json";
+
 // Not imported from components/ui: that is a client module, and the public guide renders on the server.
 const cx = (...c: (string | false | undefined)[]) => c.filter(Boolean).join(" ");
 
 /**
  * A small Markdown reader for help articles: ## and ### headings, paragraphs, - and 1. lists,
- * > tips, | tables | (first row is the header), **bold** and [links](/path). Articles are our own
- * text; nothing is read as HTML.
+ * > tips, | tables | (first row is the header), **bold**, [links](/path) and screenshots on a line of
+ * their own: ![What it shows](shot:name). Articles are our own text; nothing is read as HTML.
  */
+
+/** Screenshots taken by scripts/help-shots.mjs: public/help/shots/<name>.webp, and <name>-dark.webp. */
+export const SHOT_SIZES: Record<string, { w: number; h: number }> = SHOTS;
 
 export function slugify(text: string) {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -48,7 +53,8 @@ function inline(text: string, key: string, mode: LinkMode = "app"): ReactNode[] 
 type Block =
   | { kind: "h2" | "h3" | "p" | "tip"; text: string }
   | { kind: "ul" | "ol"; items: string[] }
-  | { kind: "table"; rows: string[][] };
+  | { kind: "table"; rows: string[][] }
+  | { kind: "shot"; name: string; caption: string };
 
 const cells = (line: string) => line.replace(/^\|/, "").replace(/\|$/, "").split("|").map((c) => c.trim());
 
@@ -67,6 +73,8 @@ export function parse(source: string): Block[] {
     const bullet = line.match(/^[-*]\s+(.*)$/);
     const numbered = line.match(/^\d+\.\s+(.*)$/);
     const tip = line.match(/^>\s?(.*)$/);
+    const shot = line.match(/^!\[([^\]]*)\]\(shot:([a-z0-9-]+)\)$/);
+    if (shot) { flush(); blocks.push({ kind: "shot", name: shot[2], caption: shot[1] }); continue; }
     if (line.startsWith("|")) {
       flush();
       if (/^\|[\s:|-]+\|?$/.test(line)) continue; // the |---|---| line under the header
@@ -131,10 +139,28 @@ export function Markdown({ source, mode = "app" }: { source: string; mode?: Link
               </table>
             </div>
           );
+          case "shot": return <Shot key={key} name={b.name} caption={b.caption} />;
           case "ol": return <ol key={key} className="grid list-decimal gap-1.5 pl-5">{b.items.map((t, j) => <li key={j}>{inline(t, `${key}-${j}`, mode)}</li>)}</ol>;
           default: return <p key={key}>{inline(b.text, key, mode)}</p>;
         }
       })}
     </div>
+  );
+}
+
+/** A cropped screenshot, in the reader's light or dark theme. Missing ones are left out rather than shown broken. */
+function Shot({ name, caption }: { name: string; caption: string }) {
+  const size = SHOT_SIZES[name];
+  if (!size) return null;
+  return (
+    <figure className="grid gap-2">
+      <picture>
+        <source srcSet={`/help/shots/${name}-dark.webp`} media="(prefers-color-scheme: dark)" />
+        <img src={`/help/shots/${name}.webp`} alt={caption} width={size.w} height={size.h} loading="lazy" decoding="async"
+          className="h-auto w-full max-w-[min(100%,var(--w))] rounded-xl border border-line shadow-sm"
+          style={{ ["--w" as string]: `${size.w}px` }} />
+      </picture>
+      {caption && <figcaption className="text-[13px] text-muted">{caption}</figcaption>}
+    </figure>
   );
 }

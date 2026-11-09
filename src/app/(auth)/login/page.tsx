@@ -35,7 +35,7 @@ const VerifyMfaDocument = graphql(`
 `);
 
 /** The second step: a code from the authenticator app, or a recovery code. */
-function CodeStep({ onDone, onRestart }: { onDone: () => void; onRestart: () => void }) {
+function CodeStep({ onDone, onRestart }: { onDone: () => void; onRestart: (why?: string) => void }) {
   const [, verify] = useMutation(VerifyMfaDocument);
   const [code, setCode] = useState("");
   const [recovery, setRecovery] = useState(false);
@@ -49,7 +49,10 @@ function CodeStep({ onDone, onRestart }: { onDone: () => void; onRestart: () => 
     setError(undefined);
     const result = await verify({ code: code.trim() });
     setBusy(false);
-    const problem = errorMessage(result.error) ?? result.data?.verifyMfa.errors[0]?.message;
+    const failure = result.data?.verifyMfa.errors[0];
+    // The password step has expired (or was replaced by a sign-in in another tab): no code can work, so start over.
+    if (failure?.field === "restart") return onRestart(failure.message);
+    const problem = errorMessage(result.error) ?? failure?.message;
     if (problem) {
       setCode("");
       return setError(problem);
@@ -69,7 +72,7 @@ function CodeStep({ onDone, onRestart }: { onDone: () => void; onRestart: () => 
           className="text-center font-mono text-lg tracking-[0.3em]" />
       </AuthField>
       <AuthButton type="submit" busy={busy}>Verify</AuthButton>
-      <button type="button" onClick={onRestart} className="block w-full text-center text-sm text-muted hover:text-ink">Start again</button>
+      <button type="button" onClick={() => onRestart()} className="block w-full text-center text-sm text-muted hover:text-ink">Start again</button>
     </form>
   );
 }
@@ -124,7 +127,7 @@ function LoginForm() {
   if (needsCode) {
     return (
       <AuthShell title="Two-step sign-in" subtitle="Open your authenticator app and enter the code for this account.">
-        <CodeStep onDone={finish} onRestart={() => setNeedsCode(false)} />
+        <CodeStep onDone={finish} onRestart={(why) => { setNeedsCode(false); setFormError(why); }} />
       </AuthShell>
     );
   }

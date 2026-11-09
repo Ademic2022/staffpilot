@@ -18,6 +18,8 @@ Each request shows the person, dates, type of leave, number of days and their no
 
 Some leave types need more than one approval. After you approve, the request moves to the next manager up the line; where the line ends, HR decides. The person is told once it is fully decided.
 
+![Requests waiting for you, each with Approve and Reject.](shot:leave-approvals)
+
 ## Pay and job changes
 
 Changes that wait for approval before they take effect, such as a promotion, a transfer or a pay rise, also appear here under **Pay and job changes**, in the order your company has set (for example manager, then HR, then finance). Approve or reject each one. A change with a future date takes effect on that day.
