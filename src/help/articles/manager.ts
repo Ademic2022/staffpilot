@@ -58,6 +58,8 @@ HR can make these changes directly from the same menu, which also has **Employme
     body: `
 Open **Attendance** → **Team**.
 
+> No **Attendance** in the menu? It is off until HR or an admin switches it on: **Settings** → **Attendance** → **Rules** → **Switch on clocking in and out**. See [Setting up attendance](/help/attendance-setup).
+
 ## Who is in
 
 The board shows everyone below you for a day: **In**, **Gone home**, **Not in yet**, **Late**, **Absent**, **On leave** or **Not working**, with their clock-in and clock-out times. Change the date to look back.
@@ -87,6 +89,8 @@ If your company uses timesheets:
     paths: ["/expenses?tab=approve", "/expenses/"],
     body: `
 Open **Expenses** → **To approve**. Each claim shows the person, total and any policy marks.
+
+> No **Expenses** in the menu? Expense claims are off until HR or an admin switches them on: **Settings** → **Expenses** → **Rules** → **Switch on expense claims**. See [Setting up expenses](/help/expenses-setup).
 
 ## Check a claim
 

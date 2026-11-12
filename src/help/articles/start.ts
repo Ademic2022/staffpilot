@@ -18,7 +18,7 @@ If your role needs two-step sign-in, you are asked for a code from your authenti
 
 ## The menu
 
-The menu on the left only shows what you can use. Depending on your role you will see:
+The menu on the left only shows what you can use. Depending on your role, and on what your company has switched on (attendance, expenses and payroll are optional), you will see:
 
 - **Home**: announcements, who is away, birthdays and your shortcuts.
 - **My profile** and **My payslips**: your own record and pay.

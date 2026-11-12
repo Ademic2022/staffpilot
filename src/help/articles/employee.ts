@@ -25,11 +25,11 @@ Keep at least one emergency contact on the **Emergency** tab, so HR knows who to
 
 ## Your photo
 
-If your company allows it, click your photo on your profile and choose **Change photo**. Pick a JPG, PNG or WebP picture, drag it and zoom until your face fills most of the square, then **Save photo**; a bar shows the upload's progress. Otherwise ask HR.
+If your company allows it (HR switches on **Let employees change their own photo** in **Settings** → **Company** → **General settings**), click your photo on your profile and choose **Change photo**. Pick a JPG, PNG or WebP picture, drag it and zoom until your face fills most of the square, then **Save photo**; a bar shows the upload's progress. Otherwise ask HR.
 
 ## Documents
 
-The **Documents** tab shows documents HR has shared with you, such as your contract. If your company allows it, you can also upload files to your own record; they go into an **Employee uploads** category that only you and HR can see.
+The **Documents** tab shows documents HR has shared with you, such as your contract. If your company allows it (**Let employees upload files to their own record**, in the same General settings), you can also upload files to your own record; they go into an **Employee uploads** category that only you and HR can see.
 
 ## Job and pay
 
@@ -86,6 +86,8 @@ Open the request and choose **Cancel**. A request that is still waiting, or appr
     body: `
 If your company runs payroll in StaffPilot, open **My payslips** in the menu. Each payslip appears once payroll has approved and published that month's payroll; you get a notification when it does.
 
+> No **My payslips** in the menu? Payroll is off until an owner switches on **Run payroll in StaffPilot** in **Settings** → **Company** → **General settings**. See [Setting up payroll](/help/payroll-setup). If your company pays you outside StaffPilot, your payslips come from there.
+
 ## Reading a payslip
 
 Choose a payslip to see its lines, or download the **PDF**.
@@ -115,7 +117,9 @@ If you have a salary advance or a staff loan, **My payslips** shows what is left
     audience: EVERYONE,
     paths: ["/attendance", "/attendance?tab=mine"],
     body: `
-If your company uses attendance, open **Attendance** in the menu. **My time** shows your shift for today, a clock button and your last two weeks.
+If your company uses attendance, open **Attendance** in the menu. **My time** shows your shift for today, a clock button and your last two weeks. Once attendance is on, a clock button also sits at the top of Home.
+
+> No **Attendance** in the menu? It is off until HR or an admin switches it on: **Settings** → **Attendance** → **Rules** → **Switch on clocking in and out**. See [Setting up attendance](/help/attendance-setup).
 
 ## Clock in and out
 
@@ -150,6 +154,8 @@ Ask your manager or HR. They can add or correct your time, and the day is marked
     body: `
 If your company uses timesheets, open **Attendance** → **Timesheet**. Each timesheet is one week, Monday to Sunday.
 
+> No **Timesheet** tab? Timesheets are off until HR or an admin switches them on: **Settings** → **Attendance** → **Rules** → **Switch on weekly timesheets**. They work with or without clocking in. See [Setting up attendance](/help/attendance-setup).
+
 ## Log your hours
 
 1. Use the arrows to choose the week.
@@ -174,6 +180,8 @@ If your manager **sends it back**, their note shows at the top of the week. Chan
     paths: ["/expenses"],
     body: `
 If your company uses expense claims, open **Expenses** in the menu.
+
+> No **Expenses** in the menu? Expense claims are off until HR or an admin switches them on: **Settings** → **Expenses** → **Rules** → **Switch on expense claims**. See [Setting up expenses](/help/expenses-setup).
 
 ## Start a claim
 

@@ -22,6 +22,19 @@ Everything you set up lives under **Settings** in the menu. You only see the are
 
 ![The setup checklist at the top of Settings. Each step ticks itself when it is done.](shot:setup-checklist)
 
+## Features you switch on
+
+These are off for a new company. Until one is switched on, its menu item is hidden from everyone.
+
+| Feature | Where to switch it on |
+|---|---|
+| Clocking in and out | **Settings** → **Attendance** → **Rules** → **Switch on clocking in and out** |
+| Weekly timesheets | **Settings** → **Attendance** → **Rules** → **Switch on weekly timesheets** |
+| Expense claims | **Settings** → **Expenses** → **Rules** → **Switch on expense claims** |
+| Payroll and payslips | **Settings** → **Company** → **General settings** → **Run payroll in StaffPilot** (owners) |
+| Employees change their own photo | **Settings** → **Company** → **General settings** |
+| Employees upload their own files | **Settings** → **Company** → **General settings** |
+
 > On any settings page, the **?** button beside the bell opens its article.
 `,
   },
@@ -342,7 +355,7 @@ Every report downloads as **CSV**, **Excel** or **PDF**.
     audience: HR,
     paths: ["/settings/attendance"],
     body: `
-**Settings** → **Attendance** has three tabs.
+Attendance is off for a new company: nobody sees **Attendance** or the clock button on Home until you switch it on under **Rules** below. **Settings** → **Attendance** has three tabs.
 
 ## Rules
 
@@ -413,6 +426,8 @@ The **Rating spread** shows how many people sit at each rating, before and after
     audience: ["hr", "payroll"],
     paths: ["/settings/expenses", "/expenses?tab=all"],
     body: `
+Expense claims are off for a new company: nobody sees **Expenses** until you switch them on under **Rules**.
+
 ## Rules
 
 **Settings** → **Expenses** → **Rules**:
