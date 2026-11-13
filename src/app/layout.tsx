@@ -7,6 +7,8 @@ import "@fortawesome/fontawesome-svg-core/styles.css";
 
 import { SEO, SITE, siteUrl } from "@/lib/site";
 
+import { APPLE_TOUCH_ICON } from "./apple-touch-icon";
+
 import { Providers } from "./providers";
 import "./globals.css";
 
@@ -26,8 +28,10 @@ export const metadata: Metadata = {
   applicationName: SITE.name,
   // iPhone home-screen icon, at the address iOS also tries on its own (Chrome on iPhone falls back
   // to it). Opaque, as iOS fills transparency with black.
-  // A new file name makes iOS fetch it afresh: it keeps an icon it once failed to load per address.
-  icons: { apple: [{ url: "/icons/apple-180.png", sizes: "180x180", type: "image/png" }] },
+  // Embedded rather than linked: the Add to Home Screen sheet on iPhone uses its own loader, which
+  // can fail to fetch an icon address and then draws the name's first letter instead. The same
+  // picture is also at every root address iOS asks for (public/apple-touch-icon*.png).
+  icons: { apple: [{ url: APPLE_TOUCH_ICON, sizes: "180x180", type: "image/png" }] },
   appleWebApp: { capable: true, title: SITE.name, statusBarStyle: "default" },
   robots: { index: false, follow: false },
   openGraph: { siteName: SITE.name, locale: "en_NG", type: "website" },
