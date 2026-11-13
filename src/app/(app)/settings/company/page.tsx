@@ -3,15 +3,16 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useMutation, useQuery } from "urql";
 
-import { IconUpload } from "@/components/icons";
+import { CompanyLogo } from "@/components/CompanyLogo";
+import { IconCheck, IconUpload } from "@/components/icons";
 import {
-  Button, Card, Checkbox, ErrorNote, Field, FormSection, Input, Loading, Notice, Select, Textarea,
+  Button, Card, Checkbox, ErrorNote, Field, FormSection, Input, Loading, Notice, Select, Spinner, Textarea, cx,
 } from "@/components/ui";
 import { useSettingsTab } from "@/components/settings/areas";
 import { DataAndAccount } from "@/components/settings/DataAndAccount";
 import { graphql } from "@/gql";
 import type { CompanySettingsQuery } from "@/gql/graphql";
-import { errorMessage, postForm } from "@/lib/api";
+import { errorMessage, postFormWithProgress } from "@/lib/api";
 import { reportErrors } from "@/lib/forms";
 import { PERMS } from "@/lib/permissions";
 import { useSession } from "@/lib/session";
@@ -62,6 +63,9 @@ function Form({ initial, section, onSaved }: { initial: Settings; section: Compa
     payrollEnabled: initial.payrollEnabled,
   });
   const [logo, setLogo] = useState(initial.logoUrl);
+  // While a logo goes up: the chosen picture shown straight away, and the share sent so far.
+  const [uploading, setUploading] = useState<{ preview: string; share: number } | null>(null);
+  const [logoSaved, setLogoSaved] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string>();
   const [busy, setBusy] = useState(false);
@@ -79,13 +83,22 @@ function Form({ initial, section, onSaved }: { initial: Settings; section: Compa
   const colorChanged = isHex(v.primaryColor) && v.primaryColor.toLowerCase() !== savedColor.toLowerCase();
 
   async function uploadLogo(file: File) {
+    setLogoSaved(false);
+    if (!["image/png", "image/jpeg", "image/webp"].includes(file.type)) return setErrors({ logo: "Use a PNG, JPG or WebP image." });
+    if (file.size > 2 * 1024 * 1024) return setErrors({ logo: "Use an image of at most 2 MB." });
+    setErrors({});
+    const preview = URL.createObjectURL(file);
+    setUploading({ preview, share: 0 });
     const form = new FormData();
     form.set("file", file);
-    const body = await postForm<{ logoUrl?: string }>("/api/tenant/logo/", form);
+    const body = await postFormWithProgress<{ logoUrl?: string }>("/api/tenant/logo/", form,
+      (share) => setUploading((u) => (u ? { ...u, share } : u)));
+    setUploading(null);
+    URL.revokeObjectURL(preview);
     if (body.errors?.length) return setErrors({ logo: body.errors[0].message });
-    setErrors({});
     setLogo(body.logoUrl ?? null);
-    reset();
+    setLogoSaved(true);
+    reset(); // the menu and sign-in page pick up the new logo
   }
 
   async function submit(e: FormEvent) {
@@ -156,17 +169,30 @@ function Form({ initial, section, onSaved }: { initial: Settings; section: Compa
 
         {section === "branding" && <FormSection stacked title="Branding" description="Your logo and colour on the sign-in page, the menu and emails.">
           <div className="space-y-5">
-            <Field label="Logo" error={errors.logo} hint="PNG, JPG or WebP, up to 2 MB. Square or wide logos work best.">
+            <Field group label="Logo" error={errors.logo}
+              hint="PNG, JPG or WebP, up to 2 MB. A square mark works best; transparent backgrounds are fine, and empty margins are trimmed.">
               <div className="flex flex-wrap items-center gap-4">
-                <span className="grid h-16 w-16 place-items-center overflow-hidden rounded-xl border border-line bg-white">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  {logo ? <img src={logo} alt="Current logo" className="h-full w-full object-contain p-1.5" /> : <span className="text-xs text-muted">None</span>}
+                <span className="relative">
+                  {uploading || logo
+                    ? <CompanyLogo key={uploading?.preview ?? logo!} src={uploading?.preview ?? logo!} alt="Current logo" className="h-16 w-16 rounded-xl" pad="p-1.5" />
+                    : <span className="grid h-16 w-16 place-items-center rounded-xl border border-dashed border-line-strong text-xs text-muted">None</span>}
+                  {uploading && (
+                    <span className="absolute inset-0 grid place-items-center rounded-xl bg-black/40 text-white"><Spinner small /></span>
+                  )}
                 </span>
-                <label className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-lg border border-line-strong bg-surface px-4 text-sm font-medium text-ink shadow-sm hover:bg-subtle">
-                  <IconUpload size={16} />{logo ? "Replace" : "Upload"}
-                  <input type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" onChange={(e) => { const f = e.target.files?.[0]; if (f) void uploadLogo(f); }} />
+                <label aria-disabled={!!uploading}
+                  className={cx("inline-flex h-10 items-center gap-2 rounded-lg border border-line-strong bg-surface px-4 text-sm font-medium text-ink shadow-sm",
+                    uploading ? "cursor-wait opacity-70" : "cursor-pointer hover:bg-subtle")}>
+                  {uploading ? <>Uploading… {Math.round(uploading.share * 100)}%</> : <><IconUpload size={16} />{logo ? "Replace" : "Upload"}</>}
+                  <input type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" disabled={!!uploading}
+                    onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) void uploadLogo(f); }} />
                 </label>
-                {logo && <Button variant="ghost" onClick={async () => { await removeLogo({}); setLogo(null); reset(); }}>Remove</Button>}
+                {logo && !uploading && <Button variant="ghost" onClick={async () => { await removeLogo({}); setLogo(null); setLogoSaved(false); reset(); }}>Remove</Button>}
+                {logoSaved && !uploading && (
+                  <span role="status" className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-700 dark:text-emerald-400">
+                    <IconCheck size={15} /> Logo saved. It now shows on the menu, sign-in page and emails.
+                  </span>
+                )}
               </div>
             </Field>
             <Field label="Colour" error={errors.primaryColor}

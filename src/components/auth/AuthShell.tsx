@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { createContext, useContext, useId, useState, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode } from "react";
 
+import { CompanyLogo } from "@/components/CompanyLogo";
 import { initials } from "@/lib/format";
 import { useSession } from "@/lib/session";
 import { SITE } from "@/lib/site";
@@ -64,8 +65,7 @@ export function AuthShell({ title, subtitle, children, footer, aside, wide }: {
           <div className="w-full lg:max-w-[440px]">
             <div className="flex items-center gap-4">
               {tenant?.logoUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={tenant.logoUrl} alt="" className="h-12 w-12 rounded-xl bg-white object-contain p-1.5" />
+                <CompanyLogo src={tenant.logoUrl} className="h-12 w-12 rounded-xl" pad="p-1.5" />
               ) : tenant ? (
                 <span className="grid h-12 w-12 place-items-center rounded-xl bg-white/15 font-display text-lg font-semibold ring-1 ring-inset ring-white/25">
                   {initials(tenant.name)}

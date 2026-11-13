@@ -112,17 +112,26 @@ export function IconButton({ label, children, className, ...props }: ButtonHTMLA
 
 /* ------------------------------------------------------------------- Forms */
 
-export function Field({ label, hint, error, optional, children }: { label: string; hint?: ReactNode; error?: string; optional?: boolean; children: ReactNode }) {
+/**
+ * A labelled form control. `group` is for several controls, or a file picker with its own
+ * buttons: a <label> would pass every click anywhere inside it on to its first control, so
+ * clicking blank space would open the picker.
+ */
+export function Field({ label, hint, error, optional, group, children }: {
+  label: string; hint?: ReactNode; error?: string; optional?: boolean; group?: boolean; children: ReactNode;
+}) {
+  const id = useId();
+  const Wrapper = group ? "div" : "label";
   return (
-    <label className="block">
-      <span className="mb-1.5 flex items-baseline justify-between gap-2 text-[13px] font-medium text-ink">
+    <Wrapper className="block" {...(group ? { role: "group", "aria-labelledby": id } : {})}>
+      <span id={id} className="mb-1.5 flex items-baseline justify-between gap-2 text-[13px] font-medium text-ink">
         {label}
         {optional && <span className="text-xs font-normal text-muted">Optional</span>}
       </span>
       {children}
       {hint && !error && <span className="mt-1.5 block text-xs leading-relaxed text-muted">{hint}</span>}
       {error && <span className="mt-1.5 block text-xs text-red-600">{error}</span>}
-    </label>
+    </Wrapper>
   );
 }
 

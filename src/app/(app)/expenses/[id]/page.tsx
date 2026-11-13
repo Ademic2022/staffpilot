@@ -98,7 +98,7 @@ function LineEditor({ claimId, line, data, onClose, onSaved }: { claimId: string
           </Field>
         )}
         {!mileage && (
-          <Field label="Receipt" optional={!cat?.receiptRequired} error={errors.receipt}
+          <Field group label="Receipt" optional={!cat?.receiptRequired} error={errors.receipt}
             hint={cat?.receiptRequired && data.expenseSettings.receiptOver && Number(data.expenseSettings.receiptOver) > 0
               ? `Needed above ${formatMoney(String(data.expenseSettings.receiptOver), currency)}.` : "A photo or PDF."}>
             <div className="flex flex-wrap items-center gap-2">

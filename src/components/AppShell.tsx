@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, type ComponentType, type ReactNode } from "react";
 import { useMutation, useQuery } from "urql";
 
+import { CompanyLogo } from "@/components/CompanyLogo";
 import { graphql } from "@/gql";
 import { formatDate, initials } from "@/lib/format";
 import { PERMS } from "@/lib/permissions";
@@ -80,8 +81,7 @@ function ClosingBanner({ tenant, owner }: { tenant: Tenant; owner: boolean }) {
 
 function Crest({ tenant }: { tenant: Tenant | null }) {
   if (tenant?.logoUrl) {
-    // eslint-disable-next-line @next/next/no-img-element
-    return <img src={tenant.logoUrl} alt="" className="h-9 w-9 flex-none rounded-lg border border-line bg-white object-contain p-1" />;
+    return <CompanyLogo src={tenant.logoUrl} className="h-9 w-9" />;
   }
   const label = tenant ? initials(tenant.name.replace(/\b(ltd|limited|plc|inc|the)\b\.?/gi, "")) || tenant.name[0] : "";
   return (

@@ -61,7 +61,7 @@ export default function ImportEmployeesPage() {
           <Card title="Upload the file">
             <form onSubmit={submit} noValidate className="space-y-4">
               {problem && <ErrorNote error={problem} />}
-              <Field label="File" hint=".xlsx or .csv, up to 2,000 rows.">
+              <Field group label="File" hint=".xlsx or .csv, up to 2,000 rows.">
                 <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-dashed border-line-strong px-4 py-6 text-sm transition hover:bg-subtle/60">
                   <IconFile size={22} className="flex-none text-muted" />
                   <span className="min-w-0 flex-1 truncate">{file ? file.name : <span className="text-muted">Choose a file…</span>}</span>

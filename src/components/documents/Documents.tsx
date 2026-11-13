@@ -139,7 +139,7 @@ function UploadDialog({ employeeId, employeeName, own, onClose, onSaved }: {
       </>}>
       <form id="upload-form" onSubmit={submit} noValidate className="space-y-4">
         {formError && <ErrorNote error={formError} />}
-        <Field label="File" error={errors.file} hint="PDF, image, Word, Excel or text, up to 15 MB.">
+        <Field group label="File" error={errors.file} hint="PDF, image, Word, Excel or text, up to 15 MB.">
           <label className={cx("flex cursor-pointer items-center gap-3 rounded-lg border border-dashed px-4 py-4 text-sm transition hover:bg-subtle/60",
             errors.file ? "border-red-500" : "border-line-strong")}>
             <IconFile size={20} className="flex-none text-muted" />
