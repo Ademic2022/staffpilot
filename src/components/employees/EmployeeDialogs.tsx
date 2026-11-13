@@ -6,7 +6,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { useMutation, useQuery } from "urql";
 import { z } from "zod";
 
-import { Button, Dialog, ErrorNote, Field, Input, Select } from "@/components/ui";
+import { Button, Dialog, ErrorNote, Field, Input, Loading, Select } from "@/components/ui";
 import { graphql } from "@/gql";
 import type { EmployeeProfileQuery, EmployeeStatus, EmploymentType, JobChangeType, OvertimeStatus, PayFrequency, PaySchedule, PayType } from "@/gql/graphql";
 import { genderOptions } from "@/components/profile/fields";
@@ -248,6 +248,8 @@ export function ChangeJobDialog({ employee: e, onClose, onSaved, changeType = "P
             <Input type="date" aria-invalid={!!errors.effectiveDate} {...register("effectiveDate")} />
           </Field>
         </div>
+        {/* The selects mount once their options are here: mounted earlier, they would show "None" and keep it. */}
+        {!data ? <div className="border-t border-line pt-4"><Loading /></div> : (
         <div className="grid gap-4 border-t border-line pt-4 sm:grid-cols-2">
           {choice("jobTitleId", "Job title", activeOptions(data?.jobTitles, current.jobTitleId))}
           {choice("gradeId", "Grade", activeOptions(data?.grades, current.gradeId))}
@@ -262,6 +264,7 @@ export function ChangeJobDialog({ employee: e, onClose, onSaved, changeType = "P
             </Select>
           </Field>
         </div>
+        )}
         <Field label="Reason" optional hint="Shown in the employment history.">
           <ListInput id="job-reason" listKey="JOB_CHANGE_REASON" {...register("reason")} placeholder="Promotion" />
         </Field>
