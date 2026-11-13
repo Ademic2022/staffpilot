@@ -132,3 +132,26 @@ input::-ms-clear {
 @media (prefers-reduced-motion: reduce) {
   .confetti-piece { display: none; }
 }
+
+/*
+ * Date and time fields on iPhone: Safari gives them a minimum width of their own, so in a
+ * two-column row they run past the edge, and it centres their text oddly. Let them shrink like
+ * any other field and line the value up on the left, vertically centred.
+ */
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"],
+input[type="month"] {
+  min-width: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  display: flex;
+  align-items: center;
+}
+input::-webkit-date-and-time-value {
+  text-align: left;
+  margin: 0;
+}
+input::-webkit-datetime-edit {
+  padding: 0;
+}
