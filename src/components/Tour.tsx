@@ -55,17 +55,32 @@ type Box = { top: number; left: number; width: number; height: number };
 const PAD = 6;
 const CARD_W = 320;
 
-function place(box: Box | null, cardH: number) {
-  const vw = window.innerWidth, vh = window.innerHeight, gap = 14;
-  if (!box) return { top: Math.max(16, vh / 2 - cardH / 2), left: Math.max(16, vw / 2 - CARD_W / 2) };
+type Side = "right" | "below" | "above" | "over";
+const ARROW = 14; // the pointer's size; the card sits this far from the lit part
+
+/** Where the card goes, and which side of the lit part it is on (for its pointer). */
+function place(box: Box | null, cardH: number): { top: number; left: number; side: Side | null } {
+  const vw = window.innerWidth, vh = window.innerHeight, gap = ARROW;
+  if (!box) return { top: Math.max(16, vh / 2 - cardH / 2), left: Math.max(16, vw / 2 - CARD_W / 2), side: null };
   const clampX = (x: number) => Math.min(Math.max(16, x), vw - CARD_W - 16);
   const clampY = (y: number) => Math.min(Math.max(16, y), vh - cardH - 16);
-  if (box.left + box.width + gap + CARD_W + 16 <= vw && box.height < vh * 0.6) {
-    return { top: clampY(box.top), left: box.left + box.width + gap }; // to the right (sidebar parts)
+  // Beside it when there is room (the menu and other tall parts), so the card never covers what it explains.
+  if (box.left + box.width + gap + CARD_W + 16 <= vw) return { top: clampY(box.top), left: box.left + box.width + gap, side: "right" };
+  if (box.top + box.height + gap + cardH + 16 <= vh) return { top: box.top + box.height + gap, left: clampX(box.left), side: "below" };
+  if (box.top - gap - cardH >= 16) return { top: box.top - gap - cardH, left: clampX(box.left), side: "above" };
+  return { top: clampY(vh - cardH - 16), left: clampX(box.left), side: "over" };
+}
+
+/** The small pointer on the card's edge, aimed at the lit part. */
+function arrowStyle(side: Side | null, box: Box | null, at: { top: number; left: number }, cardH: number): React.CSSProperties | null {
+  if (!box || !side || side === "over") return null;
+  const half = ARROW / 2;
+  if (side === "right") {
+    const y = Math.min(Math.max(box.top + Math.min(box.height / 2, 24) - at.top, 18), cardH - 18);
+    return { left: -half, top: y - half };
   }
-  if (box.top + box.height + gap + cardH + 16 <= vh) return { top: box.top + box.height + gap, left: clampX(box.left) }; // below
-  if (box.top - gap - cardH >= 16) return { top: box.top - gap - cardH, left: clampX(box.left) }; // above
-  return { top: clampY(vh - cardH - 16), left: clampX(box.left) };
+  const x = Math.min(Math.max(box.left + Math.min(box.width / 2, 40) - at.left, 18), CARD_W - 18);
+  return side === "below" ? { top: -half, left: x - half } : { bottom: -half, left: x - half };
 }
 
 export function Tour() {
@@ -162,6 +177,7 @@ export function Tour() {
   if (!steps || !step) return null;
   const last = index === steps.length - 1;
   const at = place(step.target ? box : null, cardH);
+  const arrow = arrowStyle(at.side, step.target ? box : null, at, cardH);
 
   return createPortal(
     <div className="fixed inset-0 z-[60]" aria-live="polite">
@@ -169,13 +185,16 @@ export function Tour() {
       {step.target && box ? (
         <>
           <div className="absolute inset-0" />
-          <div className="pointer-events-none absolute rounded-xl ring-2 ring-brand transition-all duration-200 motion-reduce:transition-none"
-            style={{ ...box, boxShadow: "0 0 0 9999px rgba(10, 18, 14, 0.58)" }} />
+          {/* A clear ring in the brand colour (lightened on dark pages), pulsing once as it lands. */}
+          <div key={index} className="pointer-events-none absolute rounded-xl transition-all duration-200 motion-safe:animate-[tour-pulse_900ms_ease-out_1] motion-reduce:transition-none"
+            style={{ ...box, boxShadow: "0 0 0 3px var(--brand-ink), 0 0 0 9999px var(--tour-dim)" }} />
         </>
-      ) : <div className="absolute inset-0 bg-[rgba(10,18,14,0.58)]" />}
+      ) : <div className="absolute inset-0 bg-[var(--tour-dim)]" />}
       <div ref={card} role="dialog" aria-modal="true" aria-labelledby="tour-title" tabIndex={-1}
-        className="absolute rounded-2xl border border-line bg-surface p-5 shadow-xl outline-none transition-[top,left] duration-200 motion-reduce:transition-none"
+        className="absolute rounded-2xl border border-line-strong bg-surface p-5 shadow-2xl outline-none transition-[top,left] duration-200 motion-reduce:transition-none"
         style={{ top: at.top, left: at.left, width: CARD_W }}>
+        {arrow && <span aria-hidden className="absolute h-3.5 w-3.5 rotate-45 border-line-strong bg-surface"
+          style={{ ...arrow, borderWidth: at.side === "right" ? "0 0 1px 1px" : at.side === "below" ? "1px 0 0 1px" : "0 1px 1px 0" }} />}
         <p className="text-xs font-medium text-muted">{index + 1} of {steps.length}</p>
         <h2 id="tour-title" className="mt-1 text-[17px] font-semibold text-ink">{step.title}</h2>
         <p className="mt-1.5 text-sm leading-relaxed text-muted">{step.body}</p>
