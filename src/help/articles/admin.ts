@@ -22,6 +22,16 @@ Everything you set up lives under **Settings** in the menu. You only see the are
 
 ![The setup checklist at the top of Settings. Each step ticks itself when it is done.](shot:setup-checklist)
 
+## What a new company starts with
+
+So you are not starting from an empty page, a new company already has these. Change or remove any of them.
+
+- **Your legal entity** and a **Head office** location, in your country's time zone.
+- **Your own employee record**, at the head office.
+- **Leave types**: annual (20 days), sick (12 days, the Labour Act minimum), maternity (60 working days, 12 weeks), paternity (10 working days), compassionate and unpaid.
+- **Public holidays** for this year and next, for a Nigerian company. See [Setting up time off](/help/time-off-setup).
+- **Document categories**: contract, ID, certificates, work permit and disciplinary.
+
 ## Features you switch on
 
 These are off for a new company. Until one is switched on, its menu item is hidden from everyone.
@@ -64,7 +74,7 @@ How dates, amounts and names read for everyone, and what employees may do themse
 
 ## Logo and colour
 
-Upload a PNG, JPG or WebP logo (up to 2 MB) and choose your colour. They appear on the sign-in page, the menu and emails.
+Upload a PNG, JPG or WebP logo (up to 2 MB) and choose your colour. They appear on the sign-in page, the menu and emails. A transparent background works well: empty margins are trimmed, and a white logo is shown on a dark tile so it stays visible.
 
 ![Upload your logo (1) and pick your colour (2). The preview shows how it will look.](shot:company-branding)
 
@@ -82,7 +92,7 @@ Export everything your company keeps, or close the account. See [Exporting your 
   {
     slug: "users-and-access",
     title: "Users and access levels",
-    summary: "Inviting people, access levels, field access, data scope, View as and API keys.",
+    summary: "Inviting people one by one or all at once, access levels, field access, data scope, View as and API keys.",
     audience: HR,
     paths: ["/settings/users"],
     body: `
@@ -91,6 +101,14 @@ Export everything your company keeps, or close the account. See [Exporting your 
 ## Invite someone
 
 On **Users**, choose **Invite someone**. Enter their name and work email, choose their **access level**, and link **their employee record** so they see their own profile, leave and documents. They get an email to set a password. You can **cancel an invitation** that has not been used.
+
+An employee record and a login are separate: people in **People** cannot sign in until they are invited, so they are not on the Users list yet.
+
+## Invite many employees at once
+
+Choose **Invite employees** to invite everyone who has a work email and no login yet. Everyone is ticked; untick anyone who should wait, then **Send invitations**. Each person gets the **Employee** access level and is linked to their own record. People who have left, people already invited, and people with no work email are not listed (add a work email on their record to invite them).
+
+Managers, HR and payroll need more than the Employee level: invite them with **Invite someone**, or change their level once they have joined.
 
 To stop someone signing in, turn off **Can sign in**. Their access ends straight away; their records stay. The list shows each person's **last sign-in**, and **Export** downloads it.
 
@@ -172,7 +190,7 @@ When people change their legal name, bank details or ID numbers, the change wait
 - **Legal entities**: the companies that employ people, each with its country and currency. Payroll uses the country's tax rules.
 - **Locations**: offices and sites, with their time zone and public holidays. For attendance, a location can have a **clock-in area**: its latitude, longitude and radius in metres.
 - **Departments**: can sit under other departments.
-- **Job titles**.
+- **Job titles**, each with a **job description** (up to 4,000 characters, about 600 words) that shows on the Job tab of everyone with that title. **Write with AI** drafts one from the title, using anything you have typed as notes; read it and adjust it before saving, or choose **Undo**. Only the title and your notes are sent to write it.
 - **Grades and pay bands**: ranked grades, each with a minimum, midpoint and maximum pay. The **Pay bands** report shows who is outside their band.
 - **Teams**: groups that cut across departments, such as project teams. Everyone can see them.
 `,
@@ -209,6 +227,8 @@ Changing a policy does not change the day count of requests already made.
 ## Public holidays
 
 Add the days everyone is off, for every location or just some. Holidays are not counted as leave days.
+
+A Nigerian company starts with the federal public holidays for this year and next, and each new year is added automatically. A fixed holiday that falls on a weekend also gets the next working day, marked **(observed)**. Eid el-Fitr, Eid el-Kabir and Eid el-Maulud follow the moon, so their expected dates are marked **(to be confirmed)**: change them when the Federal Government announces the dates. A year you have already filled in yourself is never changed.
 
 ## Adjusting a balance
 

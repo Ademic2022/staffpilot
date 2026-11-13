@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { Badge, Button, Card, Checkbox, Dialog, ErrorNote, Field, IconButton, Input, Loading, Notice, Select, Table, TD, TH } from "@/components/ui";
 import { AccessLevels } from "@/components/settings/AccessLevels";
+import { InviteEmployeesDialog } from "@/components/settings/InviteEmployees";
 import { ApiKeys } from "@/components/settings/Integrations";
 import { useViewAs } from "@/components/settings/viewAs";
 import { useSettingsTab } from "@/components/settings/areas";
@@ -233,6 +234,7 @@ export default function UsersPage() {
   const { can } = useSession();
   const [{ data, error }, reload] = useQuery({ query: UsersAdminDocument });
   const [editing, setEditing] = useState<{ member: Member | null } | null>(null);
+  const [bulk, setBulk] = useState(false);
   const [, resend] = useMutation(ResendDocument);
   const viewAs = useViewAs();
   const { me } = useSession();
@@ -247,7 +249,7 @@ export default function UsersPage() {
 
   return (
     <>
-      <SettingsIntro actions={<><Button variant="secondary" onClick={() => exportCsv(data.members)}>Export</Button><Button icon={<IconPlus size={16} />} onClick={() => { setSaved(undefined); setEditing({ member: null }); }}>Invite someone</Button></>}>Who can sign in, what they can do, and whose records they reach.</SettingsIntro>
+      <SettingsIntro actions={<><Button variant="secondary" onClick={() => exportCsv(data.members)}>Export</Button><Button variant="secondary" onClick={() => { setSaved(undefined); setBulk(true); }}>Invite employees</Button><Button icon={<IconPlus size={16} />} onClick={() => { setSaved(undefined); setEditing({ member: null }); }}>Invite someone</Button></>}>Who can sign in, what they can do, and whose records they reach.</SettingsIntro>
       {saved && <Notice tone="success">{saved}</Notice>}
       <Card flush>
         <Table>
@@ -282,6 +284,10 @@ export default function UsersPage() {
           </tbody>
         </Table>
       </Card>
+      {bulk && (
+        <InviteEmployeesDialog onClose={() => setBulk(false)}
+          onDone={(message) => { setBulk(false); setSaved(message); reload({ requestPolicy: "network-only" }); }} />
+      )}
       {editing && (
         <MemberDialog data={data} member={editing.member} onClose={() => setEditing(null)}
           onSaved={(message) => { setEditing(null); setSaved(message); reload({ requestPolicy: "network-only" }); }} />

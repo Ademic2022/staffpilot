@@ -304,6 +304,8 @@ type Documents = {
     "mutation RevokeApiKey($id: ID!) { revokeApiKey(id: $id) }": typeof types.RevokeApiKeyDocument,
     "query MyEmailPreferences { myEmailPreferences { key label email } }": typeof types.MyEmailPreferencesDocument,
     "\n  mutation SetEmailPreferences($off: [String!]!) { setEmailPreferences(emailOff: $off) { key email } }\n": typeof types.SetEmailPreferencesDocument,
+    "\n  query InviteCandidates { inviteCandidates { withoutEmail people { employeeId name email department } } }\n": typeof types.InviteCandidatesDocument,
+    "\n  mutation InviteEmployees($ids: [ID!]!) { inviteEmployees(employeeIds: $ids) { invited problems { name message } } }\n": typeof types.InviteEmployeesDocument,
     "\n  query OptionListsAdmin {\n    optionLists { key name }\n    listOptions(includeInactive: true) { id listKey label position isActive }\n  }\n": typeof types.OptionListsAdminDocument,
     "\n  mutation SaveListOption($input: ListOptionInput!) {\n    saveListOption(input: $input) { option { id } errors { field message } }\n  }\n": typeof types.SaveListOptionDocument,
     "\n  mutation ReorderListOptions($ids: [ID!]!) { reorderListOptions(ids: $ids) }\n": typeof types.ReorderListOptionsDocument,
@@ -611,6 +613,8 @@ const documents: Documents = {
     "mutation RevokeApiKey($id: ID!) { revokeApiKey(id: $id) }": types.RevokeApiKeyDocument,
     "query MyEmailPreferences { myEmailPreferences { key label email } }": types.MyEmailPreferencesDocument,
     "\n  mutation SetEmailPreferences($off: [String!]!) { setEmailPreferences(emailOff: $off) { key email } }\n": types.SetEmailPreferencesDocument,
+    "\n  query InviteCandidates { inviteCandidates { withoutEmail people { employeeId name email department } } }\n": types.InviteCandidatesDocument,
+    "\n  mutation InviteEmployees($ids: [ID!]!) { inviteEmployees(employeeIds: $ids) { invited problems { name message } } }\n": types.InviteEmployeesDocument,
     "\n  query OptionListsAdmin {\n    optionLists { key name }\n    listOptions(includeInactive: true) { id listKey label position isActive }\n  }\n": types.OptionListsAdminDocument,
     "\n  mutation SaveListOption($input: ListOptionInput!) {\n    saveListOption(input: $input) { option { id } errors { field message } }\n  }\n": types.SaveListOptionDocument,
     "\n  mutation ReorderListOptions($ids: [ID!]!) { reorderListOptions(ids: $ids) }\n": types.ReorderListOptionsDocument,
@@ -1802,6 +1806,14 @@ export function graphql(source: "query MyEmailPreferences { myEmailPreferences {
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation SetEmailPreferences($off: [String!]!) { setEmailPreferences(emailOff: $off) { key email } }\n"): (typeof documents)["\n  mutation SetEmailPreferences($off: [String!]!) { setEmailPreferences(emailOff: $off) { key email } }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query InviteCandidates { inviteCandidates { withoutEmail people { employeeId name email department } } }\n"): (typeof documents)["\n  query InviteCandidates { inviteCandidates { withoutEmail people { employeeId name email department } } }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation InviteEmployees($ids: [ID!]!) { inviteEmployees(employeeIds: $ids) { invited problems { name message } } }\n"): (typeof documents)["\n  mutation InviteEmployees($ids: [ID!]!) { inviteEmployees(employeeIds: $ids) { invited problems { name message } } }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

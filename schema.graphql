@@ -239,6 +239,16 @@ input BonusTargetInput {
   amount: Decimal = null
 }
 
+type BulkInviteProblem {
+  name: String!
+  message: String!
+}
+
+type BulkInviteResult {
+  invited: Int!
+  problems: [BulkInviteProblem!]!
+}
+
 type CalendarAbsence {
   requestId: ID!
   employee: LeavePerson!
@@ -1349,6 +1359,20 @@ type Insights {
   onboarding: OnboardingSummary
 }
 
+type InviteCandidate {
+  employeeId: ID!
+  name: String!
+  email: String!
+  department: String
+}
+
+type InviteCandidates {
+  people: [InviteCandidate!]!
+
+  """Present employees with no work email, who cannot be invited yet."""
+  withoutEmail: Int!
+}
+
 input InviteMemberInput {
   email: String!
   firstName: String!
@@ -1927,6 +1951,11 @@ type Mutation {
   """Delete a role nobody holds. Built-in roles cannot be deleted."""
   deleteRole(id: ID!): Boolean!
   inviteMember(input: InviteMemberInput!): MemberPayload!
+
+  """
+  Invite the chosen employees (from inviteCandidates) by work email, with the Employee role.
+  """
+  inviteEmployees(employeeIds: [ID!]!): BulkInviteResult!
   updateMember(input: UpdateMemberInput!): MemberPayload!
   resendInvite(id: ID!): Boolean!
 
@@ -2839,6 +2868,11 @@ type Query {
   """The groups of employee fields a role's field access covers."""
   fieldGroups: [FieldGroupInfo!]!
   permissionCatalog: [PermissionInfo!]!
+
+  """
+  Employees who can be invited with the Employee role: present, with a work email and no login.
+  """
+  inviteCandidates: InviteCandidates!
 
   """Whether a set-password link is still good, and whose it is."""
   passwordLink(uid: String!, token: String!): String
