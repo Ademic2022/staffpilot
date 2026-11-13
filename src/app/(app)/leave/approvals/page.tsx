@@ -69,7 +69,7 @@ function DecideDialog({ request, approve: initial, override, onClose, onDone }: 
   }
 
   return (
-    <Dialog open onClose={onClose} title={override ? "Override as HR" : approve ? "Approve leave" : "Reject leave"}
+    <Dialog open onClose={onClose} title={override ? `Decide instead of ${request.waitingFor?.fullName ?? "the approver"}` : approve ? "Approve leave" : "Reject leave"}
       description={`${request.employee.fullName}: ${request.leaveType.name.toLowerCase()}, ${formatRange(request.startDate, request.endDate)} (${formatDays(request.days)}).`}
       footer={<>
         <Button variant="secondary" onClick={onClose} disabled={busy}>Cancel</Button>
@@ -221,7 +221,7 @@ export default function LeaveApprovalsPage() {
                   <div className="flex flex-col items-end gap-2">
                     <span className="text-xs text-muted">Waiting for {r.waitingFor?.fullName}</span>
                     <Button variant="secondary" onClick={() => { setSaved(undefined); setDeciding({ request: r, approve: true, override: true }); }}>
-                      Override as HR
+                      Decide instead
                     </Button>
                   </div>
                 ) : r.canDecide ? (
