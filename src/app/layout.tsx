@@ -24,6 +24,10 @@ export const metadata: Metadata = {
   title: { default: SITE.name, template: `%s · ${SITE.name}` },
   description: SEO.description,
   applicationName: SITE.name,
+  // iPhone home-screen icon, at the address iOS also tries on its own (Chrome on iPhone falls back
+  // to it). Opaque, as iOS fills transparency with black.
+  icons: { apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }] },
+  appleWebApp: { capable: true, title: SITE.name, statusBarStyle: "default" },
   robots: { index: false, follow: false },
   openGraph: { siteName: SITE.name, locale: "en_NG", type: "website" },
   twitter: { card: "summary_large_image" },
