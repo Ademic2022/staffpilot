@@ -13,6 +13,16 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   // Django's API paths end in "/"; let them through untouched instead of redirecting.
   skipTrailingSlashRedirect: true,
+  // The service worker must never be cached, or a fix to it would not reach installed apps.
+  async headers() {
+    return [{
+      source: "/sw.js",
+      headers: [
+        { key: "Cache-Control", value: "no-cache, no-store, must-revalidate" },
+        { key: "Content-Type", value: "application/javascript; charset=utf-8" },
+      ],
+    }];
+  },
   async rewrites() {
     // `:path*` drops a trailing slash, so slash-terminated paths get their own rule first.
     const withSlash = API_PATHS.filter((p) => p.endsWith("*")).map((p) => `${p}/`);

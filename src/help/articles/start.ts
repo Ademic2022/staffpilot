@@ -83,6 +83,33 @@ See time off and company dates in Google Calendar, Outlook or Apple Calendar. Un
 `,
   },
   {
+    slug: "on-your-phone",
+    title: "StaffPilot on your phone",
+    summary: "Install the app on your home screen and get notifications.",
+    audience: ["employee", "manager", "hr", "payroll"],
+    paths: [],
+    body: `
+StaffPilot works in your phone's browser, and you can also install it, so it opens from an icon like any other app.
+
+## Install it
+
+- **Android (Chrome)**: on **Home**, tap **Install** when StaffPilot offers it. Or open the browser menu and choose **Install app** (or **Add to Home screen**).
+- **iPhone and iPad (Safari)**: tap **Share**, then **Add to Home Screen**.
+
+You can also do it from **Your account** → **This device**. Install it from your company's own address, so the app opens on your company.
+
+## Turn on notifications
+
+Open **Your account** → **This device** → **Turn on notifications**, and allow them when your phone asks. Leave approvals, payslips and everything else under the bell then reach you even when StaffPilot is closed. Turn them on for each phone or computer you use; **Turn off** stops them on that device only.
+
+> On an iPhone, notifications only work in the installed app: add StaffPilot to your Home Screen first, open it from that icon, then turn notifications on.
+
+## With no signal
+
+StaffPilot needs a connection. Without one you see an **offline** page; tap **Try again** when you are back online. Nothing about your company is stored on the phone.
+`,
+  },
+  {
     slug: "home-page",
     title: "Your home page",
     summary: "Announcements, widgets, shortcuts and arranging your page.",

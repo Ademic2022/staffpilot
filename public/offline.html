@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>You are offline · StaffPilot</title>
+  <style>
+    :root { color-scheme: light dark; --ink: #15181a; --muted: #62676c; --bg: #f6f6f3; --brand: #7a6c2e; }
+    @media (prefers-color-scheme: dark) { :root { --ink: #e8eae8; --muted: #9ba3a0; --bg: #0e1111; --brand: #c9b97a; } }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: var(--bg); color: var(--ink);
+      font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; padding: 24px; box-sizing: border-box; text-align: center; }
+    img { width: 72px; height: 72px; border-radius: 16px; }
+    h1 { font-size: 22px; margin: 16px 0 6px; }
+    p { color: var(--muted); margin: 0 0 20px; max-width: 320px; }
+    button { font: inherit; font-weight: 600; color: #fff; background: var(--brand); border: 0; border-radius: 999px; padding: 10px 22px; }
+  </style>
+</head>
+<body>
+  <main>
+    <img src="/icons/icon-192.png" alt="">
+    <h1>You are offline</h1>
+    <p>StaffPilot needs a connection. Check your data or Wi-Fi, then try again.</p>
+    <button onclick="location.reload()">Try again</button>
+  </main>
+</body>
+</html>

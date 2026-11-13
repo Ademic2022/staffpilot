@@ -1919,6 +1919,14 @@ type Mutation {
   Mark some of your notifications read, or all of them when ids is null. Returns how many changed.
   """
   markNotificationsRead(ids: [ID!] = null): Int!
+
+  """
+  Turn on push notifications for this device: the browser's subscription.
+  """
+  savePushSubscription(endpoint: String!, p256dh: String!, auth: String!, userAgent: String! = ""): Boolean!
+
+  """Turn off push notifications for this device."""
+  removePushSubscription(endpoint: String!): Boolean!
   saveDocumentCategory(input: SaveDocumentCategoryInput!): DocumentCategoryPayload!
   updateDocument(input: UpdateDocumentInput!): DocumentPayload!
   removeDocument(id: ID!): Boolean!
@@ -2839,6 +2847,11 @@ type Query {
   """Your notifications, newest first."""
   notifications(unreadOnly: Boolean! = false, first: Int! = 20, after: String = null): NotificationConnection!
   unreadNotificationCount: Int!
+
+  """
+  The key a browser needs to subscribe to push notifications, or null when push is off.
+  """
+  pushPublicKey: String
 
   """Everyone currently working here, with work details only."""
   directory(search: String = null, departmentId: ID = null, managerId: ID = null, first: Int! = 50, after: String = null): DirectoryEntryConnection!

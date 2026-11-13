@@ -178,6 +178,9 @@ type Documents = {
     "\n  query NotificationList($first: Int!, $after: String) {\n    unreadNotificationCount\n    notifications(first: $first, after: $after) {\n      nodes { id kind title body link read createdAt }\n      pageInfo { hasNextPage endCursor }\n    }\n  }\n": typeof types.NotificationListDocument,
     "\n  query UnreadNotificationCount {\n    unreadNotificationCount\n  }\n": typeof types.UnreadNotificationCountDocument,
     "\n  mutation MarkNotificationsRead($ids: [ID!]) {\n    markNotificationsRead(ids: $ids)\n  }\n": typeof types.MarkNotificationsReadDocument,
+    "query PushPublicKey { pushPublicKey }": typeof types.PushPublicKeyDocument,
+    "\n  mutation SavePushSubscription($endpoint: String!, $p256dh: String!, $auth: String!, $userAgent: String!) {\n    savePushSubscription(endpoint: $endpoint, p256dh: $p256dh, auth: $auth, userAgent: $userAgent)\n  }\n": typeof types.SavePushSubscriptionDocument,
+    "mutation RemovePushSubscription($endpoint: String!) { removePushSubscription(endpoint: $endpoint) }": typeof types.RemovePushSubscriptionDocument,
     "\n  query PendingPayJobChanges {\n    pendingChanges { id kind kindName employeeId employeeName summary status step stepCount requestedBy createdAt canDecide canCancel }\n  }\n": typeof types.PendingPayJobChangesDocument,
     "\n  mutation DecidePendingChange($id: ID!, $approve: Boolean!, $note: String) {\n    decidePendingChange(id: $id, approve: $approve, note: $note) { change { id status } errors { message } }\n  }\n": typeof types.DecidePendingChangeDocument,
     "\n  mutation CancelPendingChange($id: ID!) {\n    cancelPendingChange(id: $id) { change { id status } errors { message } }\n  }\n": typeof types.CancelPendingChangeDocument,
@@ -487,6 +490,9 @@ const documents: Documents = {
     "\n  query NotificationList($first: Int!, $after: String) {\n    unreadNotificationCount\n    notifications(first: $first, after: $after) {\n      nodes { id kind title body link read createdAt }\n      pageInfo { hasNextPage endCursor }\n    }\n  }\n": types.NotificationListDocument,
     "\n  query UnreadNotificationCount {\n    unreadNotificationCount\n  }\n": types.UnreadNotificationCountDocument,
     "\n  mutation MarkNotificationsRead($ids: [ID!]) {\n    markNotificationsRead(ids: $ids)\n  }\n": types.MarkNotificationsReadDocument,
+    "query PushPublicKey { pushPublicKey }": types.PushPublicKeyDocument,
+    "\n  mutation SavePushSubscription($endpoint: String!, $p256dh: String!, $auth: String!, $userAgent: String!) {\n    savePushSubscription(endpoint: $endpoint, p256dh: $p256dh, auth: $auth, userAgent: $userAgent)\n  }\n": types.SavePushSubscriptionDocument,
+    "mutation RemovePushSubscription($endpoint: String!) { removePushSubscription(endpoint: $endpoint) }": types.RemovePushSubscriptionDocument,
     "\n  query PendingPayJobChanges {\n    pendingChanges { id kind kindName employeeId employeeName summary status step stepCount requestedBy createdAt canDecide canCancel }\n  }\n": types.PendingPayJobChangesDocument,
     "\n  mutation DecidePendingChange($id: ID!, $approve: Boolean!, $note: String) {\n    decidePendingChange(id: $id, approve: $approve, note: $note) { change { id status } errors { message } }\n  }\n": types.DecidePendingChangeDocument,
     "\n  mutation CancelPendingChange($id: ID!) {\n    cancelPendingChange(id: $id) { change { id status } errors { message } }\n  }\n": types.CancelPendingChangeDocument,
@@ -1302,6 +1308,18 @@ export function graphql(source: "\n  query UnreadNotificationCount {\n    unread
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation MarkNotificationsRead($ids: [ID!]) {\n    markNotificationsRead(ids: $ids)\n  }\n"): (typeof documents)["\n  mutation MarkNotificationsRead($ids: [ID!]) {\n    markNotificationsRead(ids: $ids)\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "query PushPublicKey { pushPublicKey }"): (typeof documents)["query PushPublicKey { pushPublicKey }"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation SavePushSubscription($endpoint: String!, $p256dh: String!, $auth: String!, $userAgent: String!) {\n    savePushSubscription(endpoint: $endpoint, p256dh: $p256dh, auth: $auth, userAgent: $userAgent)\n  }\n"): (typeof documents)["\n  mutation SavePushSubscription($endpoint: String!, $p256dh: String!, $auth: String!, $userAgent: String!) {\n    savePushSubscription(endpoint: $endpoint, p256dh: $p256dh, auth: $auth, userAgent: $userAgent)\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "mutation RemovePushSubscription($endpoint: String!) { removePushSubscription(endpoint: $endpoint) }"): (typeof documents)["mutation RemovePushSubscription($endpoint: String!) { removePushSubscription(endpoint: $endpoint) }"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

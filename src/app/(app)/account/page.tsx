@@ -6,6 +6,7 @@ import { useMutation } from "urql";
 import { IconCheck, IconLock } from "@/components/icons";
 import { Badge, Button, Card, ErrorNote, Field, Input, Notice, PageHeader, PasswordInput } from "@/components/ui";
 import { CalendarFeeds, EmailPreferences } from "@/components/settings/Integrations";
+import { ThisDevice } from "@/components/ThisDevice";
 import { graphql } from "@/gql";
 import { errorMessage } from "@/lib/api";
 import { reportErrors } from "@/lib/forms";
@@ -245,6 +246,7 @@ export default function AccountPage() {
       <div className="grid gap-5 lg:grid-cols-2">
         <TwoStepCard />
         <PasswordCard />
+        <ThisDevice />
         <EmailPreferences />
         <CalendarFeeds />
       </div>

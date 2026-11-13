@@ -6,6 +6,7 @@ import { useEffect, useState, type ComponentType, type ReactNode } from "react";
 import { useMutation, useQuery } from "urql";
 
 import { CompanyLogo } from "@/components/CompanyLogo";
+import { InstallBanner } from "@/components/ThisDevice";
 import { graphql } from "@/gql";
 import { formatDate, initials } from "@/lib/format";
 import { PERMS } from "@/lib/permissions";
@@ -286,6 +287,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         {tenant?.status === "closing" && <ClosingBanner tenant={tenant} owner={can(PERMS.tenantManage)} />}
         {me.viewingAs && <ViewAsBanner name={me.viewingAs.name} realName={me.viewingAs.realName} onStop={reset} />}
         <main id="main" className="mx-auto max-w-6xl space-y-5 px-4 py-6 sm:px-8 sm:py-8">
+          {pathname === "/home" && <InstallBanner />}
           {me.mfaSetupRequired && pathname !== "/account" && (
             <div data-tour="mfa"><Notice tone="warning" title="Set up two-step sign-in to use your admin access">
               {tenant?.name} requires it for your role. Until then you can use the app as an employee.{" "}
