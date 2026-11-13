@@ -72,4 +72,5 @@ export const IconNote = (p: IconProps) => <Icon {...p}><path d="M4.5 2.5h8l3 3v1
 export const IconCar = (p: IconProps) => <Icon {...p}><path d="M3 13.5V10l1.8-4.2a1.5 1.5 0 0 1 1.4-.8h7.6a1.5 1.5 0 0 1 1.4.8L17 10v3.5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1zM3 10h14" /><circle cx="6.5" cy="12" r=".6" fill="currentColor" /><circle cx="13.5" cy="12" r=".6" fill="currentColor" /><path d="M5 14.5v1.5M15 14.5v1.5" /></Icon>;
 export const IconLinkedIn = (p: IconProps) => <Icon {...p}><rect x="2.5" y="2.5" width="15" height="15" rx="2.5" /><path d="M6.5 9v4.5M6.5 6.5v.01M9.5 13.5V9M9.5 11c0-1.2.9-2 2-2s2 .8 2 2v2.5" /></Icon>;
 export const IconAt = (p: IconProps) => <Icon {...p}><circle cx="10" cy="10" r="3" /><path d="M13 10v1.2a2.3 2.3 0 0 0 4.5.5A7.5 7.5 0 1 0 14 16.4" /></Icon>;
+export const IconSparkle = (p: IconProps) => <Icon {...p}><path d="M9 2.5l1.5 4.2 4.2 1.5-4.2 1.5L9 13.9l-1.5-4.2L3.3 8.2l4.2-1.5zM15 12.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z" /></Icon>;
 export const IconChecklist = (p: IconProps) => <Icon {...p}><path d="m3.5 5 1.3 1.3L7.3 3.8M3.5 10.5l1.3 1.3 2.5-2.5M3.5 16l1.3 1.3 2.5-2.5M10 5.5h6.5M10 11h6.5M10 16.5h6.5" /></Icon>;

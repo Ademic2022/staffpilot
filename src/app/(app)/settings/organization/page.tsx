@@ -4,9 +4,9 @@ import { useSearchParams } from "next/navigation";
 import { useState, type FormEvent, type ReactNode } from "react";
 import { useClient, useQuery } from "urql";
 
-import { IconPlus, IconSitemap } from "@/components/icons";
+import { IconPlus, IconSitemap, IconSparkle } from "@/components/icons";
 import {
-  Badge, Button, Card, Checkbox, Dialog, Empty, ErrorNote, Field, Input, Loading, Notice, Select, Table, TD, TH, Textarea,
+  Badge, Button, Card, Checkbox, Dialog, Empty, ErrorNote, Field, Input, Loading, Notice, Select, Spinner, Table, TD, TH, Textarea, cx,
 } from "@/components/ui";
 import { useSettingsTab } from "@/components/settings/areas";
 import { SettingsIntro } from "@/components/settings/Intro";
@@ -26,7 +26,12 @@ const OrganizationDocument = graphql(`
     jobTitles { id name description isActive }
     grades { id name rank isActive payMin payMid payMax }
     employees(filter: { statuses: [ACTIVE, PROBATION, ON_LEAVE] }, first: 100) { nodes { id fullName } }
+    aiWriting
   }
+`);
+
+const DraftJobDescriptionDocument = graphql(`
+  mutation DraftJobDescription($title: String!, $notes: String!) { draftJobDescription(title: $title, notes: $notes) }
 `);
 
 const SaveLegalEntityDocument = graphql(`
@@ -129,7 +134,8 @@ const KINDS: Record<Kind, { label: string; singular: string; intro: string; fiel
     intro: "The titles you can give employees. The description shows on the Job tab of each record.",
     fields: [
       { name: "name", label: "Name", required: true, wide: true },
-      { name: "description", label: "Job description", type: "textarea", wide: true, hint: "What the role is for and what it covers." },
+      { name: "description", label: "Job description", type: "textarea", wide: true, maxLength: 4000,
+        hint: "What the role is for and what it covers. Up to 4,000 characters (about 600 words)." },
     ],
   },
   grades: {
@@ -179,6 +185,7 @@ function UnitDialog({ kind, data, editing, onClose, onSaved }: {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string>();
   const [busy, setBusy] = useState(false);
+  const [drafting, setDrafting] = useState(false);
   const set = (name: string, value: string | boolean) => setValues((v) => ({ ...v, [name]: value }));
 
   async function submit(ev: FormEvent) {
@@ -231,7 +238,16 @@ function UnitDialog({ kind, data, editing, onClose, onSaved }: {
                       {f.options?.(data, values, editing.id).map((o) => <option key={o.id} value={o.id}>{o.name}</option>)}
                     </Select>
                   ) : f.type === "textarea" ? (
-                    <Textarea rows={f.name === "description" ? 6 : 2} value={value} onChange={(e) => set(f.name, e.target.value)} />
+                    <>
+                      <Textarea rows={f.name === "description" ? (kind === "jobTitles" ? 12 : 6) : 2} value={value} readOnly={drafting}
+                        maxLength={f.maxLength} aria-invalid={invalid} onChange={(e) => set(f.name, e.target.value)} />
+                      {f.maxLength && (
+                        <span className={cx("mt-1 block text-right text-xs tabular-nums",
+                          value.length >= f.maxLength ? "font-medium text-red-600" : value.length > f.maxLength * 0.9 ? "text-amber-700 dark:text-amber-400" : "text-muted")}>
+                          {value.length.toLocaleString()} / {f.maxLength.toLocaleString()}
+                        </span>
+                      )}
+                    </>
                   ) : (
                     <Input value={value} aria-invalid={invalid} placeholder={f.placeholder} maxLength={f.maxLength}
                       inputMode={f.type === "number" ? "numeric" : undefined}
@@ -239,6 +255,10 @@ function UnitDialog({ kind, data, editing, onClose, onSaved }: {
                       onChange={(e) => set(f.name, e.target.value)} />
                   )}
                 </Field>
+                {kind === "jobTitles" && f.name === "description" && data.aiWriting && (
+                  <AiDraft title={String(values.name)} text={value} busy={drafting} setBusy={setDrafting}
+                    onDraft={(text) => set("description", text)} />
+                )}
               </div>
             );
           })}
@@ -249,6 +269,48 @@ function UnitDialog({ kind, data, editing, onClose, onSaved }: {
         )}
       </form>
     </Dialog>
+  );
+}
+
+/**
+ * "Write with AI" under a job description: drafts one from the title, using whatever is in the
+ * box as notes (or a draft to improve). The person reads and edits it before saving, and can
+ * undo straight back to what they had.
+ */
+function AiDraft({ title, text, busy, setBusy, onDraft }: {
+  title: string; text: string; busy: boolean; setBusy: (b: boolean) => void; onDraft: (text: string) => void;
+}) {
+  const client = useClient();
+  const [problem, setProblem] = useState<string>();
+  const [before, setBefore] = useState<string | null>(null);
+
+  async function write() {
+    if (!title.trim()) return setProblem("Enter the job title first.");
+    setProblem(undefined);
+    setBusy(true);
+    const r = await client.mutation(DraftJobDescriptionDocument, { title, notes: text }).toPromise();
+    setBusy(false);
+    const draft = r.data?.draftJobDescription;
+    if (!draft) return setProblem(errorMessage(r.error) ?? "No draft came back. Try again.");
+    setBefore(text);
+    onDraft(draft);
+  }
+
+  return (
+    <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5">
+      <Button type="button" size="sm" variant="secondary" onClick={write} disabled={busy}
+        icon={busy ? <Spinner small /> : <IconSparkle size={15} />}>
+        {busy ? "Writing…" : text.trim() ? "Rewrite with AI" : "Write with AI"}
+      </Button>
+      {before !== null && !busy && (
+        <button type="button" className="text-sm font-medium text-brand-ink hover:underline"
+          onClick={() => { onDraft(before); setBefore(null); }}>Undo</button>
+      )}
+      <span className="text-xs text-muted">
+        {problem ? <span className="text-red-600">{problem}</span>
+          : "Uses the title and anything you have typed here as notes. Read it and adjust it before saving."}
+      </span>
+    </div>
   );
 }
 

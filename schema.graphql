@@ -1852,6 +1852,9 @@ type Mutation {
   saveLocation(input: SaveLocationInput!): LocationPayload!
   saveDepartment(input: SaveDepartmentInput!): DepartmentPayload!
   saveJobTitle(input: SaveJobTitleInput!): JobTitlePayload!
+
+  """A draft job description for HR to read and edit; nothing is saved."""
+  draftJobDescription(title: String!, notes: String! = ""): String!
   saveGrade(input: SaveGradeInput!): GradePayload!
   hireEmployee(input: HireEmployeeInput!): EmployeePayload!
 
@@ -2763,6 +2766,9 @@ type Query {
   locations: [Location!]!
   departments: [Department!]!
   jobTitles: [JobTitle!]!
+
+  """Whether the server can draft text, such as job descriptions, with AI."""
+  aiWriting: Boolean!
   grades: [Grade!]!
   employees(filter: EmployeeFilter = null, first: Int! = 50, after: String = null, sort: String = null, descending: Boolean! = false): EmployeeConnection!
   employee(id: ID!): Employee!

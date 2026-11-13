@@ -72,6 +72,7 @@ export default function PrivacyPage() {
           <li>Our server and database hosting provider, which runs the application and stores its database.</li>
           <li>Cloudflare, whose R2 service stores uploaded files such as photos, documents, receipts and payslips.</li>
           <li>Mailjet, which delivers the service&apos;s emails.</li>
+          <li>Groq, which drafts text when you ask for writing help, such as a job description. Only the job title and the notes you typed are sent, never records about people.</li>
           <li>Namecheap, which hosts our support mailbox.</li>
         </ul>
         <p>
