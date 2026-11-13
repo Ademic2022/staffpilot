@@ -88,7 +88,7 @@ export function GlobalSearch({ compact = false }: { compact?: boolean }) {
         className={cx("flex items-center gap-2.5 rounded-lg border border-line bg-surface text-sm text-muted transition hover:border-line-strong hover:text-ink",
           compact ? "h-9 w-9 justify-center" : "h-9 w-full px-3")}>
         <FontAwesomeIcon icon={faMagnifyingGlass} className="text-xs" />
-        {!compact && <><span className="flex-1 text-left">Search</span><kbd className="rounded border border-line px-1.5 text-[10px]">⌘K</kbd></>}
+        {!compact && <><span className="flex-1 text-left">Search</span><kbd className="rounded border border-line px-1.5 text-[10px] pointer-coarse:hidden">⌘K</kbd></>}
       </button>
       {open && (
         <div className="fixed inset-0 z-[70] flex items-start justify-center bg-black/40 px-4 pt-[12vh]" onMouseDown={() => setOpen(false)}>

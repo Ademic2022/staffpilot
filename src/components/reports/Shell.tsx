@@ -34,7 +34,7 @@ export function ReportsShell({ tab, actions, children }: { tab: ReportsTab; acti
         </div>
       </div>
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-        <nav aria-label="Reports" className="flex gap-1 overflow-x-auto lg:w-56 lg:flex-none lg:flex-col">
+        <nav aria-label="Reports" className="flex gap-1 overflow-x-auto pr-8 lg:w-56 lg:flex-none lg:flex-col lg:pr-0 [mask-image:linear-gradient(to_right,black_85%,transparent)] lg:[mask-image:none]">
           {TABS.filter((t) => t.key !== "custom" || can(PERMS.employeesView)).map((t) => (
             <Link key={t.key} href={`/reports?tab=${t.key}`} aria-current={tab === t.key ? "page" : undefined}
               className={cx("flex items-center gap-3 whitespace-nowrap rounded-xl px-3.5 py-2.5 text-sm font-medium transition",

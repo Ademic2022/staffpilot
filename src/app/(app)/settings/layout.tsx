@@ -24,7 +24,7 @@ function Shell({ children }: { children: ReactNode }) {
       <h1 className="font-display text-[26px] font-medium leading-tight tracking-[-0.01em] text-ink sm:text-[30px]">Settings</h1>
       <SetupBar />
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-        <nav aria-label="Settings" className="flex gap-1 overflow-x-auto lg:w-60 lg:flex-none lg:flex-col">
+        <nav aria-label="Settings" className="flex gap-1 overflow-x-auto pr-8 lg:w-60 lg:flex-none lg:flex-col lg:pr-0 [mask-image:linear-gradient(to_right,black_85%,transparent)] lg:[mask-image:none]">
           {areas.map((a) => {
             const active = a === area;
             return (

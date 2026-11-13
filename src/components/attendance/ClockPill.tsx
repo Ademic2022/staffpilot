@@ -95,7 +95,7 @@ export function ClockPill() {
       </button>
       {open && (
         <div role="dialog" aria-label="Clock in and out"
-          className="absolute right-0 z-40 mt-2 w-72 rounded-xl border border-line bg-surface p-4 shadow-lg">
+          className="absolute left-0 z-40 mt-2 w-[min(18rem,calc(100vw-2rem))] rounded-xl border border-line bg-surface p-4 shadow-lg sm:left-auto sm:right-0">
           <p className="text-sm text-muted">{me.shiftStart ? `Today: ${me.shift}, ${me.shiftStart} – ${me.shiftEnd}` : "Not a working day for you"}</p>
           <p className="mt-1 text-[17px] font-semibold text-ink">
             {since ? `In since ${clockTime(since)} · ${elapsed}` : "You are clocked out"}

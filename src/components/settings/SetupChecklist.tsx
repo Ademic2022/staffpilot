@@ -21,7 +21,7 @@ const GROUPS: [string, string][] = [["essentials", "Essentials"], ["payroll", "P
 function Ring({ percent }: { percent: number }) {
   const r = 22, c = 2 * Math.PI * r;
   return (
-    <span className="relative grid h-14 w-14 flex-none place-items-center">
+    <span className="relative hidden h-14 w-14 flex-none place-items-center sm:grid">
       <svg viewBox="0 0 50 50" className="absolute inset-0 -rotate-90" aria-hidden>
         <circle cx="25" cy="25" r={r} fill="none" strokeWidth="5" className="stroke-subtle" />
         <circle cx="25" cy="25" r={r} fill="none" strokeWidth="5" strokeLinecap="round" className="stroke-brand"
@@ -50,7 +50,7 @@ export function SetupCard({ setup, company }: { setup: Setup; company: string })
           <div className="flex items-start justify-between gap-3">
             <div>
               <h2 className="text-[16px] font-semibold text-ink">Set up {company}</h2>
-              <p className="mt-0.5 text-sm text-muted">{done} of {setup.steps.length} done. Each step ticks itself once it is done.</p>
+              <p className="mt-0.5 text-sm text-muted"><span className="font-medium text-ink sm:hidden">{setup.percent}% · </span>{done} of {setup.steps.length} done. Each step ticks itself once it is done.</p>
             </div>
             <button type="button" className="flex-none text-sm text-muted hover:text-ink"
               onClick={() => setHidden(true)}>
@@ -116,19 +116,20 @@ export function SetupBar() {
   const done = setup.steps.filter((s) => s.done).length;
   return (
     <div className="rounded-2xl border border-line bg-surface px-4 py-3 shadow-sm">
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-        <div className="min-w-0 flex-1">
+      {/* Stacked on a phone; one row from sm up. */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+        <div className="min-w-0 sm:flex-1">
           <div className="flex items-center justify-between gap-3 text-sm">
             <span className="font-semibold text-ink">Setup: {done} of {setup.steps.length} done</span>
-            <button type="button" onClick={() => setOpen((o) => !o)} className="text-brand-ink hover:underline">{open ? "Hide steps" : "All steps"}</button>
+            <button type="button" onClick={() => setOpen((o) => !o)} className="flex-none text-brand-ink hover:underline">{open ? "Hide steps" : "All steps"}</button>
           </div>
           <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-subtle">
             <div className="h-full rounded-full bg-brand transition-[width]" style={{ width: `${setup.percent}%` }} />
           </div>
         </div>
         {next && (
-          <Link href={next.href} className="inline-flex items-center gap-2 rounded-full bg-brand px-3.5 py-1.5 text-sm font-medium text-white hover:opacity-90">
-            Next: {next.label} <FontAwesomeIcon icon={faChevronRight} className="text-xs" />
+          <Link href={next.href} className="inline-flex min-w-0 items-center justify-between gap-2 rounded-full bg-brand px-3.5 py-1.5 text-sm font-medium text-white hover:opacity-90 sm:flex-none sm:justify-start">
+            <span className="truncate">Next: {next.label}</span> <FontAwesomeIcon icon={faChevronRight} className="flex-none text-xs" />
           </Link>
         )}
       </div>

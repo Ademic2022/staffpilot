@@ -69,32 +69,45 @@ function Elapsed({ since }: { since: string }) {
   return <>{hm(Math.max(0, Math.floor((now - new Date(since).getTime()) / 60000)))}</>;
 }
 
+/** "Fri 13 Nov": fits a phone's table column on one line. */
+function shortDay(iso: string) {
+  return new Date(`${iso}T12:00:00`).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
+}
+
+function DayBadges({ d, flags }: { d: Day; flags: string[] }) {
+  return (
+    <>
+      {d.absent && <Badge tone="bad">Absent</Badge>}
+      {d.onLeave && <Badge tone="brand">On leave</Badge>}
+      {flags.map((f) => <Badge key={f} tone={f === "late" || f === "off_site" ? "warn" : "neutral"}>{FLAG[f] ?? f}</Badge>)}
+      {d.overtime && <Badge tone={d.overtime.status === "approved" ? "good" : d.overtime.status === "rejected" ? "neutral" : "warn"}>
+        Overtime {hm(d.overtime.minutes)} · {d.overtime.status === "pending" ? "waiting" : d.overtime.status}</Badge>}
+    </>
+  );
+}
+
 function DayRows({ days, onEdit }: { days: Day[]; onEdit?: (d: Day) => void }) {
   return (
     <table className="w-full text-sm">
       <thead className="bg-subtle/70 text-left"><tr>
         <th className="px-4 py-2.5 font-semibold text-ink">Day</th><th className="px-3 py-2.5 font-semibold text-ink">In</th>
         <th className="px-3 py-2.5 font-semibold text-ink">Out</th><th className="px-3 py-2.5 text-right font-semibold text-ink">Worked</th>
-        <th className="px-3 py-2.5 font-semibold text-ink" /><th className="w-10" />
+        <th className="hidden px-3 py-2.5 font-semibold text-ink sm:table-cell" /><th className="w-10" />
       </tr></thead>
       <tbody className="divide-y divide-line">
         {days.map((d) => {
           const flags = [...new Set(d.entries.flatMap((e) => e.flags))];
           return (
             <tr key={d.date}>
-              <td className="px-4 py-2"><span className="text-ink">{formatDate(d.date)}</span>
-                <span className="block text-xs text-muted">{d.holiday ? "Public holiday" : d.scheduled ? d.shift : "Not a working day"}</span></td>
+              <td className="px-4 py-2">
+                <span className="whitespace-nowrap text-ink"><span className="sm:hidden">{shortDay(d.date)}</span><span className="hidden sm:inline">{formatDate(d.date)}</span></span>
+                <span className="block text-xs text-muted">{d.holiday ? "Public holiday" : d.scheduled ? d.shift : "Not a working day"}</span>
+                <span className="mt-1 flex flex-wrap gap-1 sm:hidden"><DayBadges d={d} flags={flags} /></span></td>
               <td className="px-3 py-2 tabular-nums">{time(d.entries[0]?.clockIn)}</td>
               <td className="px-3 py-2 tabular-nums">{d.entries.length ? time(d.entries[d.entries.length - 1].clockOut) : "—"}</td>
               <td className="px-3 py-2 text-right tabular-nums">{d.worked ? hm(d.worked) : "—"}</td>
-              <td className="px-3 py-2">
-                <span className="flex flex-wrap gap-1">
-                  {d.absent && <Badge tone="bad">Absent</Badge>}
-                  {d.onLeave && <Badge tone="brand">On leave</Badge>}
-                  {flags.map((f) => <Badge key={f} tone={f === "late" || f === "off_site" ? "warn" : "neutral"}>{FLAG[f] ?? f}</Badge>)}
-                  {d.overtime && <Badge tone={d.overtime.status === "approved" ? "good" : d.overtime.status === "rejected" ? "neutral" : "warn"}>
-                    Overtime {hm(d.overtime.minutes)} · {d.overtime.status === "pending" ? "waiting" : d.overtime.status}</Badge>}
-                </span>
+              <td className="hidden px-3 py-2 sm:table-cell">
+                <span className="flex flex-wrap gap-1"><DayBadges d={d} flags={flags} /></span>
               </td>
               <td className="pr-2">{onEdit && <IconButton label={`Edit ${d.date}`} onClick={() => onEdit(d)}><FontAwesomeIcon icon={faPen} className="text-xs" /></IconButton>}</td>
             </tr>
