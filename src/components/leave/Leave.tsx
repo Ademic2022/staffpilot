@@ -232,6 +232,8 @@ export function RequestLeaveDialog({ balances, employeeId, onClose, onSaved }: {
   const quote = ready ? quoteData?.leaveQuote : undefined;
   const quoteError = quote?.errors[0]?.message;
   const short = quote?.availableAfter != null && Number(quote.availableAfter) < 0;
+  // Every chosen day is a weekend or public holiday: nothing to take, so say so before they send.
+  const noWorkingDays = !quoteError && quote?.days != null && Number(quote.days) === 0;
 
   async function submit(ev: FormEvent) {
     ev.preventDefault();
@@ -249,6 +251,8 @@ export function RequestLeaveDialog({ balances, employeeId, onClose, onSaved }: {
     const found: Record<string, string> = {};
     const failed = reportErrors(result, result.data?.requestLeave.errors, ["startDate", "endDate", "halfDay", "leaveType"] as const,
       (f, message) => { found[f] = message; }, setFormError);
+    // For a half day only one date is shown: a problem with the "last day" belongs on it.
+    if (halfDay && found.endDate && !found.startDate) { found.startDate = found.endDate; delete found.endDate; }
     setErrors(found);
     if (found.leaveType || found.halfDay) setFormError(found.leaveType ?? found.halfDay);
     const made = result.data?.requestLeave.request;
@@ -260,7 +264,7 @@ export function RequestLeaveDialog({ balances, employeeId, onClose, onSaved }: {
       description="Weekends and public holidays are not counted."
       footer={<>
         <Button variant="secondary" onClick={onClose} disabled={busy}>Cancel</Button>
-        <Button type="submit" form="leave-form" busy={busy} disabled={short}>Send request</Button>
+        <Button type="submit" form="leave-form" busy={busy} disabled={short || noWorkingDays}>Send request</Button>
       </>}>
       <form id="leave-form" onSubmit={submit} noValidate className="space-y-4">
         {formError && <ErrorNote error={formError} />}
@@ -290,11 +294,15 @@ export function RequestLeaveDialog({ balances, employeeId, onClose, onSaved }: {
 
         {ready && (
           <div aria-live="polite" className={cx("rounded-lg border px-4 py-3 text-sm",
-            quoteError || short ? "border-red-200 bg-red-50 text-red-900 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-100" : "border-line bg-subtle/60")}>
+            quoteError || short || noWorkingDays ? "border-red-200 bg-red-50 text-red-900 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-100" : "border-line bg-subtle/60")}>
             {quoting && !quote ? (
               <span className="text-muted">Working out the days…</span>
             ) : quoteError ? (
               quoteError
+            ) : noWorkingDays ? (
+              halfDay || start === endDate
+                ? `${formatDate(start)} is a weekend or public holiday, so there is nothing to take. Choose a working day.`
+                : "Every day in these dates is a weekend or public holiday, so there is nothing to take. Choose working days."
             ) : quote ? (
               <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
                 <span><span className="font-semibold tabular-nums">{formatDays(quote.days ?? 0)}</span> of {type?.leaveType.name.toLowerCase()}</span>
