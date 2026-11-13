@@ -24,6 +24,7 @@ export default function ImportEmployeesPage() {
   const [problem, setProblem] = useState<string>();
   const [errors, setErrors] = useState<ImportError[]>([]);
   const [created, setCreated] = useState<number | null>(null);
+  const [examples, setExamples] = useState(0);
   const reportUrl = useMemo(() => (errors.length ? errorReport(errors) : null), [errors]);
 
   if (!can(PERMS.employeesManage)) return <Notice tone="warning">You do not have permission to import employees.</Notice>;
@@ -37,8 +38,9 @@ export default function ImportEmployeesPage() {
     setCreated(null);
     const form = new FormData();
     form.set("file", file);
-    const body = await postForm<{ created?: number; errors?: ImportError[] }>("/api/employees/import/", form);
+    const body = await postForm<{ created?: number; errors?: ImportError[]; skippedExamples?: number }>("/api/employees/import/", form);
     setBusy(false);
+    setExamples(body.skippedExamples ?? 0);
     const rows = (body.errors ?? []) as (ImportError & { field?: string | null })[];
     if (rows.length && rows[0].row === undefined) return setProblem(rows[0].message);
     if (rows.length) return setErrors(rows);
@@ -56,6 +58,7 @@ export default function ImportEmployeesPage() {
           {created !== null && (
             <Notice tone="success" title={`Imported ${created} ${created === 1 ? "employee" : "employees"}`}>
               They are on the employee list now, with their first job record and audit entries.
+              {examples > 0 && ` The ${examples} example ${examples === 1 ? "row" : "rows"} from the template ${examples === 1 ? "was" : "were"} left out.`}
             </Notice>
           )}
           <Card title="Upload the file">
@@ -96,7 +99,7 @@ export default function ImportEmployeesPage() {
         <Card title="How it works">
           <ol className="space-y-4 text-sm">
             {[
-              <>Download the template. It has a column for every field, with notes on what each expects.</>,
+              <>Download the template. It has a column for every field, with notes on what each expects, and three grey example rows numbered EXAMPLE to show the format. Example rows are never imported.</>,
               <>Fill in one row per person. Legal entity, departments and job titles must match the names under Organization.</>,
               <>Upload it. Every row is checked first: if any row has a problem, nothing is imported and you get a list to fix.</>,
             ].map((step, i) => (

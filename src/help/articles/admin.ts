@@ -128,7 +128,7 @@ From **People**, choose **New employee**. Fill in their legal name, hire date, l
 
 ## Import many at once
 
-From the **…** menu on People, choose **Import employees**. **Download template** (it has a column for every field, with notes), fill in one row per person, and upload it as Excel or CSV. Legal entities, departments and job titles must match the names under Job organization. Every row is checked first: if any row has a problem, nothing is imported and you get a list to fix.
+From the **…** menu on People, choose **Import employees**. **Download template** (it has a column for every field, with notes, and three grey example rows using your own organization names), fill in one row per person, and upload it as Excel or CSV. The example rows are numbered **EXAMPLE-1** to **EXAMPLE-3** and are never imported, so it does not matter if you leave them in. Legal entities, departments and job titles must match the names under Job organization. Every row is checked first: if any row has a problem, nothing is imported and you get a list to fix.
 
 ![Download the template, fill in one row per person, then upload it.](shot:employee-import)
 
