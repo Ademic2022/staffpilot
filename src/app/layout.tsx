@@ -26,7 +26,8 @@ export const metadata: Metadata = {
   applicationName: SITE.name,
   // iPhone home-screen icon, at the address iOS also tries on its own (Chrome on iPhone falls back
   // to it). Opaque, as iOS fills transparency with black.
-  icons: { apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }] },
+  // A new file name makes iOS fetch it afresh: it keeps an icon it once failed to load per address.
+  icons: { apple: [{ url: "/icons/apple-180.png", sizes: "180x180", type: "image/png" }] },
   appleWebApp: { capable: true, title: SITE.name, statusBarStyle: "default" },
   robots: { index: false, follow: false },
   openGraph: { siteName: SITE.name, locale: "en_NG", type: "website" },
