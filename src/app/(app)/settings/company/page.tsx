@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useMutation, useQuery } from "urql";
 
 import { CompanyLogo } from "@/components/CompanyLogo";
+import { TimeZoneSelect } from "@/components/TimeZoneSelect";
 import { IconCheck, IconUpload } from "@/components/icons";
 import {
   Button, Card, Checkbox, ErrorNote, Field, FormSection, Input, Loading, Notice, Select, Spinner, Textarea, cx,
@@ -48,7 +49,6 @@ const DATE_FORMATS = [
 ];
 const NAME_FORMATS = [["first_last", "First Last (Ada Owner)"], ["first_middle_last", "First Middle Last (Ada Ngozi Owner)"], ["last_first", "Last, First (Owner, Ada)"]];
 export type CompanySection = "info" | "general" | "branding" | "security" | "data";
-const ZONES = typeof Intl.supportedValuesOf === "function" ? Intl.supportedValuesOf("timeZone") : ["Africa/Lagos", "UTC"];
 
 function Form({ initial, section, onSaved }: { initial: Settings; section: CompanySection; onSaved: () => void }) {
   const { me, reset } = useSession();
@@ -130,9 +130,7 @@ function Form({ initial, section, onSaved }: { initial: Settings; section: Compa
             <Field label="Currency" error={errors.currency} hint="Three letters, e.g. NGN. Used for new pay records."><Input value={v.currency} maxLength={3} className="uppercase" onChange={(e) => set("currency", e.target.value)} /></Field>
             <div className="sm:col-span-2">
               <Field label="Time zone" error={errors.timezone} hint="Leave days, reminders and reports follow this.">
-                <Select value={v.timezone} onChange={(e) => set("timezone", e.target.value)}>
-                  {ZONES.map((z) => <option key={z} value={z}>{z}</option>)}
-                </Select>
+                <TimeZoneSelect value={v.timezone} onChange={(e) => set("timezone", e.target.value)} />
               </Field>
             </div>
           </div>

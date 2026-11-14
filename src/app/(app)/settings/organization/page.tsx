@@ -5,6 +5,7 @@ import { useState, type FormEvent, type ReactNode } from "react";
 import { useClient, useQuery } from "urql";
 
 import { IconPlus, IconSitemap, IconSparkle } from "@/components/icons";
+import { TimeZoneSelect } from "@/components/TimeZoneSelect";
 import {
   Badge, Button, Card, Checkbox, Dialog, Empty, ErrorNote, Field, Input, Loading, Notice, Select, Spinner, Table, TD, TH, Textarea, cx,
 } from "@/components/ui";
@@ -67,7 +68,7 @@ type Option = { id: string; name: string };
 interface FieldDef {
   name: string;
   label: string;
-  type?: "text" | "number" | "select" | "textarea" | "money";
+  type?: "text" | "number" | "select" | "textarea" | "money" | "timezone";
   required?: boolean;
   hint?: string;
   placeholder?: string;
@@ -121,7 +122,7 @@ const KINDS: Record<Kind, { label: string; singular: string; intro: string; fiel
       { name: "legalEntityId", label: "Legal entity", type: "select", required: true, options: entityOptions, empty: "Choose…" },
       { name: "city", label: "City" },
       { name: "country", label: "Country code", required: true, upper: true, maxLength: 2, placeholder: "NG" },
-      { name: "timezone", label: "Time zone", placeholder: "Africa/Lagos", hint: "An IANA name, such as Africa/Lagos." },
+      { name: "timezone", label: "Time zone", type: "timezone", hint: "For attendance and local times at this site." },
       { name: "address", label: "Address", type: "textarea", wide: true },
       { name: "latitude", label: "Latitude", type: "money", placeholder: "6.4541", hint: "For attendance: where the site is." },
       { name: "longitude", label: "Longitude", type: "money", placeholder: "3.3947" },
@@ -237,6 +238,9 @@ function UnitDialog({ kind, data, editing, onClose, onSaved }: {
                       <option value="">{f.empty}</option>
                       {f.options?.(data, values, editing.id).map((o) => <option key={o.id} value={o.id}>{o.name}</option>)}
                     </Select>
+                  ) : f.type === "timezone" ? (
+                    <TimeZoneSelect value={value} aria-invalid={invalid} empty="Same as the company"
+                      onChange={(e) => set(f.name, e.target.value)} />
                   ) : f.type === "textarea" ? (
                     <>
                       <Textarea rows={f.name === "description" ? (kind === "jobTitles" ? 12 : 6) : 2} value={value} readOnly={drafting}
