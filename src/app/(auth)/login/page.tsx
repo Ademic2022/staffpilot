@@ -13,6 +13,7 @@ import { Notice } from "@/components/ui";
 import { AuthAlert, AuthButton, AuthField, AuthInput, AuthShell, PasswordInput } from "@/components/auth/AuthShell";
 import { graphql } from "@/gql";
 import { errorMessage } from "@/lib/api";
+import { safeNext } from "@/lib/safeNext";
 import { useSession } from "@/lib/session";
 
 const LoginDocument = graphql(`
@@ -83,11 +84,6 @@ const schema = z.object({
 });
 
 type Values = z.infer<typeof schema>;
-
-/** Only paths on this site, so a crafted ?next= cannot send people elsewhere after sign-in. */
-function safeNext(value: string | null) {
-  return value && value.startsWith("/") && !value.startsWith("//") ? value : "/home";
-}
 
 function LoginForm() {
   const router = useRouter();
