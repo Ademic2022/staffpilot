@@ -52,7 +52,7 @@ function DecideDialog({ request, approve: initial, override, onClose, onDone }: 
   async function confirm() {
     setError(undefined);
     if ((override || !approve) && !note.trim()) {
-      setNoteError(override ? "Say why HR is deciding. It is kept in the audit log." : "Say why. The employee sees this.");
+      setNoteError(override ? `Say why you are deciding instead of ${request.waitingFor?.fullName ?? "the approver"}. It is kept in the audit log.` : "Say why. The employee sees this.");
       return;
     }
     setBusy(true);
