@@ -1568,6 +1568,8 @@ type LeavePerson {
 
   """A ten-minute link to their photo, or null."""
   photoUrl: String
+  hireDate: Date
+  foundingMember: Boolean!
 }
 
 type LeavePolicy {

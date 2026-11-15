@@ -199,7 +199,9 @@ export function ProfileHeader({ e, tabs, active, onSelect, actions, canChangePho
 export function ManagerLink({ manager }: { manager: NonNullable<Profile["manager"]> }) {
   return (
     <Link href={`/employees/${manager.id}`} className="group flex items-center gap-3">
-      <Avatar name={manager.fullName} src={manager.photoUrl} />
+      <TenureFrame hireDate={manager.hireDate} founding={manager.foundingMember} radius="rounded-full" small>
+        <Avatar name={manager.fullName} src={manager.photoUrl} />
+      </TenureFrame>
       <span className="min-w-0 text-sm">
         <span className="block truncate font-medium text-ink group-hover:underline">{manager.fullName}</span>
         {manager.jobTitle && <span className="block truncate text-xs text-muted">{manager.jobTitle.name}</span>}

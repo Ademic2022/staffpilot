@@ -14,6 +14,7 @@ import {
   HolidaysWidget, HomeDataDocument, MyStuffWidget, OnboardingWidget, PeopleWidget, Photo, ReadAnnouncementDialog, TimeOffWidget,
   WelcomeWidget, WhosOutWidget, WIDGETS, type HomeData,
 } from "@/components/home/Widgets";
+import { TenureFrame } from "@/components/TenureMark";
 import { LocationWidget, PayRaiseWidget, TimeOffRequestsWidget, TimeOffUsedWidget } from "@/components/home/Expandable";
 import { EmployeeLeaveDocument, RequestLeaveDialog } from "@/components/leave/Leave";
 import { ClockPill } from "@/components/attendance/ClockPill";
@@ -34,7 +35,7 @@ const ExpiringDocument = graphql(`
 
 const MyPhotoDocument = graphql(`
   query HomeMyPhoto($id: ID!) {
-    employee(id: $id) { id photoUrl }
+    employee(id: $id) { id photoUrl hireDate foundingMember }
   }
 `);
 
@@ -231,7 +232,10 @@ export default function HomePage() {
     <div className={editing ? "pb-56" : undefined}>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-6">
-          <Photo name={me.user.fullName} src={photo?.employee?.photoUrl} size={96} className="hidden sm:block" />
+          <TenureFrame hireDate={photo?.employee?.hireDate} founding={photo?.employee?.foundingMember} radius="rounded-2xl"
+            gapColor="var(--background)" className="hidden sm:inline-block">
+            <Photo name={me.user.fullName} src={photo?.employee?.photoUrl} size={96} className="hidden sm:block" />
+          </TenureFrame>
           <h1 className="font-display text-[40px] font-medium leading-tight text-brand-ink sm:text-[46px]">Hi, {firstName}</h1>
         </div>
         {!editing && (

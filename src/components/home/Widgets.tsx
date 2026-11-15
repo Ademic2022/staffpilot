@@ -36,7 +36,7 @@ export const HomeDataDocument = graphql(`
       directReports {
         notes outToday department location timezone workEmail workPhone workPhoneExt
         events { kind label date }
-        person { id fullName jobTitle photoUrl }
+        person { id fullName jobTitle photoUrl hireDate foundingMember }
       }
       insights {
         months { month headcount additions terminations voluntary involuntary other turnoverRate }
@@ -233,7 +233,7 @@ export function MyStuffWidget({ stuff, employeeId }: { stuff: NonNullable<HomeDa
 
 const ApprovalsDocument = graphql(`
   query HomeApprovals {
-    leaveApprovals { id startDate endDate days createdAt canDecide employee { id fullName photoUrl } leaveType { name color } }
+    leaveApprovals { id startDate endDate days createdAt canDecide employee { id fullName photoUrl hireDate foundingMember } leaveType { name color } }
   }
 `);
 
@@ -257,7 +257,7 @@ const DismissDocument = graphql(`
 
 type FeedItem = {
   key: string; at: string; when: string; body: ReactNode; href?: string; onOpen?: () => void;
-  avatar?: { name: string; src?: string | null }; icon?: IconDefinition; actions?: ReactNode;
+  avatar?: { name: string; src?: string | null; hireDate?: string | null; founding?: boolean }; icon?: IconDefinition; actions?: ReactNode;
 };
 
 export function ago(iso: string) {
@@ -303,7 +303,7 @@ export function HappeningWidget({ company, announcements, newHires, dismissed, c
       actions: <Button size="sm" variant="secondary" className="rounded-full" onClick={() => onOpen(a)}>View announcement</Button>,
     })),
     ...(approvals?.leaveApprovals ?? []).filter((r) => r.canDecide).map((r): FeedItem => ({
-      key: `l${r.id}`, at: r.createdAt, when: ago(r.createdAt), avatar: { name: r.employee.fullName, src: r.employee.photoUrl },
+      key: `l${r.id}`, at: r.createdAt, when: ago(r.createdAt), avatar: { name: r.employee.fullName, src: r.employee.photoUrl, hireDate: r.employee.hireDate, founding: r.employee.foundingMember },
       href: "/leave/approvals",
       body: <>{r.employee.fullName} requested <strong className="font-semibold">{formatRange(r.startDate, r.endDate)}</strong> off – {formatDays(r.days)} of {r.leaveType.name}</>,
       actions: (
@@ -319,7 +319,7 @@ export function HappeningWidget({ company, announcements, newHires, dismissed, c
       actions: <Link href="/employees/requests" className="inline-flex h-8 items-center rounded-full border border-line-strong px-3 text-sm font-medium text-ink hover:bg-subtle">Review</Link>,
     })),
     ...newHires.filter((h) => h.hireDate <= now.slice(0, 10)).map((h): FeedItem => ({
-      key: `h${h.person.id}`, at: `${h.hireDate}T08:00:00`, when: ago(`${h.hireDate}T08:00:00`), avatar: { name: h.person.fullName, src: h.person.photoUrl },
+      key: `h${h.person.id}`, at: `${h.hireDate}T08:00:00`, when: ago(`${h.hireDate}T08:00:00`), avatar: { name: h.person.fullName, src: h.person.photoUrl, hireDate: h.person.hireDate, founding: h.person.foundingMember },
       href: `/employees/${h.person.id}`,
       body: <>{h.person.fullName} joined{h.person.jobTitle ? <> as <strong className="font-semibold">{h.person.jobTitle}</strong></> : null}.</>,
     })),
@@ -339,7 +339,11 @@ export function HappeningWidget({ company, announcements, newHires, dismissed, c
             const text = <span className="text-[15px] leading-snug text-ink group-hover:text-brand-ink group-hover:underline">{i.body}</span>;
             return (
               <li key={i.key} className="group flex items-center gap-3.5 border-b border-line py-3.5 last:border-0">
-                {i.avatar ? <Photo name={i.avatar.name} src={i.avatar.src} size={42} /> : (
+                {i.avatar ? (
+                  <TenureFrame hireDate={i.avatar.hireDate} founding={i.avatar.founding} radius="rounded-lg" markSize={16}>
+                    <Photo name={i.avatar.name} src={i.avatar.src} size={42} />
+                  </TenureFrame>
+                ) : (
                   <span className="grid h-[42px] w-[42px] flex-none place-items-center rounded-lg bg-subtle text-muted"><FontAwesomeIcon icon={i.icon ?? faBullhorn} /></span>
                 )}
                 <div className="min-w-0 flex-1">
@@ -558,7 +562,9 @@ function ContactCard({ report }: { report: Report }) {
   return (
     <span className="block w-72">
       <span className="flex items-center gap-3">
-        <Photo name={report.person.fullName} src={report.person.photoUrl} size={44} />
+        <TenureFrame hireDate={report.person.hireDate} founding={report.person.foundingMember} radius="rounded-lg" markSize={16}>
+          <Photo name={report.person.fullName} src={report.person.photoUrl} size={44} />
+        </TenureFrame>
         <span className="min-w-0">
           <span className="block truncate font-display text-[19px] text-ink">{report.person.fullName}</span>
           {role && <span className="block truncate text-[13px] text-muted">{role}</span>}
@@ -628,7 +634,9 @@ function ReportTile({ report }: { report: Report }) {
     <li className="flex flex-col items-center text-center">
       <span className="group/tile relative">
         <Link href={`/employees/${report.person.id}`} aria-label={report.person.fullName}>
-          <Photo name={report.person.fullName} src={report.person.photoUrl} size={96} faded={report.outToday} />
+          <TenureFrame hireDate={report.person.hireDate} founding={report.person.foundingMember} radius="rounded-2xl">
+            <Photo name={report.person.fullName} src={report.person.photoUrl} size={96} faded={report.outToday} />
+          </TenureFrame>
         </Link>
         <TileMenu report={report} />
       </span>
@@ -873,7 +881,7 @@ export function CelebrationsWidget({ celebrations }: { celebrations: HomeData["h
 
 const WhosOutDocument = graphql(`
   query HomeWhosOut($day: Date!) {
-    leaveCalendar(start: $day, end: $day) { absences { requestId status employee { id fullName photoUrl } leaveType { name } } }
+    leaveCalendar(start: $day, end: $day) { absences { requestId status employee { id fullName photoUrl hireDate foundingMember } leaveType { name } } }
   }
 `);
 
@@ -891,7 +899,9 @@ export function WhosOutWidget() {
           {out.map((a) => (
             <li key={a.requestId}>
               <Link href={`/employees/${a.employee.id}`} title={`${a.employee.fullName}${a.leaveType ? ` · ${a.leaveType.name}` : ""}`}>
-                <Photo name={a.employee.fullName} src={a.employee.photoUrl} size={56} />
+                <TenureFrame hireDate={a.employee.hireDate} founding={a.employee.foundingMember} radius="rounded-xl" markSize={18}>
+                  <Photo name={a.employee.fullName} src={a.employee.photoUrl} size={56} />
+                </TenureFrame>
               </Link>
             </li>
           ))}

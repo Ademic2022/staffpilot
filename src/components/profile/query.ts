@@ -36,7 +36,7 @@ export const EmployeeProfileDocument = graphql(`
       location { id name city country timezone }
       jobTitle { id name description }
       grade { id name }
-      manager { id fullName jobTitle { name } photoUrl }
+      manager { id fullName jobTitle { name } photoUrl hireDate foundingMember }
       directReports { id fullName jobTitle { name } }
       emergencyContacts {
         id name relationship phone workPhone workPhoneExt homePhone email isPrimary
