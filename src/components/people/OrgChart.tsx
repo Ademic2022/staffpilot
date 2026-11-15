@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type RefObject } from "react";
 
+import { TenureFrame } from "@/components/TenureMark";
 import { Photo } from "@/components/home/Widgets";
 import { useSnapshot } from "@/components/snapshot/Snapshot";
 import { Badge, Button, Dialog, ErrorNote, IconButton, Loading, Select, cx } from "@/components/ui";
@@ -38,7 +39,7 @@ function HoverCard({ p, full, openSnapshot }: { p: OrgPerson; full: boolean; ope
   return (
     <div role="tooltip" className="ui-fade-in absolute left-1/2 top-full z-30 mt-2 w-72 -translate-x-1/2 rounded-xl border border-line bg-surface p-4 text-left shadow-lg">
       <div className="flex items-center gap-3">
-        <Photo name={p.fullName} src={p.photoUrl} size={52} />
+        <TenureFrame hireDate={p.hireDate} founding={p.foundingMember} radius="rounded-xl" markSize={18}><Photo name={p.fullName} src={p.photoUrl} size={52} /></TenureFrame>
         <div className="min-w-0">
           <p className="truncate font-semibold text-ink">{p.fullName}</p>
           <p className="truncate text-sm text-muted">{p.jobTitle ?? "No job title"}</p>
@@ -80,7 +81,7 @@ function Node({ p, ctx }: { p: OrgPerson; ctx: Ctx }) {
               : ctx.path.has(p.id) ? "border-brand-ink" : "border-line hover:border-line-strong")}>
           <button type="button" onClick={() => ctx.full && ctx.openSnapshot(p.id)} aria-label={ctx.full ? `Snapshot of ${p.fullName}` : p.fullName}
             className="absolute -top-7 left-1/2 -translate-x-1/2 rounded-xl ring-4 ring-surface">
-            <Photo name={p.fullName} src={p.photoUrl} size={56} faded={Boolean(p.outUntil)} />
+            <TenureFrame hireDate={p.hireDate} founding={p.foundingMember} radius="rounded-xl" markSize={18}><Photo name={p.fullName} src={p.photoUrl} size={56} faded={Boolean(p.outUntil)} /></TenureFrame>
           </button>
           {/* Only the name opens the hover card; the card stays open while the pointer is on it. */}
           <div className="relative inline-block max-w-full align-top" onMouseEnter={enter} onMouseLeave={leave}>
@@ -193,7 +194,7 @@ function JumpTo({ people, chosen, onPick, onClear }: { people: OrgPerson[]; chos
             <li key={p.id} role="option" aria-selected={i === active}>
               <button type="button" onMouseDown={(e) => { e.preventDefault(); pick(p); }} onMouseEnter={() => setActive(i)}
                 className={cx("flex w-full items-center gap-3 px-3 py-2 text-left", i === active && "bg-subtle")}>
-                <Photo name={p.fullName} src={p.photoUrl} size={32} />
+                <TenureFrame hireDate={p.hireDate} founding={p.foundingMember} radius="rounded-lg" small><Photo name={p.fullName} src={p.photoUrl} size={32} /></TenureFrame>
                 <span className="min-w-0">
                   <span className="block truncate text-sm font-medium text-ink">{p.fullName}</span>
                   <span className="block truncate text-xs text-muted">{p.jobTitle ?? "No job title"}</span>

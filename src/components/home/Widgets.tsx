@@ -12,6 +12,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState, type CSSProperties, type FormEvent, type ReactNode } from "react";
 import { useMutation, useQuery } from "urql";
 
+import { TenureFrame } from "@/components/TenureMark";
 import { EmptyArt, type ArtKind } from "@/components/home/EmptyArt";
 import { useSnapshot } from "@/components/snapshot/Snapshot";
 import { BarList, ChartTable, DivergingStrip, Legend, MonthColumns, SERIES, TipRow, type Column, type Series } from "@/components/home/Charts";
@@ -29,8 +30,8 @@ export const HomeDataDocument = graphql(`
       setup { percent steps { key label why href done group } }
       myProfile { percent missing { key label tab critical why } }
       dataGaps { key label why count people { id fullName jobTitle photoUrl } }
-      celebrations { kind date years person { id fullName jobTitle photoUrl } }
-      newHires { hireDate person { id fullName jobTitle photoUrl } }
+      celebrations { kind date years person { id fullName jobTitle photoUrl hireDate foundingMember } }
+      newHires { hireDate person { id fullName jobTitle photoUrl hireDate foundingMember } }
       myStuff { trainings certifications certificationsExpiring benefits openTasks }
       directReports {
         notes outToday department location timezone workEmail workPhone workPhoneExt
@@ -851,11 +852,12 @@ export function CelebrationsWidget({ celebrations }: { celebrations: HomeData["h
           {celebrations.slice(0, 7).map((c) => (
             <li key={c.kind + c.person.id} className={cx("relative flex items-center gap-3 rounded-lg px-1 py-1.5", c.date === now && "bg-subtle")}>
               <Confetti seed={c.kind + c.person.id} />
-              <Link href={`/employees/${c.person.id}`}><Photo name={c.person.fullName} src={c.person.photoUrl} size={40} /></Link>
+              <Link href={`/employees/${c.person.id}`}><TenureFrame hireDate={c.person.hireDate} founding={c.person.foundingMember} radius="rounded-lg" small>
+                <Photo name={c.person.fullName} src={c.person.photoUrl} size={40} /></TenureFrame></Link>
               <div className="min-w-0 flex-1">
                 <Link href={`/employees/${c.person.id}`} className="block truncate text-[15px] font-semibold text-ink hover:underline">{c.person.fullName}</Link>
                 <p className="text-[13px] text-muted">
-                  {longDate(c.date)} – {c.kind === "birthday" ? "Happy birthday!" : plural(c.years ?? 0, "year")}
+                  {longDate(c.date)} – {c.kind === "birthday" ? "Happy birthday!" : <>{plural(c.years ?? 0, "year")} here <span aria-hidden>✨</span></>}
                 </p>
               </div>
               <FontAwesomeIcon icon={c.kind === "birthday" ? faCakeCandles : faAward} className={cx("text-lg", c.date === now ? "text-brand-ink" : "text-muted/70")} />
@@ -1000,7 +1002,8 @@ export function WelcomeWidget({ hires, company }: { hires: HomeData["home"]["new
             {(started.length ? started : coming).slice(0, 6).map((h) => (
               <li key={h.person.id}>
                 <Link href={`/employees/${h.person.id}`} title={`${h.person.fullName}${h.person.jobTitle ? ` · ${h.person.jobTitle}` : ""}`}>
-                  <Photo name={h.person.fullName} src={h.person.photoUrl} size={56} />
+                  <TenureFrame hireDate={h.person.hireDate} founding={h.person.foundingMember} radius="rounded-xl" markSize={18}>
+                    <Photo name={h.person.fullName} src={h.person.photoUrl} size={56} /></TenureFrame>
                 </Link>
               </li>
             ))}

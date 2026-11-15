@@ -452,6 +452,7 @@ type CompanySettings {
   expandedGender: Boolean!
   employeeUploads: Boolean!
   payrollEnabled: Boolean!
+  showTenure: Boolean!
 
   """The address this request came from, to put on the allow-list."""
   yourIp: String!
@@ -472,6 +473,7 @@ input CompanySettingsInput {
   employeesEditOwnPhoto: Boolean
   expandedGender: Boolean
   employeeUploads: Boolean
+  showTenure: Boolean
   payrollEnabled: Boolean
 }
 
@@ -698,6 +700,7 @@ type DirectoryEntry {
   outUntil: Date
   employeeNumber: String!
   hireDate: Date
+  foundingMember: Boolean!
   mobile: String!
   linkedinUrl: String!
   twitter: String!
@@ -838,6 +841,7 @@ type Employee {
   workPhoneExt: String!
   status: EmployeeStatus!
   hireDate: Date!
+  foundingMember: Boolean!
   probationEndDate: Date
   terminationDate: Date
   terminationReason: String!
@@ -1320,6 +1324,8 @@ type HomePerson {
   fullName: String!
   jobTitle: String
   photoUrl: String
+  hireDate: Date
+  foundingMember: Boolean!
 }
 
 type HomeWidget {
@@ -1880,6 +1886,11 @@ type Mutation {
   """A draft job description for HR to read and edit; nothing is saved."""
   draftJobDescription(title: String!, notes: String! = ""): String!
   saveGrade(input: SaveGradeInput!): GradePayload!
+
+  """
+  Mark someone as one of the founding team (shown on their photo), or take it off.
+  """
+  setFoundingMember(employeeId: ID!, founding: Boolean!): Boolean!
   hireEmployee(input: HireEmployeeInput!): EmployeePayload!
 
   """
@@ -3796,6 +3807,7 @@ type TenantPublic {
   expandedGender: Boolean!
   employeeUploads: Boolean!
   payrollEnabled: Boolean!
+  showTenure: Boolean!
   attendanceEnabled: Boolean!
   expensesEnabled: Boolean!
   timesheetsEnabled: Boolean!

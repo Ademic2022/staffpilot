@@ -10,7 +10,7 @@ import { ChangeJobDialog, ChangePayDialog, ChangeStatusDialog, canChangeStatus }
 import { EmergencyContactsCard, PrivateDetailsCard } from "@/components/employees/RecordCards";
 import { MyChangeNotice } from "@/components/employees/SelfService";
 import {
-  faArrowTrendUp, faBell, faBoxArchive, faBriefcase, faCaretDown, faEllipsis, faKey, faLaptop, faLock, faMoneyBillWave,
+  faArrowTrendUp, faBell, faBoxArchive, faStar, faBriefcase, faCaretDown, faEllipsis, faKey, faLaptop, faLock, faMoneyBillWave,
   faTableColumns, faTrashCan, faUserCheck, type IconDefinition,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -52,6 +52,10 @@ const EmployeeAccessDocument = graphql(`
   query EmployeeAccess($id: ID!) {
     employee(id: $id) { id access { email roles isActive invitePending } }
   }
+`);
+
+const FoundingDocument = graphql(`
+  mutation SetFoundingMember($employeeId: ID!, $founding: Boolean!) { setFoundingMember(employeeId: $employeeId, founding: $founding) }
 `);
 
 const RemovePhotoDocument = graphql(`
@@ -126,6 +130,7 @@ function EmployeeRecord() {
   const [{ data: layoutData }, reloadLayout] = useQuery({ query: ProfileLayoutDocument });
   const [, archive] = useMutation(ArchiveDocument);
   const [, removePhoto] = useMutation(RemovePhotoDocument);
+  const [, setFounding] = useMutation(FoundingDocument);
   const [, sendReset] = useMutation(SendResetDocument);
   const usersManage = can(PERMS.usersManage);
   const [{ data: accessData }] = useQuery({ query: EmployeeAccessDocument, variables: { id }, pause: !usersManage });
@@ -254,6 +259,13 @@ function EmployeeRecord() {
                 return (
                   <>
                     {!self && <MenuItem icon={faBell} onClick={() => { close(); setDialog("remind"); }}>Remind me…</MenuItem>}
+                    {manage && tenant?.showTenure !== false && (
+                      <MenuItem icon={faStar} hint="Marked on their photo, whatever their years" onClick={async () => {
+                        close();
+                        await setFounding({ employeeId: e.id, founding: !e.foundingMember });
+                        saved(e.foundingMember ? "No longer marked as founding team." : "Marked as founding team.");
+                      }}>{e.foundingMember ? "Not founding team" : "Founding team"}</MenuItem>
+                    )}
                     {!self && (e.photoUrl || access || left) && <MenuDivider />}
                     {e.photoUrl && (
                       <MenuItem icon={faTrashCan} onClick={async () => { close(); await removePhoto({ employeeId: e.id }); saved("Photo removed."); }}>Remove photo</MenuItem>

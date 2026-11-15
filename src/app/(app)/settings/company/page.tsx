@@ -22,7 +22,7 @@ const CompanySettingsDocument = graphql(`
   query CompanySettings {
     companySettings {
       name country currency timezone primaryColor logoUrl requireAdminMfa sessionTimeoutMinutes ipAllowlist yourIp
-      dateFormat nameFormat showCurrencyCode employeesEditOwnPhoto expandedGender employeeUploads payrollEnabled
+      dateFormat nameFormat showCurrencyCode employeesEditOwnPhoto expandedGender employeeUploads payrollEnabled showTenure
     }
   }
 `);
@@ -59,7 +59,7 @@ function Form({ initial, section, onSaved }: { initial: Settings; section: Compa
     primaryColor: initial.primaryColor || "#0F3D2E", requireAdminMfa: initial.requireAdminMfa,
     sessionTimeoutMinutes: initial.sessionTimeoutMinutes, ipAllowlist: initial.ipAllowlist.join("\n"),
     dateFormat: initial.dateFormat, nameFormat: initial.nameFormat, showCurrencyCode: initial.showCurrencyCode,
-    employeesEditOwnPhoto: initial.employeesEditOwnPhoto, expandedGender: initial.expandedGender, employeeUploads: initial.employeeUploads,
+    employeesEditOwnPhoto: initial.employeesEditOwnPhoto, expandedGender: initial.expandedGender, employeeUploads: initial.employeeUploads, showTenure: initial.showTenure,
     payrollEnabled: initial.payrollEnabled,
   });
   const [logo, setLogo] = useState(initial.logoUrl);
@@ -156,6 +156,8 @@ function Form({ initial, section, onSaved }: { initial: Settings; section: Compa
                   checked={v.employeesEditOwnPhoto} onChange={(c) => set("employeesEditOwnPhoto", c)} />
                 <Checkbox label="Let employees upload files to their own record" description="They land in an Employee uploads category that the employee and HR can see."
                   checked={v.employeeUploads} onChange={(c) => set("employeeUploads", c)} />
+                <Checkbox label="Show how long people have been here" description="A frame round profile photos by years of service, New for the first 90 days, and the founding team marked."
+                  checked={v.showTenure} onChange={(c) => set("showTenure", c)} />
                 <Checkbox label="Show expanded gender options" description="Adds Non-binary as a gender, and a pronouns field on every profile."
                   checked={v.expandedGender} onChange={(c) => set("expandedGender", c)} />
                 <Checkbox label="Run payroll in StaffPilot" description="Adds Payroll and My payslips. Leave it off if you pay people elsewhere: expense claims are then paid back by bank transfer, and past payslips stay readable."

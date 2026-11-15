@@ -7,6 +7,7 @@ import { faCaretDown, faWrench } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { IconCamera } from "@/components/icons";
+import { TenureFrame, TenureLabel } from "@/components/TenureMark";
 import { Avatar, cx, statusLabel, statusTone, type BadgeTone } from "@/components/ui";
 import { initials } from "@/lib/format";
 
@@ -149,21 +150,24 @@ export function ProfileHeader({ e, tabs, active, onSelect, actions, canChangePho
     <>
       <div ref={band} className="relative rounded-2xl bg-brand text-white shadow-sm">
         <div className="flex flex-col gap-5 px-5 pt-5 sm:flex-row sm:px-7 sm:pt-7">
-          <div className="relative -mb-16 h-32 w-32 flex-none overflow-hidden rounded-[22px] bg-white/15 ring-4 ring-background sm:h-40 sm:w-40">
-            {e.photoUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={e.photoUrl} alt={e.fullName} className="h-full w-full object-cover" />
-            ) : (
-              <span className="grid h-full w-full place-items-center font-display text-[44px] text-white/90">{initials(e.fullName)}</span>
-            )}
-            {canChangePhoto && <PhotoButton employeeId={e.id} onUploaded={onPhoto} />}
-          </div>
+          <TenureFrame hireDate={e.hireDate} founding={e.foundingMember} radius="rounded-[22px]" gap={4} width={4} markSize={30} gapColor="var(--background)" className="-mb-16 self-start">
+            <div className="relative h-32 w-32 overflow-hidden rounded-[22px] bg-white/15 ring-4 ring-background sm:h-40 sm:w-40">
+              {e.photoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={e.photoUrl} alt={e.fullName} className="h-full w-full object-cover" />
+              ) : (
+                <span className="grid h-full w-full place-items-center font-display text-[44px] text-white/90">{initials(e.fullName)}</span>
+              )}
+              {canChangePhoto && <PhotoButton employeeId={e.id} onUploaded={onPhoto} />}
+            </div>
+          </TenureFrame>
           <div className="min-w-0 flex-1 pt-14 sm:pt-0">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="min-w-0">
                 <h1 className="font-display text-[30px] font-medium leading-tight tracking-[-0.01em] sm:text-[36px]">{e.fullName}</h1>
                 <div className="mt-1 flex flex-wrap items-center gap-2 text-[15px] text-white/80">
                   {line && <span>{line}</span>}
+                  <TenureLabel hireDate={e.hireDate} founding={e.foundingMember} onDark />
                   <span className="inline-flex items-center gap-1.5 rounded-md bg-white/15 px-2 py-0.5 text-xs font-medium text-white ring-1 ring-inset ring-white/25">
                     <span className={cx("h-1.5 w-1.5 rounded-full", BAND_DOTS[statusTone[e.status] ?? "neutral"])} />
                     {statusLabel[e.status] ?? e.status}

@@ -25,6 +25,7 @@ export const EmployeeProfileDocument = graphql(`
       photoUrl
       status
       hireDate
+      foundingMember
       probationEndDate
       terminationDate
       terminationReason

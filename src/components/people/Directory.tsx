@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { useDeferredValue, useMemo, useState } from "react";
 
+import { TenureFrame, TenureLabel } from "@/components/TenureMark";
 import { Photo } from "@/components/home/Widgets";
 import { useSnapshot } from "@/components/snapshot/Snapshot";
 import { Badge, ErrorNote, Loading, SearchInput, Select, cx } from "@/components/ui";
@@ -41,14 +42,15 @@ function Entry({ p, byId, onChart }: { p: OrgPerson; byId: Map<string, OrgPerson
     <li className="grid gap-4 border-b border-line px-5 py-5 last:border-b-0 sm:grid-cols-[96px_minmax(0,1.3fr)_minmax(0,1fr)_minmax(0,1fr)] sm:gap-6">
       {full ? (
         <button type="button" onClick={() => snapshot.open(p.id)} aria-label={`Snapshot of ${p.fullName}`} className="self-start">
-          <Photo name={p.fullName} src={p.photoUrl} size={96} />
+          <TenureFrame hireDate={p.hireDate} founding={p.foundingMember} radius="rounded-2xl"><Photo name={p.fullName} src={p.photoUrl} size={96} /></TenureFrame>
         </button>
-      ) : <Photo name={p.fullName} src={p.photoUrl} size={96} />}
+      ) : <span className="self-start"><TenureFrame hireDate={p.hireDate} founding={p.foundingMember} radius="rounded-2xl"><Photo name={p.fullName} src={p.photoUrl} size={96} /></TenureFrame></span>}
       <div className="min-w-0 space-y-1">
         <p className="flex flex-wrap items-center gap-2">
           {full
             ? <Link href={`/employees/${p.id}`} className="font-display text-xl leading-tight text-brand-ink hover:underline">{p.fullName}</Link>
             : <span className="font-display text-xl leading-tight text-brand-ink">{p.fullName}</span>}
+          <TenureLabel hireDate={p.hireDate} founding={p.foundingMember} />
           {p.outUntil && <Badge tone="warn" dot>{outLabel(p.outUntil)}</Badge>}
         </p>
         {role && <p className="text-sm text-ink">{role}</p>}

@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useDeferredValue, useEffect, useRef, useState, type ReactNode } from "react";
 import { useMutation, useQuery } from "urql";
 
+import { TenureFrame } from "@/components/TenureMark";
 import { Photo } from "@/components/home/Widgets";
 import { tenure } from "@/components/profile/Vitals";
 import { useSnapshot } from "@/components/snapshot/Snapshot";
@@ -30,7 +31,7 @@ const ListDocument = graphql(`
       totalCount
       pageInfo { hasNextPage endCursor }
       nodes {
-        id employeeNumber firstName lastName preferredName fullName photoUrl status employmentType hireDate
+        id employeeNumber firstName lastName preferredName fullName photoUrl status employmentType hireDate foundingMember
         workEmail workPhone workPhoneExt phone gender dateOfBirth
         jobTitle { name } department { name } location { name } legalEntity { name } grade { name } manager { fullName }
       }
@@ -450,7 +451,7 @@ export function PeopleList() {
 
 type Person = {
   id: string; employeeNumber: string; firstName: string; lastName: string; preferredName: string; fullName: string; photoUrl?: string | null;
-  status: string; employmentType: string; hireDate: string; workEmail: string; workPhone: string; workPhoneExt: string; phone: string;
+  status: string; employmentType: string; hireDate: string; foundingMember?: boolean; workEmail: string; workPhone: string; workPhoneExt: string; phone: string;
   gender?: string | null; dateOfBirth?: string | null; jobTitle?: { name: string } | null; department?: { name: string } | null;
   location?: { name: string } | null; legalEntity: { name: string }; grade?: { name: string } | null; manager?: { fullName: string } | null;
 };
@@ -458,7 +459,8 @@ type Person = {
 function cell(key: string, e: Person, openSnapshot: () => void): ReactNode {
   const dash = <span className="text-muted">—</span>;
   switch (key) {
-    case "photo": return <button type="button" onClick={openSnapshot} aria-label={`Snapshot of ${e.fullName}`}><Photo name={e.fullName} src={e.photoUrl} size={52} /></button>;
+    case "photo": return <button type="button" onClick={openSnapshot} aria-label={`Snapshot of ${e.fullName}`}>
+      <TenureFrame hireDate={e.hireDate} founding={e.foundingMember} radius="rounded-xl" markSize={18}><Photo name={e.fullName} src={e.photoUrl} size={52} /></TenureFrame></button>;
     case "number": return <span className="tabular-nums text-ink">{e.employeeNumber}</span>;
     case "name": return (
       <Link href={`/employees/${e.id}`} className="font-medium text-brand-ink hover:underline">
