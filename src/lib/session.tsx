@@ -37,6 +37,8 @@ interface SessionValue {
   can: (...perms: string[]) => boolean;
   /** Throw away cached data and load the session again (after sign-in or sign-out). */
   reset: () => void;
+  /** The session could not be loaded (no connection, server down): not the same as "signed out". */
+  failed: boolean;
 }
 
 const SessionContext = createContext<SessionValue | null>(null);
@@ -70,6 +72,7 @@ function SessionState({ children, reset, version }: { children: ReactNode; reset
       tenant: fresh?.tenant ?? null,
       can: (...perms) => perms.some((p) => granted.has(p)),
       reset,
+      failed: !fresh && current && Boolean(error),
     };
   }, [data, error, current, mounted, reset]);
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;

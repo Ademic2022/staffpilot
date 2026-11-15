@@ -19,7 +19,7 @@ import { NotificationBell } from "./Notifications";
 import { GlobalSearch } from "@/components/GlobalSearch";
 import { visibleAreas } from "@/components/settings/areas";
 import { useSnapshot } from "./snapshot/Snapshot";
-import { IconButton, Loading, Notice, cx } from "./ui";
+import { Button, IconButton, Loading, Notice, cx } from "./ui";
 
 const LogoutDocument = graphql(`
   mutation Logout {
@@ -93,7 +93,7 @@ function Crest({ tenant }: { tenant: Tenant | null }) {
 }
 
 export function AppShell({ children }: { children: ReactNode }) {
-  const { loading, me, tenant, can, reset } = useSession();
+  const { loading, me, tenant, can, reset, failed } = useSession();
   const router = useRouter();
   const pathname = usePathname();
   const [, logout] = useMutation(LogoutDocument);
@@ -107,12 +107,24 @@ export function AppShell({ children }: { children: ReactNode }) {
   }, [pathname, me, recount]);
 
   useEffect(() => {
-    if (!loading && !me) router.replace(`/login?next=${encodeURIComponent(pathname)}`);
-  }, [loading, me, pathname, router]);
+    // Signed out: to the sign-in page. Not when the session simply could not be loaded (no signal):
+    // they are still signed in, and Try again below brings the page back.
+    if (!loading && !me && !failed) router.replace(`/login?next=${encodeURIComponent(pathname)}`);
+  }, [loading, me, failed, pathname, router]);
 
   useEffect(() => {
     if (tenant?.primaryColor) document.documentElement.style.setProperty("--brand", tenant.primaryColor);
   }, [tenant?.primaryColor]);
+
+  if (failed && !me) {
+    return (
+      <div className="mx-auto grid max-w-md place-items-center gap-4 px-6 py-24 text-center">
+        <p className="font-display text-2xl text-ink">You seem to be offline</p>
+        <p className="text-sm text-muted">StaffPilot could not be reached. Check your connection, then try again.</p>
+        <Button onClick={() => reset()}>Try again</Button>
+      </div>
+    );
+  }
 
   if (loading || !me) {
     return (

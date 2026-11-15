@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useRef, useState, type FormEvent } from "react";
+import { Suspense, useEffect, useRef, useState, type FormEvent } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "urql";
 import { z } from "zod";
@@ -96,7 +96,11 @@ type Values = z.infer<typeof schema>;
 function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
-  const { tenant, loading, reset } = useSession();
+  const { tenant, me, loading, reset, failed } = useSession();
+  // Already signed in (the Back button, a second tab, or a sign-in just finishing): go on to the app.
+  useEffect(() => {
+    if (!loading && me) router.replace(safeNext(params.get("next")));
+  }, [loading, me, router, params]);
   const [, login] = useMutation(LoginDocument);
   const [formError, setFormError] = useState<string>();
   const [needsCode, setNeedsCode] = useState(false);
@@ -125,6 +129,14 @@ function LoginForm() {
     router.replace(safeNext(params.get("next")));
   }
 
+  // No connection (a weak signal, the app waking up): say so, rather than "find your company".
+  if (failed) {
+    return (
+      <AuthShell title="Sign in" subtitle="StaffPilot could not be reached. Check your connection, then try again.">
+        <AuthButton type="button" onClick={() => reset()}>Try again</AuthButton>
+      </AuthShell>
+    );
+  }
   // The platform's own address has no company to sign in to: find yours first.
   if (!loading && !tenant) return <FindWorkspace />;
 

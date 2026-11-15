@@ -19,8 +19,9 @@ const noop = () => () => {};
 
 /** The platform address has no company, so signing in starts by finding yours. */
 export function FindWorkspace() {
-  // The current address (e.g. "example.com" or "localhost:3000"); company addresses sit below it.
-  const host = useSyncExternalStore(noop, () => window.location.host, () => "");
+  // The platform's address (e.g. "staffpilot.site" or "localhost:3000"); company addresses sit below
+  // it. This page only shows there, but people may arrive on www. or app.
+  const host = useSyncExternalStore(noop, () => window.location.host.replace(/^(www|app)\./, ""), () => "");
   const [slug, setSlug] = useState("");
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
