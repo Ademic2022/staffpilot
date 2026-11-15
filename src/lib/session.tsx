@@ -50,29 +50,35 @@ export function useMounted() {
 
 function SessionState({ children, reset }: { children: ReactNode; reset: () => void }) {
   const mounted = useMounted();
-  const [{ data, fetching, error }] = useQuery({ query: MeDocument, pause: !mounted });
+  const [{ data, error }] = useQuery({ query: MeDocument, pause: !mounted });
   const value = useMemo<SessionValue>(() => {
     const me = data?.me ?? null;
     // The company's date and money style (General settings) applies to every formatted value from here on.
     if (data?.tenant) setFormatPrefs({ dateFormat: data.tenant.dateFormat, showCurrencyCode: data.tenant.showCurrencyCode });
     const granted = new Set(me?.permissions ?? []);
     return {
-      loading: !mounted || (fetching && !data && !error),
+      // Loading until the server has answered. Right after sign-in the client is replaced and the
+      // query has not started yet (not "fetching", no data): counting that as "signed out" sent
+      // people straight back to the sign-in page although they were signed in.
+      loading: !mounted || (!data && !error),
       me,
       tenant: data?.tenant ?? null,
       can: (...perms) => perms.some((p) => granted.has(p)),
       reset,
     };
-  }, [data, fetching, error, mounted, reset]);
+  }, [data, error, mounted, reset]);
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
 }
 
 export function SessionProvider({ children }: { children: ReactNode }) {
-  const [client, setClient] = useState(makeClient);
-  const reset = useCallback(() => setClient(makeClient()), []);
+  // A new client after signing in or out (nothing cached from the other person), and a fresh
+  // session state with it: the query hook would otherwise keep the old "signed out" answer until
+  // the new one arrives, and the app would send a person who has just signed in back to sign in.
+  const [{ client, version }, setSession] = useState(() => ({ client: makeClient(), version: 0 }));
+  const reset = useCallback(() => setSession((s) => ({ client: makeClient(), version: s.version + 1 })), []);
   return (
     <Provider value={client}>
-      <SessionState reset={reset}>{children}</SessionState>
+      <SessionState key={version} reset={reset}>{children}</SessionState>
     </Provider>
   );
 }

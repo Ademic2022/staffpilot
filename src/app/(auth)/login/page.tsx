@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useState, type FormEvent } from "react";
+import { Suspense, useRef, useState, type FormEvent } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "urql";
 import { z } from "zod";
@@ -42,13 +42,19 @@ function CodeStep({ onDone, onRestart }: { onDone: () => void; onRestart: (why?:
   const [recovery, setRecovery] = useState(false);
   const [error, setError] = useState<string>();
   const [busy, setBusy] = useState(false);
+  // Set at once, unlike state: a quick double Enter would otherwise send the code twice, and a code
+  // works only once, so the second send would come back as "already used".
+  const sending = useRef(false);
 
   async function submit(ev: FormEvent) {
     ev.preventDefault();
+    if (sending.current) return;
     if (!code.trim()) return setError(recovery ? "Enter one of your recovery codes." : "Enter the 6-digit code.");
+    sending.current = true;
     setBusy(true);
     setError(undefined);
     const result = await verify({ code: code.trim() });
+    sending.current = false;
     setBusy(false);
     const failure = result.data?.verifyMfa.errors[0];
     // The password step has expired (or was replaced by a sign-in in another tab): no code can work, so start over.
