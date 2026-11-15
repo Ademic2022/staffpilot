@@ -102,7 +102,7 @@ export default function TrainingSettingsPage() {
   const [saved, setSaved] = useState<string>();
   const [, remove] = useMutation(DeleteDocument);
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="list" />;
   const refresh = (m: string) => { setSaved(m); reload({ requestPolicy: "network-only" }); };
   return (
     <>

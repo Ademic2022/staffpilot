@@ -24,7 +24,7 @@ export default function PayslipsPage() {
   const [{ data, error }] = useQuery({ query: MyPayslipsDocument });
   const [open, setOpen] = useState<string | null>(null);
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="list" />;
   const slips = data.myPayslips;
   const latest = slips[0];
   return (

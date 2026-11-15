@@ -31,7 +31,7 @@ export default function LeavePage() {
       ? <Notice tone="info" title="No employee record">Your account is not linked to an employee record, so there is no leave to show. If you work here, add yourself from Home.</Notice>
       : <ErrorNote error={errorMessage(error)} />;
   }
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="cards" />;
   const { balances, requests, ledger } = data.employeeLeave;
   const refresh = () => reload({ requestPolicy: "network-only" });
   const upcoming = [...(holidayData?.thisYear ?? []), ...(holidayData?.nextYear ?? [])]

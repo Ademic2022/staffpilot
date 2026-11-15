@@ -68,7 +68,7 @@ export function CustomBuilder({ initial }: { initial?: Draft }) {
   };
 
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!options) return <Loading />;
+  if (!options) return <Loading shape="form" />;
 
   const submit = async () => {
     const result = await save({ input: { id: draft.id ?? null, name: draft.name, description: draft.description, fields: draft.fields,
@@ -159,7 +159,7 @@ export function CustomBuilder({ initial }: { initial?: Draft }) {
         <div className="min-w-0 flex-1">
           <h2 className="mb-3 text-lg font-semibold text-ink">Preview</h2>
           {!draft.fields.length ? <p className="text-sm text-muted">Choose at least one field.</p>
-            : preview ? <ResultView result={preview.runCustomReport} fetching={fetching} empty="No one matches these filters." /> : <Loading />}
+            : preview ? <ResultView result={preview.runCustomReport} fetching={fetching} empty="No one matches these filters." /> : <Loading shape="table" />}
         </div>
       </div>
     </>

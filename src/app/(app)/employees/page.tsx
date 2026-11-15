@@ -60,7 +60,7 @@ function People() {
 
 export default function PeoplePage() {
   return (
-    <Suspense fallback={<Loading />}>
+    <Suspense fallback={<Loading shape="table" />}>
       <People />
     </Suspense>
   );

@@ -37,7 +37,7 @@ export default function CustomReportPage() {
   const exportHref = (fmt: string) => `/api/reports/custom/${id}/${fmt}/`;
 
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="table" />;
 
   return (
     <>

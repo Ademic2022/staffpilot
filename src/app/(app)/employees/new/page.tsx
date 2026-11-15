@@ -60,7 +60,7 @@ export default function HirePage() {
   const entityId = useWatch({ control, name: "legalEntityId" });
 
   if (!can(PERMS.employeesManage)) return <Notice tone="warning">You do not have permission to add employees.</Notice>;
-  if (!data && fetching) return <Loading />;
+  if (!data && fetching) return <Loading shape="form" />;
 
   async function onSubmit(v: Values) {
     setFormError(undefined);

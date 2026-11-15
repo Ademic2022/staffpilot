@@ -70,7 +70,7 @@ export default function ChangeRequestsPage() {
 
   if (!can(PERMS.employeesManage)) return <Notice tone="warning">You do not have permission to review changes.</Notice>;
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="list" />;
   const changes = data.pendingChangeRequests;
 
   return (

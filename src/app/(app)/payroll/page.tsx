@@ -92,7 +92,7 @@ function Runs() {
   const [{ data, error }] = useQuery({ query: HomeDocument, requestPolicy: "cache-and-network" });
   const [creating, setCreating] = useState(false);
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="table" />;
   return (
     <>
       <Card flush title="Payroll runs" actions={can(PERMS.payrollManage) ? <Button size="sm" icon={<FontAwesomeIcon icon={faPlus} />} onClick={() => setCreating(true)}>New payroll</Button> : undefined}>
@@ -208,7 +208,7 @@ function People() {
   const [editing, setEditing] = useState<{ profile: Profile; name: string } | null>(null);
   const [, assign] = useMutation(AssignDocument);
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="table" />;
   const profiles = new Map(data.payrollPeople.map((p) => [p.employeeId, p]));
   const groupName = (id?: string | null) => data.payGroups.find((g) => g.id === id)?.name;
   const q = search.trim().toLowerCase();
@@ -285,5 +285,5 @@ function Payroll() {
 }
 
 export default function PayrollPage() {
-  return <Suspense fallback={<Loading />}><Payroll /></Suspense>;
+  return <Suspense fallback={<Loading shape="table" />}><Payroll /></Suspense>;
 }

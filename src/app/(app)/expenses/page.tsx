@@ -79,7 +79,7 @@ function Mine() {
   const [{ data, error }] = useQuery({ query: MineDocument, requestPolicy: "cache-and-network" });
   const [creating, setCreating] = useState(false);
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="list" />;
   if (!data.expenseSettings.enabled) return <Notice title="Expenses are off">Your company has not switched on expense claims.</Notice>;
   const open = data.myExpenseClaims.filter((c) => ["draft", "submitted", "approved"].includes(c.status));
   const done = data.myExpenseClaims.filter((c) => !open.includes(c));
@@ -99,7 +99,7 @@ function Mine() {
 function ToApprove() {
   const [{ data, error }] = useQuery({ query: ToApproveDocument, requestPolicy: "cache-and-network" });
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="list" />;
   return (
     <Card flush title="Waiting for you" description="Open a claim to check its receipts, then approve, send it back or reject it.">
       {data.expensesToApprove.length ? <ul className="divide-y divide-line">{data.expensesToApprove.map((c) => <ClaimRow key={c.id} c={c} showPerson />)}</ul>
@@ -153,7 +153,7 @@ function All() {
         </Notice>
       )}
       <Card flush>
-        {!data ? <Loading /> : rows.length ? (
+        {!data ? <Loading shape="list" /> : rows.length ? (
           <ul className="divide-y divide-line">
             {rows.map((c) => <ClaimRow key={c.id} c={c} showPerson select={c.canPay ? {
               checked: picked.includes(c.id), onChange: (on) => setPicked(on ? [...picked, c.id] : picked.filter((x) => x !== c.id)),
@@ -205,5 +205,5 @@ function Expenses() {
 }
 
 export default function ExpensesPage() {
-  return <Suspense fallback={<Loading />}><Expenses /></Suspense>;
+  return <Suspense fallback={<Loading shape="list" />}><Expenses /></Suspense>;
 }

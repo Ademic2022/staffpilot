@@ -340,7 +340,7 @@ export function OrgChart({ focus }: { focus: string | null }) {
   };
 
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!loaded) return <Loading />;
+  if (!loaded) return <Loading shape="cards" />;
 
   const ctx: Ctx = {
     children, expanded: shown, focused, path: new Set(trail), full: can(PERMS.employeesView), openSnapshot: snapshot.open,

@@ -108,7 +108,7 @@ export default function ReportPage() {
         </div>
       </Card>
 
-      {error ? <ErrorNote error={errorMessage(error)} /> : !result ? <Loading /> : <ResultView result={result} fetching={fetching} />}
+      {error ? <ErrorNote error={errorMessage(error)} /> : !result ? <Loading shape="table" /> : <ResultView result={result} fetching={fetching} />}
     </>
   );
 }

@@ -106,7 +106,7 @@ export default function CustomFieldsPage() {
   if (!can(PERMS.employeesManage)) return <Notice tone="warning">You do not have permission to set up employee fields.</Notice>;
   if (tab === "lists") return <><SettingsIntro>The choices offered for reasons, relationships and degrees.</SettingsIntro><OptionLists /></>;
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="list" />;
   const fields = data.customFields;
 
   return (

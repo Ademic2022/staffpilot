@@ -135,7 +135,7 @@ export function Directory({ onChart }: { onChart: (id: string) => void }) {
   const count = groups.reduce((n, [, rows]) => n + rows.length, 0);
 
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!loaded) return <Loading />;
+  if (!loaded) return <Loading shape="list" />;
 
   return (
     <>

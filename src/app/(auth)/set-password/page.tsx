@@ -36,7 +36,7 @@ function SetPasswordForm() {
   const [error, setError] = useState<string>();
   const [busy, setBusy] = useState(false);
 
-  if (!mounted || fetching) return <AuthShell title="Choose a password"><Loading /></AuthShell>;
+  if (!mounted || fetching) return <AuthShell title="Choose a password"><Loading shape="form" /></AuthShell>;
   const email = data?.passwordLink;
   if (!email) {
     return (

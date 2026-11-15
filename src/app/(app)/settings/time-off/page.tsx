@@ -388,7 +388,7 @@ export default function LeaveSettingsPage() {
 
   if (!can(PERMS.leaveManage)) return <Notice tone="warning">You do not have permission to set up leave.</Notice>;
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="table" />;
 
   const done = (message: string) => { setEditing(null); setSaved(message); reload({ requestPolicy: "network-only" }); };
   const open = (row: unknown = null) => { setSaved(undefined); setEditing({ tab, row }); };

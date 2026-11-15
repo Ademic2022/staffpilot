@@ -92,7 +92,7 @@ export function EmployeeDocsAdmin() {
 
   if (!can(PERMS.documentsManage)) return <Notice tone="warning">You do not have permission to manage documents.</Notice>;
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="list" />;
   const expiring = data.expiringDocuments;
 
   return (

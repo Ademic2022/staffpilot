@@ -150,7 +150,7 @@ export default function AttendanceSettingsPage() {
   const [saved, setSaved] = useState<string>();
   const [editing, setEditing] = useState<null | { shift: Shift | null } | { assign: Shift }>(null);
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="form" />;
   const refresh = (m: string) => { setEditing(null); setSaved(m); reload({ requestPolicy: "network-only" }); };
   return (
     <>

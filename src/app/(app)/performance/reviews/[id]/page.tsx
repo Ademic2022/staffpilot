@@ -205,7 +205,7 @@ export default function ReviewPage() {
   const { id } = useParams<{ id: string }>();
   const [{ data, error }, reload] = useQuery({ query: ReviewDocument, variables: { id }, requestPolicy: "cache-and-network" });
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="form" />;
   const d = data.review;
   const r = d.review;
   const refresh = () => reload({ requestPolicy: "network-only" });

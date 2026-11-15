@@ -47,7 +47,7 @@ export function CalendarFeeds() {
   return (
     <Card title="Calendar links" description="Subscribe in Google, Outlook or Apple Calendar to see time off and dates there. Anyone with a link can read it, so keep it private.">
       {error && <ErrorNote error={errorMessage(error)} />}
-      {!data ? <Loading /> : (
+      {!data ? <Loading shape="inline" /> : (
         <div className="space-y-4">
           {data.myCalendarFeeds.map((f) => (
             <div key={f.id} className="rounded-xl border border-line p-3">
@@ -86,7 +86,7 @@ export function ApiKeys() {
   const [, revoke] = useMutation(RevokeKeyDocument);
   const refresh = () => reload({ requestPolicy: "network-only" });
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="inline" />;
   return (
     <div className="space-y-5">
       {secret && (
@@ -142,7 +142,7 @@ export function EmailPreferences() {
   return (
     <Card title="Email notifications" description="Everything also appears under the bell; untick what you do not want by email.">
       {error && <ErrorNote error={errorMessage(error)} />}
-      {!data ? <Loading /> : (
+      {!data ? <Loading shape="inline" /> : (
         <div className="space-y-2">
           {data.myEmailPreferences.map((p) => (
             <Checkbox key={p.key} label={p.label} checked={p.email} onChange={async (c) => {

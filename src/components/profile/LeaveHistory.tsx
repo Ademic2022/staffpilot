@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQuery } from "urql";
 
 import { RequestsTable, type LeaveBalanceRow, type LeaveRequestRow } from "@/components/leave/Leave";
-import { Badge, Select, Table, TD, TH, cx } from "@/components/ui";
+import { Badge, Select, Table, TD, TH, cx, Loading } from "@/components/ui";
 import { graphql } from "@/gql";
 import { formatDate, formatDays, formatRange } from "@/lib/format";
 import { today } from "@/lib/forms";
@@ -92,7 +92,7 @@ export function LeaveHistory({ employeeId, balances, requests, showEmployee, onC
         </div>
       }>
       {view === "balance" ? (
-        !history ? <p className="px-5 pb-5 text-sm text-muted sm:px-6">Loading…</p>
+        !history ? <div className="px-5 pb-5 sm:px-6"><Loading shape="inline" label="Loading history" /></div>
           : history.rows.length ? (
             <Table>
               <thead>

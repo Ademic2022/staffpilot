@@ -74,5 +74,5 @@ function Help() {
 }
 
 export default function HelpPage() {
-  return <Suspense fallback={<Loading />}><Help /></Suspense>;
+  return <Suspense fallback={<Loading shape="list" />}><Help /></Suspense>;
 }

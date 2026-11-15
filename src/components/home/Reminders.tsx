@@ -7,7 +7,7 @@ import { useState, type FormEvent } from "react";
 import { useMutation, useQuery } from "urql";
 
 import { Empty, Widget } from "@/components/home/Widgets";
-import { Button, Dialog, ErrorNote, Field, IconButton, Input, cx } from "@/components/ui";
+import { Button, Dialog, ErrorNote, Field, IconButton, Input, cx, Skeleton } from "@/components/ui";
 import { graphql } from "@/gql";
 import { errorMessage } from "@/lib/api";
 import { formatDate } from "@/lib/format";
@@ -117,7 +117,7 @@ export function ReminderList({ employeeId, onAdd, limit = 6 }: { employeeId?: st
   if (!data) {
     return (
       <div className="space-y-3 py-1" aria-busy="true" aria-label="Loading reminders">
-        {[0, 1, 2].map((i) => <div key={i} className="h-10 animate-pulse rounded-lg bg-subtle motion-reduce:animate-none" />)}
+        {[0, 1, 2].map((i) => <Skeleton key={i} className="h-10 rounded-lg" />)}
       </div>
     );
   }

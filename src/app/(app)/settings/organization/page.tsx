@@ -352,7 +352,7 @@ function OrganizationPage() {
 
   if (!can(PERMS.orgManage)) return <Notice tone="warning">You do not have permission to manage the organization.</Notice>;
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="table" />;
 
   const config = KINDS[tab];
   const rows = data[tab] as Row[];

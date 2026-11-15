@@ -227,7 +227,7 @@ export function PowerEdit() {
     if (result.data) setResults(result.data.powerEdit);
   };
 
-  if (!lookups) return <Loading />;
+  if (!lookups) return <Loading shape="table" />;
   const groups = [...new Set(defs.map((d) => d.group))];
 
   return (

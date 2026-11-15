@@ -127,7 +127,7 @@ function MyTime() {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<{ ok: boolean; text: string }>();
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="table" />;
   const me = data.myAttendance;
   if (!me.enabled) return <Notice title="Attendance is off">Your company has not switched on clocking in and out.</Notice>;
   const run = async (inOut: "in" | "out") => {
@@ -252,7 +252,7 @@ function Person({ id, name, onBack }: { id: string; name: string; onBack: () => 
           <Field label="To"><Input type="date" value={end} onChange={(e) => setEnd(e.target.value)} /></Field>
         </div>
       </div>
-      {error ? <ErrorNote error={errorMessage(error)} /> : !data ? <Loading /> : (
+      {error ? <ErrorNote error={errorMessage(error)} /> : !data ? <Loading shape="table" /> : (
         <Card flush><DayRows days={[...data.attendanceDays].reverse()} onEdit={setEditing} /></Card>
       )}
       {editing && <EntryDialog employeeId={id} day={editing} onClose={() => setEditing(null)} onSaved={() => { setEditing(null); reload({ requestPolicy: "network-only" }); }} />}
@@ -268,7 +268,7 @@ function Team() {
   if (!tenant?.attendanceEnabled) return <Notice title="Attendance is off">Switch on clocking in and out in Settings → Attendance to see who is in.</Notice>;
   if (person) return <Person id={person.id} name={person.name} onBack={() => setPerson(null)} />;
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="table" />;
   const counts = data.attendanceBoard.reduce<Record<string, number>>((n, r) => ({ ...n, [r.status]: (n[r.status] ?? 0) + 1 }), {});
   return (
     <>
@@ -307,7 +307,7 @@ function Approvals() {
   const [{ data, error }, reload] = useQuery({ query: OvertimeDocument, requestPolicy: "cache-and-network" });
   const [, decide] = useMutation(DecideDocument);
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="table" />;
   return (
     <Card flush title="Overtime to approve" description="Approved overtime is paid in the next payroll.">
       {data.overtimeToDecide.length ? (
@@ -357,6 +357,6 @@ function Attendance() {
 }
 
 export default function AttendancePage() {
-  return <Suspense fallback={<Loading />}><Attendance /></Suspense>;
+  return <Suspense fallback={<Loading shape="table" />}><Attendance /></Suspense>;
 }
 

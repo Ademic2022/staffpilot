@@ -117,7 +117,7 @@ export default function BenefitsSetupPage() {
   const [saved, setSaved] = useState<string>();
   if (!can(PERMS.employeesManage)) return <ErrorNote error="You do not have access to benefits setup." />;
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="list" />;
 
   return (
     <>

@@ -103,7 +103,7 @@ export default function CyclePage() {
   const [filter, setFilter] = useState("all");
   const rows = useMemo(() => data?.cycleReviews ?? [], [data]);
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="table" />;
   const c = data.reviewCycle;
   const refresh = () => reload({ requestPolicy: "network-only" });
   const scale = rows[0]?.scale ?? [];

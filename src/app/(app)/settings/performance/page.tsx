@@ -109,7 +109,7 @@ export default function PerformanceSettingsPage() {
   const [editing, setEditing] = useState<Template | null | undefined>(undefined);
   const [message, setMessage] = useState<{ ok: boolean; text: string }>();
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="form" />;
   const refresh = (text: string) => { setEditing(undefined); setMessage({ ok: true, text }); reload({ requestPolicy: "network-only" }); };
   return (
     <>

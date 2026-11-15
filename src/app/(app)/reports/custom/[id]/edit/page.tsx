@@ -13,7 +13,7 @@ export default function EditCustomReportPage() {
   const { id } = useParams<{ id: string }>();
   const [{ data, error }] = useQuery({ query: CustomReportsDocument, requestPolicy: "network-only" });
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="form" />;
   const report = data.customReports.find((r) => r.id === id);
   if (!report || !report.mine) return <Notice tone="warning" title="Not yours to change">Only whoever made a report can change it.</Notice>;
   return (

@@ -139,7 +139,7 @@ function EmployeeRecord() {
   const [reminderVersion, setReminderVersion] = useState(0);
 
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data || !layoutData) return <Loading />;
+  if (!data || !layoutData) return <Loading shape="profile" />;
   const e: Profile = data.employee;
   if (!e) return <ErrorNote error="This employee could not be found." />;
 
@@ -365,7 +365,7 @@ function EmployeeRecord() {
 
 export default function EmployeePage() {
   return (
-    <Suspense fallback={<Loading />}>
+    <Suspense fallback={<Loading shape="profile" />}>
       <EmployeeRecord />
     </Suspense>
   );

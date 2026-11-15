@@ -13,7 +13,7 @@ import { TenureFrame } from "@/components/TenureMark";
 import { Photo } from "@/components/home/Widgets";
 import { tenure } from "@/components/profile/Vitals";
 import { useSnapshot } from "@/components/snapshot/Snapshot";
-import { Button, Checkbox, CursorPager, Dialog, ErrorNote, Field, IconButton, Input, SearchInput, Select, StatusBadge, cx } from "@/components/ui";
+import { Button, Checkbox, CursorPager, Dialog, ErrorNote, Field, IconButton, Input, SearchInput, Select, StatusBadge, cx, Loading } from "@/components/ui";
 import { graphql } from "@/gql";
 import { errorMessage } from "@/lib/api";
 import { formatDate, humanize } from "@/lib/format";
@@ -395,7 +395,7 @@ export function PeopleList() {
         )}
         <section className="min-w-0 flex-1 overflow-hidden rounded-2xl border border-line bg-surface shadow-sm">
           {error ? <div className="p-5"><ErrorNote error={errorMessage(error)} /></div> : !list ? (
-            <p className="p-6 text-sm text-muted">Loading…</p>
+            <div className="p-4"><Loading shape="inline" rows={3} label="Loading people" /></div>
           ) : !list.nodes.length ? (
             <div className="px-6 py-14 text-center">
               <p className="font-display text-xl text-ink">No one matches</p>

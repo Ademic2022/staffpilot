@@ -62,7 +62,7 @@ export function Loans() {
   const [adding, setAdding] = useState(false);
   const [, close] = useMutation(CloseDocument);
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="table" />;
   const refresh = () => reload({ requestPolicy: "network-only" });
   return (
     <>

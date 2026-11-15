@@ -132,7 +132,7 @@ export default function HomePage() {
   }, [added]);
 
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!me || !data) return <Loading />;
+  if (!me || !data) return <Loading shape="cards" />;
   const home = data.home;
   const insights = home.insights;
   const balances = leaveData?.employeeLeave.balances ?? [];

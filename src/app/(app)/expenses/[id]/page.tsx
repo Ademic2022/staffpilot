@@ -137,7 +137,7 @@ export default function ClaimPage() {
   const [deciding, setDeciding] = useState<"approve" | "return" | "reject" | null>(null);
   const [withdrawing, setWithdrawing] = useState(false);
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="form" />;
   const c = data.expenseClaim;
   const draft = c.mine && c.status === "draft";
   const refresh = () => reload({ requestPolicy: "network-only" });

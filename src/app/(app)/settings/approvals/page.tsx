@@ -102,7 +102,7 @@ export default function ApprovalsSettingsPage() {
       who see them in their notifications and on Home.</SettingsIntro>;
   }
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="form" />;
   return (
     <>
       <SettingsIntro>Who approves {tab === "pay_change" ? "pay changes" : "job changes and promotions"}, in order. Waiting changes show under Approvals.</SettingsIntro>

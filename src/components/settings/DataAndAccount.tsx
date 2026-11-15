@@ -169,7 +169,7 @@ export function DataAndAccount() {
   const [{ data, error }, reload] = useQuery({ query: DataDocument, requestPolicy: "cache-and-network" });
   const refresh = useCallback(() => reload({ requestPolicy: "network-only" }), [reload]);
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="inline" />;
   return (
     <div className="grid gap-5">
       <Exports data={data} onChanged={refresh} />

@@ -40,7 +40,7 @@ function Welcome() {
 
   return (
     <AuthShell title={problem ? "Almost there" : "Setting up your workspace"} subtitle={problem}>
-      {problem ? <Link href="/login" className="font-semibold text-brand-ink hover:underline">Go to sign in</Link> : <Loading />}
+      {problem ? <Link href="/login" className="font-semibold text-brand-ink hover:underline">Go to sign in</Link> : <Loading shape="form" />}
     </AuthShell>
   );
 }

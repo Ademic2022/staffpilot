@@ -124,7 +124,7 @@ export default function ChecklistSetupPage() {
   const [saved, setSaved] = useState<string>();
   if (!can(PERMS.employeesManage)) return <ErrorNote error="You do not have access to checklist setup." />;
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="list" />;
   const rows = data.taskTemplates.filter((t) => t.kind === kind);
 
   return (

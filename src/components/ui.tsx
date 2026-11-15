@@ -9,7 +9,7 @@ import {
   useState,
   type ButtonHTMLAttributes,
   type InputHTMLAttributes,
-  type ReactNode,
+  type CSSProperties, type ReactNode,
   type SelectHTMLAttributes,
   type TextareaHTMLAttributes,
 } from "react";
@@ -365,18 +365,122 @@ export function Spinner({ small }: { small?: boolean }) {
   return <span className={cx("inline-block animate-spin rounded-full border-2 border-current border-r-transparent opacity-80", small ? "h-4 w-4" : "h-5 w-5")} aria-label="Loading" />;
 }
 
-export function Skeleton({ className }: { className?: string }) {
-  return <div className={cx("ui-skeleton rounded-md", className)} />;
+export function Skeleton({ className, style }: { className?: string; style?: CSSProperties }) {
+  return <div aria-hidden className={cx("ui-skeleton rounded-md", className)} style={style} />;
 }
 
-export function Loading({ label = "Loading" }: { label?: string }) {
-  return (
-    <div className="space-y-3 py-2" role="status" aria-label={label}>
-      <Skeleton className="h-5 w-1/3" />
-      <Skeleton className="h-24 w-full rounded-xl" />
-      <Skeleton className="h-24 w-full rounded-xl" />
-    </div>
-  );
+/**
+ * What is about to appear, in outline, while it loads. Pick the shape of the content:
+ * - "page": a heading and a card of rows (the default)
+ * - "table": a card with a header row and lines
+ * - "list": rows with a picture, a title and a line under it
+ * - "cards": a grid of cards
+ * - "form": labelled fields
+ * - "profile": a banner with a photo, then sections
+ * - "inline": a few lines, for inside a card or dialog
+ * It shows after a short pause, so a quick load never flashes.
+ */
+export type LoadingShape = "page" | "table" | "list" | "cards" | "form" | "profile" | "inline";
+
+export function Loading({ label = "Loading", shape = "page", rows = 5 }: { label?: string; shape?: LoadingShape; rows?: number }) {
+  const lines = Array.from({ length: rows }, (_, i) => i);
+  const width = (i: number) => ["w-2/3", "w-1/2", "w-3/4", "w-2/5", "w-3/5"][i % 5];
+  const body = (() => {
+    switch (shape) {
+      case "inline":
+        return (
+          <div className="space-y-3 py-1">
+            {lines.slice(0, Math.min(rows, 3)).map((i) => <Skeleton key={i} className={cx("h-4", width(i))} />)}
+          </div>
+        );
+      case "table":
+        return (
+          <div className="overflow-hidden rounded-2xl border border-line bg-surface">
+            <div className="flex gap-6 border-b border-line bg-subtle/50 px-4 py-3">
+              {[24, 32, 20, 16].map((w, i) => <Skeleton key={i} className="h-3.5" style={{ width: `${w}%` }} />)}
+            </div>
+            {lines.map((i) => (
+              <div key={i} className="flex items-center gap-6 border-b border-line px-4 py-3.5 last:border-0">
+                <Skeleton className="h-8 w-8 flex-none rounded-lg" />
+                <Skeleton className={cx("h-4", width(i))} style={{ maxWidth: "30%" }} />
+                <Skeleton className="h-4 w-1/5" />
+                <Skeleton className="ml-auto h-4 w-16" />
+              </div>
+            ))}
+          </div>
+        );
+      case "list":
+        return (
+          <div className="divide-y divide-line rounded-2xl border border-line bg-surface">
+            {lines.map((i) => (
+              <div key={i} className="flex items-center gap-3.5 px-4 py-3.5">
+                <Skeleton className="h-10 w-10 flex-none rounded-xl" />
+                <div className="min-w-0 flex-1 space-y-2">
+                  <Skeleton className={cx("h-4", width(i))} />
+                  <Skeleton className="h-3 w-1/3" />
+                </div>
+              </div>
+            ))}
+          </div>
+        );
+      case "cards":
+        return (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {lines.slice(0, Math.max(3, Math.min(rows, 6))).map((i) => (
+              <div key={i} className="space-y-3 rounded-2xl border border-line bg-surface p-5">
+                <Skeleton className="h-4 w-1/2" />
+                <Skeleton className="h-8 w-1/3" />
+                <Skeleton className="h-3 w-2/3" />
+              </div>
+            ))}
+          </div>
+        );
+      case "form":
+        return (
+          <div className="space-y-5 rounded-2xl border border-line bg-surface p-5">
+            {lines.slice(0, Math.min(rows, 6)).map((i) => (
+              <div key={i} className="space-y-2">
+                <Skeleton className="h-3.5 w-28" />
+                <Skeleton className="h-10 w-full rounded-lg" />
+              </div>
+            ))}
+          </div>
+        );
+      case "profile":
+        return (
+          <div className="space-y-5">
+            <div className="flex items-end gap-5 rounded-2xl border border-line bg-surface p-6">
+              <Skeleton className="h-32 w-32 flex-none rounded-[22px]" />
+              <div className="flex-1 space-y-3 pb-2">
+                <Skeleton className="h-8 w-1/3" />
+                <Skeleton className="h-4 w-1/2" />
+              </div>
+            </div>
+            <div className="grid gap-5 lg:grid-cols-[230px_1fr]">
+              <div className="hidden space-y-3 lg:block">{lines.slice(0, 4).map((i) => <Skeleton key={i} className="h-4 w-full" />)}</div>
+              <div className="space-y-3 rounded-2xl border border-line bg-surface p-5">
+                {lines.map((i) => <Skeleton key={i} className={cx("h-4", width(i))} />)}
+              </div>
+            </div>
+          </div>
+        );
+      default:
+        return (
+          <div className="space-y-4">
+            <Skeleton className="h-6 w-56" />
+            <div className="space-y-4 rounded-2xl border border-line bg-surface p-5">
+              {lines.map((i) => (
+                <div key={i} className="flex items-center gap-4">
+                  <Skeleton className={cx("h-4", width(i))} />
+                  <Skeleton className="ml-auto h-4 w-20" />
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+    }
+  })();
+  return <div className="ui-loading" role="status" aria-label={label}><span className="sr-only">{label}…</span>{body}</div>;
 }
 
 type Tone = "info" | "success" | "warning" | "error";

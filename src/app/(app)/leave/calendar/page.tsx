@@ -86,7 +86,7 @@ export default function LeaveCalendarPage() {
           </div>
         } />
 
-      {error ? <ErrorNote error={errorMessage(error)} /> : !data ? <Loading /> : (
+      {error ? <ErrorNote error={errorMessage(error)} /> : !data ? <Loading shape="table" /> : (
         <Card flush>
           {people.length === 0 ? (
             <div className="p-5">

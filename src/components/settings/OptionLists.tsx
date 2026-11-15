@@ -48,7 +48,7 @@ export function OptionLists() {
   const [, reorder] = useMutation(ReorderDocument);
   const [, remove] = useMutation(DeleteDocument);
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="list" />;
   const key = chosen ?? data.optionLists[0]?.key;
   const options = data.listOptions.filter((o) => o.listKey === key);
   const refresh = () => reload({ requestPolicy: "network-only" });

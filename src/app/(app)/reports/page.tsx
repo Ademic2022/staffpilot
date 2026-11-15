@@ -59,7 +59,7 @@ function Reports() {
   const refresh = () => { refetchCatalog({ requestPolicy: "network-only" }); refetchCustom({ requestPolicy: "network-only" }); };
 
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!catalog) return <Loading />;
+  if (!catalog) return <Loading shape="cards" />;
 
   const standard: Entry[] = catalog.reportCatalog.map((r) => ({
     id: r.key, title: r.title, href: `/reports/${r.key}`, kind: "standard", favorite: r.favorite, lastViewed: r.lastViewed, reportKey: r.key,
@@ -126,7 +126,7 @@ function Reports() {
 
 export default function ReportsPage() {
   return (
-    <Suspense fallback={<Loading />}>
+    <Suspense fallback={<Loading shape="cards" />}>
       <Reports />
     </Suspense>
   );

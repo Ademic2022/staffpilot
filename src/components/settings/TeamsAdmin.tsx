@@ -83,7 +83,7 @@ export function TeamsAdmin() {
   const [saved, setSaved] = useState<string>();
   const [, remove] = useMutation(DeleteTeamDocument);
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="table" />;
   const refresh = (m: string) => { setSaved(m); reload({ requestPolicy: "network-only" }); };
   return (
     <>

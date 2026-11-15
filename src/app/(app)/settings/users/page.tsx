@@ -245,7 +245,7 @@ export default function UsersPage() {
   if (tab === "levels") return <><SettingsIntro>What each access level may do and see. Give people levels from the Users list.</SettingsIntro><AccessLevels /></>;
   if (!can(PERMS.usersManage)) return <Notice tone="warning">You do not have permission to manage users.</Notice>;
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="table" />;
 
   return (
     <>

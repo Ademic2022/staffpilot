@@ -67,7 +67,7 @@ export function ProjectsAdmin({ onSaved }: { onSaved: (m: string) => void }) {
   const [{ data, error }, reload] = useQuery({ query: ProjectsDocument });
   const [editing, setEditing] = useState<Project | null | undefined>(undefined);
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="table" />;
   return (
     <>
       <SettingsIntro actions={<Button icon={<FontAwesomeIcon icon={faPlus} />} onClick={() => setEditing(null)}>New project</Button>}>

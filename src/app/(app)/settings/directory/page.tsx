@@ -67,7 +67,7 @@ function Form({ data }: { data: DirectorySettingsAdminQuery }) {
 export default function DirectorySettingsPage() {
   const [{ data, error }] = useQuery({ query: SettingsDocument });
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="form" />;
   return (
     <>
       <SettingsIntro>Whether people see the directory and org chart, and which work details they show.</SettingsIntro>

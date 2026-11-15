@@ -245,7 +245,7 @@ export function AccessLevels() {
   const [creating, setCreating] = useState(false);
   const [saved, setSaved] = useState<string>();
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="form" />;
   const refresh = (m?: string) => { setSaved(m); reload({ requestPolicy: "network-only" }); };
   const chosen = data.roles.find((r) => r.id === chosenId) ?? data.roles[0];
   const builtIn = data.roles.filter((r) => r.isSystem);

@@ -12,7 +12,7 @@ import { useQuery } from "urql";
 import { BarList, ChartTable, Legend, MonthColumns, MonthLine, SERIES, TipRow, type Column, type Series } from "@/components/home/Charts";
 import { BigFigure, Empty, Widget, ago, longDate, monthName, plural } from "@/components/home/Widgets";
 import { tenure } from "@/components/profile/Vitals";
-import { Select, Table, TD, TH, cx } from "@/components/ui";
+import { Select, Table, TD, TH, cx, Loading } from "@/components/ui";
 import { graphql } from "@/gql";
 import type { WidgetFilter } from "@/gql/graphql";
 import { formatDate, formatDays, formatMoney, formatRange } from "@/lib/format";
@@ -108,7 +108,7 @@ function FilterMenu({ filter, onChange }: { filter: Filter; onChange: (f: Filter
             </div>
           )}
           <div className="w-56 rounded-xl border border-line bg-surface py-1.5 shadow-lg">
-            {!data && <p className="px-4 py-2 text-sm text-muted">Loading…</p>}
+            {!data && <div className="px-4 py-2"><Loading shape="inline" rows={2} /></div>}
             {dims.map((d) => {
               const on = filter[d.key as Dimension]?.length ?? 0;
               return (

@@ -18,7 +18,7 @@ export default function NotificationsPage() {
   const open = useOpenNotification(refresh);
 
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="list" />;
   const { nodes, pageInfo } = data.notifications;
   const unread = data.unreadNotificationCount;
 

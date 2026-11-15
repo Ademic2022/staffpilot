@@ -75,7 +75,7 @@ export default function AuditLogPage() {
         <Field label="From"><Input type="date" value={from} onChange={(e) => { setFrom(e.target.value); reset(); }} /></Field>
         <Field label="To"><Input type="date" value={to} onChange={(e) => { setTo(e.target.value); reset(); }} /></Field>
       </div>
-      {error ? <ErrorNote error={errorMessage(error)} /> : !page ? <Loading /> : (
+      {error ? <ErrorNote error={errorMessage(error)} /> : !page ? <Loading shape="table" /> : (
         <Card flush>
           <div className={fetching ? "opacity-60" : undefined}>
             <table className="w-full text-sm">

@@ -184,7 +184,7 @@ export default function LeaveApprovalsPage() {
   const refresh = () => reload({ requestPolicy: "network-only" });
 
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="list" />;
   const requests = data.leaveApprovals;
   const given = data.myDelegations.filter((d) => d.delegator.id === me?.employee?.id);
   const received = data.myDelegations.filter((d) => d.delegate.id === me?.employee?.id);

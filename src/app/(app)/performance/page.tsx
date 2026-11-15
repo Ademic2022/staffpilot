@@ -253,7 +253,7 @@ function Goals() {
   const [open, setOpen] = useState<Goal | null>(null);
   const [editing, setEditing] = useState<{ goal?: Goal; owner: string | null } | null>(null);
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="list" />;
   const hr = can(PERMS.performanceManage);
   const refresh = () => reload({ requestPolicy: "network-only" });
   // goals(employeeId: null) returns company goals, so "mine" is only meaningful with an employee record.
@@ -322,7 +322,7 @@ function Reviews() {
   const { me } = useSession();
   const [{ data, error }] = useQuery({ query: MyReviewsDocument, requestPolicy: "cache-and-network" });
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="list" />;
   const todo = data.myReviews.filter((r) => r.myRole && !r.myResponseDone && r.cycleStatus === "active");
   const own = data.myReviews.filter((r) => r.employeeName === me?.employee?.fullName && (r.myRole === "self" || !r.myRole));
   const written = data.myReviews.filter((r) => r.myRole && r.myRole !== "self" && r.myResponseDone);
@@ -389,7 +389,7 @@ function Feedback() {
   const [priv, setPriv] = useState(false);
   const [message, setMessage] = useState<{ ok: boolean; text: string }>();
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="list" />;
   const send = async () => {
     if (!to) return;
     const res = await give({ recipientId: to.id, body, private: priv });
@@ -553,7 +553,7 @@ function OneOnOnes() {
   const [{ data, error }, reload] = useQuery({ query: OneOnOnesDocument, requestPolicy: "cache-and-network" });
   const [editing, setEditing] = useState<Meeting | "new" | null>(null);
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="list" />;
   const today = new Date().toISOString().slice(0, 10);
   const upcoming = data.oneOnOnes.filter((m) => m.date >= today).reverse();
   const past = data.oneOnOnes.filter((m) => m.date < today);
@@ -603,7 +603,7 @@ function Cycles() {
   const [{ data, error }] = useQuery({ query: CyclesDocument, requestPolicy: "cache-and-network" });
   const [creating, setCreating] = useState(false);
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="list" />;
   const tone = { draft: "neutral", active: "brand", closed: "good" } as const;
   return (
     <>
@@ -661,5 +661,5 @@ function Performance() {
 }
 
 export default function PerformancePage() {
-  return <Suspense fallback={<Loading />}><Performance /></Suspense>;
+  return <Suspense fallback={<Loading shape="list" />}><Performance /></Suspense>;
 }

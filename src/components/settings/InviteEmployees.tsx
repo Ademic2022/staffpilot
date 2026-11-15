@@ -63,7 +63,7 @@ export function InviteEmployeesDialog({ onClose, onDone }: { onClose: () => void
       <div className="space-y-4">
         {problem && <ErrorNote error={problem} />}
         {error && <ErrorNote error={errorMessage(error)} />}
-        {!data && !error ? <Loading /> : !people.length ? (
+        {!data && !error ? <Loading shape="list" /> : !people.length ? (
           <Empty title="Everyone is already invited">
             Everyone with a work email already has a login or an invitation.
             {without > 0 && ` ${without} ${without === 1 ? "person has" : "people have"} no work email yet.`}

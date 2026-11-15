@@ -217,7 +217,7 @@ export function MyTimesheet({ initialWeek }: { initialWeek?: string | null }) {
         {s && <Badge tone={s.tone} dot>{s.label}</Badge>}
       </div>
       {sheet?.status === "rejected" && sheet.note && <Notice tone="warning" title={`Sent back by ${sheet.decidedBy ?? "your manager"}`}>{sheet.note}</Notice>}
-      {!data || data.myTimesheet.weekStart !== week ? <Loading /> : (
+      {!data || data.myTimesheet.weekStart !== week ? <Loading shape="table" /> : (
         <Editor key={`${week}-${sheet!.status}-${sheet!.id}`} sheet={sheet!} projects={data.myProjects} onSaved={() => reload({ requestPolicy: "network-only" })} />
       )}
     </div>
@@ -261,7 +261,7 @@ export function TimesheetApprovals() {
   const [{ data, error }, reload] = useQuery({ query: ToApproveDocument, requestPolicy: "cache-and-network" });
   const [open, setOpen] = useState<Sheet | null>(null);
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="table" />;
   return (
     <Card flush title="Timesheets to approve" description="Weeks your team has submitted.">
       {data.timesheetsToApprove.length ? (
@@ -294,7 +294,7 @@ export function TeamTimesheets({ canExport }: { canExport: boolean }) {
       {canExport && <a className="text-sm font-medium text-brand-ink hover:underline" href={`/api/attendance/timesheets/export.xlsx?start=${month}-01&end=${addDays(week, 6)}`}>
         Export project hours</a>}
     </>}>
-      {!data ? <Loading /> : data.teamTimesheets.length ? (
+      {!data ? <Loading shape="table" /> : data.teamTimesheets.length ? (
         <ul className="divide-y divide-line">
           {data.teamTimesheets.map((t) => {
             const s = SHEET_STATUS[t.status];

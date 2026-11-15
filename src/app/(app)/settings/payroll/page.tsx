@@ -173,7 +173,7 @@ export default function PayrollSettingsPage() {
   const [editing, setEditing] = useState<null | { group: Group | null } | { component: Component | null }>(null);
   const [saved, setSaved] = useState<string>();
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="table" />;
   const refresh = (m: string) => { setEditing(null); setSaved(m); reload({ requestPolicy: "network-only" }); };
   const splitTotal = data.payComponents.filter((c) => ["basic", "housing", "transport"].includes(c.role) && c.isActive)
     .reduce((n, c) => n + Number(c.percentOfGross ?? 0), 0);

@@ -124,7 +124,7 @@ export default function ExpenseSettingsPage() {
   const [saved, setSaved] = useState<string>();
   const [editing, setEditing] = useState<Category | null | undefined>(undefined);
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="form" />;
   const refresh = (m: string) => { setEditing(undefined); setSaved(m); reload({ requestPolicy: "network-only" }); };
   const money = (v: unknown) => (v ? formatMoney(String(v), tenant?.currency ?? "NGN") : "—");
   return (

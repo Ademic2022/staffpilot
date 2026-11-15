@@ -72,7 +72,7 @@ function ReadersDialog({ file, onClose }: { file: { id: string; title: string };
   return (
     <Dialog open onClose={onClose} title={`Who has read ${file.title}`} description={data ? `${done} of ${rows.length} people` : undefined}
       footer={<Button variant="secondary" onClick={onClose}>Close</Button>}>
-      {error ? <ErrorNote error={errorMessage(error)} /> : !data ? <Loading /> : (
+      {error ? <ErrorNote error={errorMessage(error)} /> : !data ? <Loading shape="list" /> : (
         <ul className="max-h-96 divide-y divide-line overflow-y-auto rounded-xl border border-line">
           {rows.map((r) => (
             <li key={r.email} className="flex items-center justify-between gap-3 px-3 py-2 text-sm">
@@ -306,7 +306,7 @@ function Files() {
                   )}
                 </div>
               )}
-              {error ? <div className="p-5"><ErrorNote error={errorMessage(error)} /></div> : !data ? <div className="p-5"><Loading /></div> : files.length ? (
+              {error ? <div className="p-5"><ErrorNote error={errorMessage(error)} /></div> : !data ? <div className="p-5"><Loading shape="list" /></div> : files.length ? (
                 <ul className={cx("divide-y divide-line transition-opacity", fetching && "opacity-60")}>
                   {files.map((f) => {
                     const { icon, tone } = iconFor(f.originalName);
@@ -415,7 +415,7 @@ function Files() {
 
 export default function FilesPage() {
   return (
-    <Suspense fallback={<Loading />}>
+    <Suspense fallback={<Loading shape="list" />}>
       <Files />
     </Suspense>
   );

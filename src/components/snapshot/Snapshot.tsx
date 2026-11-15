@@ -12,7 +12,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 import { useQuery } from "urql";
 
 import { tenure } from "@/components/profile/Vitals";
-import { cx } from "@/components/ui";
+import { cx, Loading } from "@/components/ui";
 import { graphql } from "@/gql";
 import type { EmployeeSnapshotQuery } from "@/gql/graphql";
 import { formatDate, formatFrequency, formatMoney, humanize } from "@/lib/format";
@@ -138,7 +138,7 @@ function SnapshotPanel({ id, onClose }: { id: string; onClose: () => void }) {
             <FontAwesomeIcon icon={faXmark} className="text-sm" />
           </button>
         </header>
-        {error ? <p className="p-4 text-sm text-muted">This record could not be loaded.</p> : !p ? <p className="p-4 text-sm text-muted">Loading…</p> : (
+        {error ? <p className="p-4 text-sm text-muted">This record could not be loaded.</p> : !p ? <div className="p-4"><Loading shape="inline" label="Loading" /></div> : (
           <>
             <div className="flex items-center gap-3.5 border-b border-line bg-surface px-4 py-4">
               <span className="h-14 w-14 flex-none overflow-hidden rounded-xl bg-subtle ring-1 ring-line">

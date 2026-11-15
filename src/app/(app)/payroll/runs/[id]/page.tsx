@@ -54,7 +54,7 @@ export default function PayrollRunPage() {
   const [note, setNote] = useState("");
   const [message, setMessage] = useState<{ ok: boolean; text: string }>();
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="table" />;
   const run = data.payrollRun;
   const money = (v: unknown) => formatMoney(String(v), run.currency);
   const manage = can(PERMS.payrollManage);

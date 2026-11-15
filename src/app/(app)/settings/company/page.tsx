@@ -275,7 +275,7 @@ export default function CompanySettingsPage() {
   if (!can(PERMS.tenantManage)) return <Notice tone="warning">Only owners can change company settings.</Notice>;
   if (section === "data") return <DataAndAccount />;
   if (error) return <ErrorNote error={errorMessage(error)} />;
-  if (!data) return <Loading />;
+  if (!data) return <Loading shape="form" />;
   return (
     <>
       {saved && <Notice tone="success">Settings saved.</Notice>}
