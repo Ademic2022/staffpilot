@@ -154,10 +154,19 @@ input[type="time"],
 input[type="datetime-local"],
 input[type="month"] {
   min-width: 0;
-  -webkit-appearance: none;
-  appearance: none;
-  display: flex;
-  align-items: center;
+}
+/* iPhone and iPad only (touch-callout exists only there): Safari's own date box, made to sit like
+   the other fields. Elsewhere the browser's layout stays, with its calendar icon on the right. */
+@supports (-webkit-touch-callout: none) {
+  input[type="date"],
+  input[type="time"],
+  input[type="datetime-local"],
+  input[type="month"] {
+    -webkit-appearance: none;
+    appearance: none;
+    display: flex;
+    align-items: center;
+  }
 }
 input::-webkit-date-and-time-value {
   text-align: left;
@@ -166,9 +175,8 @@ input::-webkit-date-and-time-value {
 input::-webkit-datetime-edit {
   padding: 0;
 }
-/* The calendar button on the far right, as in any other field. */
+/* The calendar button: a pointer, faded until hovered. */
 input::-webkit-calendar-picker-indicator {
-  margin-left: auto;
   cursor: pointer;
   opacity: 0.7;
 }
