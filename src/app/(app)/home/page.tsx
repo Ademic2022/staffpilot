@@ -232,10 +232,13 @@ export default function HomePage() {
     <div className={editing ? "pb-56" : undefined}>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-6">
-          <TenureFrame hireDate={photo?.employee?.hireDate} founding={photo?.employee?.foundingMember} radius="rounded-2xl"
-            gapColor="var(--background)" className="hidden sm:inline-block">
-            <Photo name={me.user.fullName} src={photo?.employee?.photoUrl} size={96} className="hidden sm:block" />
-          </TenureFrame>
+          {/* Not on phones: the greeting is enough there. The wrapper hides the frame and its mark too. */}
+          <div className="hidden flex-none sm:block">
+            <TenureFrame hireDate={photo?.employee?.hireDate} founding={photo?.employee?.foundingMember} radius="rounded-2xl"
+              gapColor="var(--background)">
+              <Photo name={me.user.fullName} src={photo?.employee?.photoUrl} size={96} />
+            </TenureFrame>
+          </div>
           <h1 className="font-display text-[40px] font-medium leading-tight text-brand-ink sm:text-[46px]">Hi, {firstName}</h1>
         </div>
         {!editing && (
