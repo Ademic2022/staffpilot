@@ -6,6 +6,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { useMutation, useQuery } from "urql";
 
+import { IconPlus } from "@/components/icons";
 import { Badge, type BadgeTone, Button, Card, Dialog, ErrorNote, Field, IconButton, Input, Loading, Notice, PageHeader, Tabs } from "@/components/ui";
 import { graphql } from "@/gql";
 import type { MyAttendanceQuery } from "@/gql/graphql";
@@ -101,7 +102,8 @@ function DayRows({ days, onEdit }: { days: Day[]; onEdit?: (d: Day) => void }) {
             <tr key={d.date}>
               <td className="px-4 py-2">
                 <span className="whitespace-nowrap text-ink"><span className="sm:hidden">{shortDay(d.date)}</span><span className="hidden sm:inline">{formatDate(d.date)}</span></span>
-                <span className="block text-xs text-muted">{d.holiday ? "Public holiday" : d.scheduled ? d.shift : "Not a working day"}</span>
+                <span className="block text-xs text-muted">{d.holiday ? "Public holiday" : d.scheduled ? d.shift : "Not a working day"}
+                  {d.entries.length > 1 && ` · ${d.entries.length} clock-ins`}</span>
                 <span className="mt-1 flex flex-wrap gap-1 sm:hidden"><DayBadges d={d} flags={flags} /></span></td>
               <td className="px-3 py-2 tabular-nums">{time(d.entries[0]?.clockIn)}</td>
               <td className="px-3 py-2 tabular-nums">{d.entries.length ? time(d.entries[d.entries.length - 1].clockOut) : "—"}</td>
@@ -151,7 +153,7 @@ function MyTime() {
               <p className="mt-1 font-display text-3xl text-ink">In since {time(open.clockIn)} · <Elapsed since={open.clockIn} /></p>
             ) : <p className="mt-1 font-display text-3xl text-ink">You are clocked out</p>}
             {open && open.flags.length > 0 && <p className="mt-1 flex items-center gap-2 text-sm text-amber-700 dark:text-amber-300"><FontAwesomeIcon icon={faTriangleExclamation} />{open.flags.map((f) => FLAG[f] ?? f).join(", ")}</p>}
-            {me.geofenced && <p className="mt-1 flex items-center gap-2 text-xs text-muted"><FontAwesomeIcon icon={faLocationDot} />Your location is checked when you clock in.</p>}
+            {me.geofenced && <p className="mt-1 flex items-center gap-2 text-xs text-muted"><FontAwesomeIcon icon={faLocationDot} />{open ? "Your location was checked when you clocked in." : "Your location is checked when you clock in."}</p>}
           </div>
           <Button busy={busy} className="h-14 px-8 text-base" icon={<FontAwesomeIcon icon={open ? faRightFromBracket : faRightToBracket} />}
             onClick={() => run(open ? "out" : "in")}>{open ? "Clock out" : "Clock in"}</Button>
@@ -162,31 +164,72 @@ function MyTime() {
   );
 }
 
+type Row = { id: string | null; start: string; end: string; note: string; minutes?: number | null; gone?: boolean };
+
+/**
+ * Correct a day's time. A day can hold several clock-ins (in, out, in again), so every entry is
+ * listed with its own times: fixing a forgotten clock-out means fixing that entry, not the first.
+ */
 function EntryDialog({ employeeId, day, onClose, onSaved }: { employeeId: string; day: Day; onClose: () => void; onSaved: () => void }) {
   const local = (iso?: string | null) => (iso ? new Date(new Date(iso).getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16) : "");
-  const first = day.entries[0];
-  const [start, setStart] = useState(local(first?.clockIn) || `${day.date}T09:00`);
-  const [end, setEnd] = useState(local(first?.clockOut) || `${day.date}T17:00`);
-  const [note, setNote] = useState(first?.note ?? "");
+  const [rows, setRows] = useState<Row[]>(() => day.entries.length
+    ? day.entries.map((e) => ({ id: e.id, start: local(e.clockIn), end: local(e.clockOut), note: e.note ?? "", minutes: e.minutes }))
+    : [{ id: null, start: `${day.date}T09:00`, end: `${day.date}T17:00`, note: "" }]);
   const [problem, setProblem] = useState<string>();
+  const [busy, setBusy] = useState(false);
   const [, save] = useMutation(SaveEntryDocument);
   const [, remove] = useMutation(DeleteEntryDocument);
+  const change = (i: number, patch: Partial<Row>) => setRows((rs) => rs.map((r, j) => (j === i ? { ...r, ...patch } : r)));
+  const shown = rows.filter((r) => !r.gone);
+
+  async function saveAll() {
+    setBusy(true);
+    setProblem(undefined);
+    for (const r of rows) {
+      const result = r.gone
+        ? (r.id ? await remove({ id: r.id }) : null)
+        : await save({ input: { id: r.id, employeeId, date: day.date, clockIn: new Date(r.start).toISOString(),
+          clockOut: r.end ? new Date(r.end).toISOString() : null, note: r.note } });
+      const failed = result && (errorMessage(result.error) ?? (result.data && "saveTimeEntry" in result.data ? result.data.saveTimeEntry.errors[0]?.message : undefined));
+      if (failed) { setBusy(false); return setProblem(failed); }
+    }
+    setBusy(false);
+    onSaved();
+  }
+
   return (
-    <Dialog open onClose={onClose} title={`Time on ${formatDate(day.date)}`} description="Changes are marked as edited and recorded in the audit log."
+    <Dialog open wide onClose={onClose} title={`Time on ${formatDate(day.date)}`}
+      description={shown.length > 1
+        ? `${shown.length} clock-ins this day. Correct the one that is wrong, for example a forgotten clock-out. Changes are marked as edited and recorded in the audit log.`
+        : "Changes are marked as edited and recorded in the audit log."}
       footer={<>
-        {first && <Button variant="ghost" icon={<FontAwesomeIcon icon={faTrash} />} onClick={async () => { await remove({ id: first.id }); onSaved(); }}>Remove</Button>}
-        <Button variant="secondary" onClick={onClose}>Cancel</Button>
-        <Button onClick={async () => {
-          const r = await save({ input: { id: first?.id ?? null, employeeId, date: day.date, clockIn: new Date(start).toISOString(),
-            clockOut: end ? new Date(end).toISOString() : null, note } });
-          const p = errorMessage(r.error) ?? r.data?.saveTimeEntry.errors[0]?.message;
-          if (p) setProblem(p); else onSaved();
-        }}>Save</Button></>}>
-      <div className="grid gap-4 sm:grid-cols-2">
-        {problem && <div className="sm:col-span-2"><ErrorNote error={problem} /></div>}
-        <Field label="In"><Input type="datetime-local" value={start} onChange={(e) => setStart(e.target.value)} /></Field>
-        <Field label="Out" optional><Input type="datetime-local" value={end} onChange={(e) => setEnd(e.target.value)} /></Field>
-        <div className="sm:col-span-2"><Field label="Why" optional><Input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Forgot to clock out" /></Field></div>
+        <Button variant="secondary" onClick={onClose} disabled={busy}>Cancel</Button>
+        <Button busy={busy} onClick={() => void saveAll()}>Save</Button></>}>
+      <div className="space-y-4">
+        {problem && <ErrorNote error={problem} />}
+        {shown.length === 0 && <p className="text-sm text-muted">No time left for this day. Save to remove it all, or add time.</p>}
+        {rows.map((r, i) => r.gone ? null : (
+          <div key={r.id ?? `new-${i}`} className="rounded-xl border border-line p-3">
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <span className="text-xs font-medium text-muted">
+                {r.id ? `Entry ${shown.indexOf(r) + 1}` : "New time"}{r.minutes != null && r.id ? ` · ${hm(r.minutes)}` : ""}
+              </span>
+              <button type="button" className="inline-flex items-center gap-1.5 text-xs font-medium text-red-600 hover:underline"
+                onClick={() => change(i, { gone: true })}><FontAwesomeIcon icon={faTrash} /> Remove</button>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Field label="In"><Input type="datetime-local" value={r.start} onChange={(e) => change(i, { start: e.target.value })} /></Field>
+              <Field label="Out" optional><Input type="datetime-local" value={r.end} onChange={(e) => change(i, { end: e.target.value })} /></Field>
+              <div className="sm:col-span-2"><Field label="Why" optional>
+                <Input value={r.note} onChange={(e) => change(i, { note: e.target.value })} placeholder="Forgot to clock out" />
+              </Field></div>
+            </div>
+          </div>
+        ))}
+        <Button variant="secondary" size="sm" icon={<IconPlus size={14} />}
+          onClick={() => setRows((rs) => [...rs, { id: null, start: `${day.date}T09:00`, end: `${day.date}T17:00`, note: "" }])}>
+          Add time
+        </Button>
       </div>
     </Dialog>
   );

@@ -100,7 +100,7 @@ export function ClockPill() {
           <p className="mt-1 text-[17px] font-semibold text-ink">
             {since ? `In since ${clockTime(since)} · ${elapsed}` : "You are clocked out"}
           </p>
-          {me.geofenced && <p className="mt-1 text-xs text-muted">Your location is checked when you clock {since ? "out" : "in"}.</p>}
+          {me.geofenced && <p className="mt-1 text-xs text-muted">{since ? "Your location was checked when you clocked in." : "Your location is checked when you clock in."}</p>}
           {problem && <div className="mt-3"><ErrorNote error={problem} /></div>}
           <Button busy={busy} className="mt-4 w-full" variant={since ? "secondary" : "primary"} onClick={toggle}>
             {since ? "Clock out" : "Clock in"}
