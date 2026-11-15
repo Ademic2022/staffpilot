@@ -48,37 +48,41 @@ export function useMounted() {
   return useSyncExternalStore(noop, () => true, () => false);
 }
 
-function SessionState({ children, reset }: { children: ReactNode; reset: () => void }) {
+function SessionState({ children, reset, version }: { children: ReactNode; reset: () => void; version: number }) {
   const mounted = useMounted();
-  const [{ data, error }] = useQuery({ query: MeDocument, pause: !mounted });
+  // Each answer is tagged with the session version that asked for it. After signing in the hook
+  // still holds the "signed out" answer until the new one comes: that is "loading", never "signed
+  // out" (which would send someone who has just signed in back to the sign-in page).
+  const context = useMemo(() => ({ sessionVersion: version }), [version]);
+  const [{ data, error, operation }] = useQuery({ query: MeDocument, pause: !mounted, context });
+  const current = operation?.context.sessionVersion === version;
   const value = useMemo<SessionValue>(() => {
-    const me = data?.me ?? null;
+    // An older answer still stands if it says someone is signed in (settings saved, cache refreshed:
+    // no flicker). An older "signed out" does not: it is waiting for the answer after signing in.
+    const fresh = current || data?.me ? data : undefined;
+    const me = fresh?.me ?? null;
     // The company's date and money style (General settings) applies to every formatted value from here on.
-    if (data?.tenant) setFormatPrefs({ dateFormat: data.tenant.dateFormat, showCurrencyCode: data.tenant.showCurrencyCode });
+    if (fresh?.tenant) setFormatPrefs({ dateFormat: fresh.tenant.dateFormat, showCurrencyCode: fresh.tenant.showCurrencyCode });
     const granted = new Set(me?.permissions ?? []);
     return {
-      // Loading until the server has answered. Right after sign-in the client is replaced and the
-      // query has not started yet (not "fetching", no data): counting that as "signed out" sent
-      // people straight back to the sign-in page although they were signed in.
-      loading: !mounted || (!data && !error),
+      loading: !mounted || (!fresh && !(current && error)),
       me,
-      tenant: data?.tenant ?? null,
+      tenant: fresh?.tenant ?? null,
       can: (...perms) => perms.some((p) => granted.has(p)),
       reset,
     };
-  }, [data, error, mounted, reset]);
+  }, [data, error, current, mounted, reset]);
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
 }
 
 export function SessionProvider({ children }: { children: ReactNode }) {
-  // A new client after signing in or out (nothing cached from the other person), and a fresh
-  // session state with it: the query hook would otherwise keep the old "signed out" answer until
-  // the new one arrives, and the app would send a person who has just signed in back to sign in.
+  // A new client after signing in or out, so nothing cached from the other person is shown.
+  // The app is not remounted: that would wipe pages mid-way and could cancel the move to Home.
   const [{ client, version }, setSession] = useState(() => ({ client: makeClient(), version: 0 }));
   const reset = useCallback(() => setSession((s) => ({ client: makeClient(), version: s.version + 1 })), []);
   return (
     <Provider value={client}>
-      <SessionState key={version} reset={reset}>{children}</SessionState>
+      <SessionState reset={reset} version={version}>{children}</SessionState>
     </Provider>
   );
 }

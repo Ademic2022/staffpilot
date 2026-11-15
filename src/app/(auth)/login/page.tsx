@@ -54,17 +54,19 @@ function CodeStep({ onDone, onRestart }: { onDone: () => void; onRestart: (why?:
     setBusy(true);
     setError(undefined);
     const result = await verify({ code: code.trim() });
-    sending.current = false;
-    setBusy(false);
     const failure = result.data?.verifyMfa.errors[0];
+    const problem = errorMessage(result.error) ?? failure?.message;
+    if (failure || problem) {
+      sending.current = false;
+      setBusy(false);
+    }
     // The password step has expired (or was replaced by a sign-in in another tab): no code can work, so start over.
     if (failure?.field === "restart") return onRestart(failure.message);
-    const problem = errorMessage(result.error) ?? failure?.message;
     if (problem) {
       setCode("");
       return setError(problem);
     }
-    onDone();
+    onDone(); // stays busy until Home appears
   }
 
   return (
