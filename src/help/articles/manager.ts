@@ -28,7 +28,7 @@ Changes that wait for approval before they take effect, such as a promotion, a t
 
 Under **Hand over your approvals**, choose who covers for you and the dates. While you are away, they can approve or reject requests that are waiting for you.
 
-> HR can tick **Show every pending request** to see and decide requests waiting for anyone.
+> HR can tick **Show every pending request** to see and decide requests waiting for anyone. A request waiting for someone else shows **Decide instead**: HR must give a reason, which goes in the audit log and is sent to the approver who was skipped.
 `,
   },
   {
@@ -66,7 +66,11 @@ The board shows everyone below you for a day: **In**, **Gone home**, **Not in ye
 
 ## Correcting someone's time
 
-Click a person to see their days. Use the pencil on a day to add or change a clock-in and clock-out, for example when they forgot to clock out. Add a note to say why. Corrected days are marked **Edited** and recorded in the audit log.
+Click a person to see their days. Use the pencil on a day to correct it. A day can hold more than one clock-in (someone clocked in, out, and in again), so every one is listed with its own **In** and **Out**: change the one that is wrong, for example the entry with a forgotten clock-out, **Remove** an entry made by mistake, or **Add time**. A day with several shows **2 clock-ins** under its date. Add a note to say why.
+
+Corrected days are marked **Edited**, and the audit log keeps the times before and after. One entry can be at most 24 hours, and must start on its day (or the evening before, for a night shift). Correcting the hours works out that day's overtime again: if it drops below your company's threshold, overtime waiting or already approved for it is taken away.
+
+> Nobody corrects their own time, owners and HR included: ask someone else with attendance access. Your own days are under **My time**.
 
 ## Overtime
 

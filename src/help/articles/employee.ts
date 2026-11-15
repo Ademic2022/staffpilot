@@ -310,6 +310,8 @@ Open **People** in the menu. Depending on your access you see the employee **lis
 
 Search by name, or filter by **department** and **location**. Each person shows the work details your company has chosen to share, such as job title, work email, phone and who they report to.
 
+The frame round each photo shows how long the person has been here: green with 🌱 **New** for their first 90 days, then bronze, silver and gold as the years go by, 👑 **OG** after 10 years, and ⭐ for the founding team. Hover a photo for the date they joined.
+
 ## Org chart
 
 The org chart shows who reports to whom. Use **Jump to an employee** to find someone; the chart highlights the line from them up to the top. Hover a name for their details. **Export** the chart as a PDF or picture, or as a file for Visio or Lucidchart.

@@ -44,6 +44,7 @@ These are off for a new company. Until one is switched on, its menu item is hidd
 | Payroll and payslips | **Settings** → **Company** → **General settings** → **Run payroll in StaffPilot** (owners) |
 | Employees change their own photo | **Settings** → **Company** → **General settings** |
 | Employees upload their own files | **Settings** → **Company** → **General settings** |
+| Length of service on photos (on to start with) | **Settings** → **Company** → **General settings** → **Show how long people have been here** |
 
 > On any settings page, the **?** button beside the bell opens its article.
 `,
@@ -71,6 +72,23 @@ How dates, amounts and names read for everyone, and what employees may do themse
 - **Let employees upload files to their own record**: they land in an Employee uploads category the employee and HR can see.
 - **Show expanded gender options**: adds Non-binary and a pronouns field.
 - **Run payroll in StaffPilot**: adds Payroll and My payslips. Leave it off if you pay people elsewhere; expense claims are then paid back by bank transfer, and payslips already published stay readable.
+- **Show how long people have been here**: a frame round profile photos by length of service (see below). On for a new company.
+
+## Length of service on photos
+
+Wherever photos appear (profiles, the People list, the directory, the org chart and Home), a frame shows how long each person has been here, worked out from their hire date:
+
+| Time here | On their photo |
+|---|---|
+| First 90 days | Green frame, 🌱 and **New** |
+| 1 to 2 years | Bronze frame |
+| 3 to 4 years | Silver frame |
+| 5 to 9 years | Gold frame and **5 yrs** |
+| 10 years or more | Gold frame, 👑 and **OG · 12 yrs** |
+
+Hover a photo for the exact date and length, such as *Joined 3 Mar 2018 · 8 years 8 months*. Work anniversaries in **Celebrations** on Home get a ✨.
+
+To mark the people who built the company, open their profile and choose **⋯** → **Founding team**: they get a gold frame, ⭐ and **Founding team**, whatever their years. Choose it again to take it off; each change is in the audit log. Turn the whole thing off with **Show how long people have been here** above.
 
 ## Logo and colour
 
@@ -188,7 +206,7 @@ When people change their legal name, bank details or ID numbers, the change wait
 **Settings** → **Job organization** holds the structure every employee record points to.
 
 - **Legal entities**: the companies that employ people, each with its country and currency. Payroll uses the country's tax rules.
-- **Locations**: offices and sites, with their time zone and public holidays. For attendance, a location can have a **clock-in area**: its latitude, longitude and radius in metres.
+- **Locations**: offices and sites, with their time zone (the same as the company unless you choose Africa/Lagos for a site) and public holidays. For attendance, a location can have a **clock-in area**: its latitude, longitude and radius in metres.
 - **Departments**: can sit under other departments.
 - **Job titles**, each with a **job description** (up to 4,000 characters, about 600 words) that shows on the Job tab of everyone with that title. **Write with AI** drafts one from the title, using anything you have typed as notes; read it and adjust it before saving, or choose **Undo**. Only the title and your notes are sent to write it.
 - **Grades and pay bands**: ranked grades, each with a minimum, midpoint and maximum pay. The **Pay bands** report shows who is outside their band.

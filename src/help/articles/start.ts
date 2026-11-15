@@ -71,6 +71,8 @@ Two-step sign-in asks for a six-digit code from an app on your phone each time y
 
 Run low on recovery codes? Choose **Make new codes**; the old ones stop working.
 
+Each code works only once. If you sign in again within a minute or two (on another device, or another company with the same account), the code still showing has just been used: wait a few seconds for the next one. If every code is refused, set your phone's date and time to set automatically, as a clock that is out by more than about 30 seconds gives the wrong codes.
+
 ![Scan the code, or type the key into your authenticator app, then enter the code it shows.](shot:two-step-setup)
 
 ## Email preferences
