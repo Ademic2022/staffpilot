@@ -208,7 +208,7 @@ When people change their legal name, bank details or ID numbers, the change wait
 - **Legal entities**: the companies that employ people, each with its country and currency. Payroll uses the country's tax rules.
 - **Locations**: offices and sites, with their time zone (the same as the company unless you choose Africa/Lagos for a site) and public holidays. For attendance, a location can have a **clock-in area**: its latitude, longitude and radius in metres.
 - **Departments**: can sit under other departments.
-- **Job titles**, each with a **job description** (up to 4,000 characters, about 600 words) that shows on the Job tab of everyone with that title. **Write with AI** drafts one from the title, using anything you have typed as notes; read it and adjust it before saving, or choose **Undo**. Only the title and your notes are sent to write it.
+- **Job titles**, each in a **department** (people in that department, or one under it, can have the title) or for **any department** (titles every team uses, such as Intern), and each with a **job description** (up to 4,000 characters, about 600 words) that shows on the Job tab of everyone with that title. **Write with AI** drafts one from the title, using anything you have typed as notes; read it and adjust it before saving, or choose **Undo**. Only the title and your notes are sent to write it.
 - **Grades and pay bands**: ranked grades, each with a minimum, midpoint and maximum pay. The **Pay bands** report shows who is outside their band.
 - **Teams**: groups that cut across departments, such as project teams. Everyone can see them.
 `,

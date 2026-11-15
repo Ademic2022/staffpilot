@@ -1413,6 +1413,7 @@ type JobTitle {
   name: String!
   description: String!
   isActive: Boolean!
+  department: Department
 }
 
 type JobTitlePayload {
@@ -3518,6 +3519,7 @@ input SaveJobTitleInput {
   id: ID = null
   name: String
   description: String
+  departmentId: ID
   isActive: Boolean
 }
 

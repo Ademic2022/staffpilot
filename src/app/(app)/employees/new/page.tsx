@@ -2,12 +2,12 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useMutation, useQuery } from "urql";
 import { z } from "zod";
 
-import { EMPLOYMENT_TYPES, JobOptionsDocument, activeOptions } from "@/components/employees/EmployeeDialogs";
+import { EMPLOYMENT_TYPES, JobOptionsDocument, activeOptions, titlesFor } from "@/components/employees/EmployeeDialogs";
 import { Button, Card, ErrorNote, Field, FormActions, FormSection, Input, Loading, Notice, PageHeader, Select } from "@/components/ui";
 import { graphql } from "@/gql";
 import { errorMessage } from "@/lib/api";
@@ -49,7 +49,7 @@ export default function HirePage() {
   const [{ data, fetching }] = useQuery({ query: JobOptionsDocument });
   const [, hire] = useMutation(HireDocument);
   const [formError, setFormError] = useState<string>();
-  const { register, handleSubmit, control, setError, formState: { errors, isSubmitting } } = useForm<Values>({
+  const { register, handleSubmit, control, setError, setValue, formState: { errors, isSubmitting } } = useForm<Values>({
     resolver: zodResolver(schema),
     defaultValues: {
       firstName: "", lastName: "", workEmail: "", hireDate: "", probationEndDate: "", legalEntityId: "",
@@ -58,6 +58,13 @@ export default function HirePage() {
     },
   });
   const entityId = useWatch({ control, name: "legalEntityId" });
+  const departmentId = useWatch({ control, name: "departmentId" });
+  const jobTitleId = useWatch({ control, name: "jobTitleId" });
+  const titles = titlesFor(data?.jobTitles, data?.departments, departmentId);
+  // A title that does not belong to the chosen department is cleared, so a mismatch cannot be saved.
+  useEffect(() => {
+    if (data && jobTitleId && !titles.some((t) => t.id === jobTitleId)) setValue("jobTitleId", "");
+  }, [data, jobTitleId, titles, setValue]);
 
   if (!can(PERMS.employeesManage)) return <Notice tone="warning">You do not have permission to add employees.</Notice>;
   if (!data && fetching) return <Loading shape="form" />;
@@ -138,8 +145,8 @@ export default function HirePage() {
               </Select>
             </Field>
             {choice("departmentId", "Department", inEntity(data?.departments))}
+            {choice("jobTitleId", "Job title", titles)}
             {choice("locationId", "Location", inEntity(data?.locations))}
-            {choice("jobTitleId", "Job title", activeOptions(data?.jobTitles))}
             {choice("gradeId", "Grade", activeOptions(data?.grades))}
             {choice("managerId", "Manager", (data?.employees.nodes ?? []).map((e) => ({ id: e.id, name: e.fullName })))}
           </div>

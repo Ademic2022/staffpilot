@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useMutation, useQuery } from "urql";
 import { z } from "zod";
@@ -115,9 +115,9 @@ export function EditPersonalDialog({ employee: e, onClose, onSaved }: DialogProp
 export const JobOptionsDocument = graphql(`
   query JobOptions {
     legalEntities { id name isActive }
-    departments { id name isActive legalEntity { id } }
+    departments { id name isActive legalEntity { id } parent { id } }
     locations { id name isActive legalEntity { id } }
-    jobTitles { id name isActive }
+    jobTitles { id name isActive department { id } }
     grades { id name isActive }
     employees(filter: { statuses: [ACTIVE, PROBATION, ON_LEAVE] }, first: 100) { nodes { id fullName } }
   }
@@ -126,6 +126,20 @@ export const JobOptionsDocument = graphql(`
 /** Active units only, plus the one currently assigned so a retired unit still shows by name. */
 export function activeOptions<T extends { id: string; isActive: boolean }>(items: T[] | undefined, keep?: string | null) {
   return (items ?? []).filter((i) => i.isActive || i.id === keep);
+}
+
+type DeptNode = { id: string; parent?: { id: string } | null };
+type TitleNode = { id: string; name: string; isActive: boolean; department?: { id: string } | null };
+
+/**
+ * The job titles that fit a department: titles for any department, plus those of the department
+ * and every department above it (a Backend engineer is still in Engineering).
+ */
+export function titlesFor<T extends TitleNode>(titles: T[] | undefined, departments: DeptNode[] | undefined, departmentId: string | null | undefined, keep?: string | null) {
+  const byId = new Map((departments ?? []).map((d) => [d.id, d]));
+  const line = new Set<string>();
+  for (let d = departmentId ? byId.get(departmentId) : undefined; d && !line.has(d.id); d = d.parent ? byId.get(d.parent.id) : undefined) line.add(d.id);
+  return activeOptions(titles, keep).filter((t) => !t.department || line.has(t.department.id));
 }
 
 export const EMPLOYMENT_TYPES: { value: EmploymentType; label: string }[] = [
@@ -193,11 +207,18 @@ export function ChangeJobDialog({ employee: e, onClose, onSaved, changeType = "P
     jobTitleId: e.jobTitle?.id ?? "", gradeId: e.grade?.id ?? "", managerId: e.manager?.id ?? "",
     employmentType: e.employmentType,
   };
-  const { register, handleSubmit, control, setError, formState: { errors, isSubmitting } } = useForm<JobValues>({
+  const { register, handleSubmit, control, setError, setValue, formState: { errors, isSubmitting } } = useForm<JobValues>({
     resolver: zodResolver(jobSchema),
     defaultValues: { effectiveDate: today(), changeType, reason: "", ...current },
   });
   const entityId = useWatch({ control, name: "legalEntityId" });
+  const departmentId = useWatch({ control, name: "departmentId" });
+  const jobTitleId = useWatch({ control, name: "jobTitleId" });
+  const titles = titlesFor(data?.jobTitles, data?.departments, departmentId, current.departmentId === departmentId ? current.jobTitleId : null);
+  // A new department: a title that does not belong to it is cleared, so a mismatch cannot be saved.
+  useEffect(() => {
+    if (data && jobTitleId && !titles.some((t) => t.id === jobTitleId)) setValue("jobTitleId", "");
+  }, [data, jobTitleId, titles, setValue]);
 
   async function onSubmit(v: JobValues) {
     setFormError(undefined);
@@ -251,10 +272,10 @@ export function ChangeJobDialog({ employee: e, onClose, onSaved, changeType = "P
         {/* The selects mount once their options are here: mounted earlier, they would show "None" and keep it. */}
         {!data ? <div className="border-t border-line pt-4"><Loading shape="inline" /></div> : (
         <div className="grid gap-4 border-t border-line pt-4 sm:grid-cols-2">
-          {choice("jobTitleId", "Job title", activeOptions(data?.jobTitles, current.jobTitleId))}
-          {choice("gradeId", "Grade", activeOptions(data?.grades, current.gradeId))}
           {choice("legalEntityId", "Legal entity", activeOptions(data?.legalEntities, current.legalEntityId), "Choose…")}
           {choice("departmentId", "Department", inEntity(data?.departments, current.departmentId))}
+          {choice("jobTitleId", "Job title", titles)}
+          {choice("gradeId", "Grade", activeOptions(data?.grades, current.gradeId))}
           {choice("locationId", "Location", inEntity(data?.locations, current.locationId))}
           {choice("managerId", "Manager",
             (data?.employees.nodes ?? []).filter((m) => m.id !== e.id).map((m) => ({ id: m.id, name: m.fullName })))}

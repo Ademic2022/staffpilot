@@ -24,7 +24,7 @@ const OrganizationDocument = graphql(`
     legalEntities { id name registrationNumber country currency isActive }
     locations { id name address city country timezone latitude longitude radiusM isActive legalEntity { id name } }
     departments { id name code isActive legalEntity { id name } parent { id name } head { id fullName } }
-    jobTitles { id name description isActive }
+    jobTitles { id name description isActive department { id name } }
     grades { id name rank isActive payMin payMid payMax }
     employees(filter: { statuses: [ACTIVE, PROBATION, ON_LEAVE] }, first: 100) { nodes { id fullName } }
     aiWriting
@@ -135,6 +135,9 @@ const KINDS: Record<Kind, { label: string; singular: string; intro: string; fiel
     intro: "The titles you can give employees. The description shows on the Job tab of each record.",
     fields: [
       { name: "name", label: "Name", required: true, wide: true },
+      { name: "departmentId", label: "Department", type: "select", empty: "Any department", wide: true,
+        hint: "Only people in this department (or one under it) can have this title. Any department: titles every team uses, such as Intern.",
+        options: (d) => d.departments.filter((x) => x.isActive).map((x) => ({ id: x.id, name: d.legalEntities.length > 1 ? `${x.name} (${x.legalEntity.name})` : x.name })) },
       { name: "description", label: "Job description", type: "textarea", wide: true, maxLength: 4000,
         hint: "What the role is for and what it covers. Up to 4,000 characters (about 600 words)." },
     ],
@@ -379,7 +382,13 @@ function OrganizationPage() {
         return [l.name, l.legalEntity.name, [l.city, l.country].filter(Boolean).join(", "), l.timezone || dash];
       },
     },
-    jobTitles: { head: ["Name"], cells: (r) => [r.name as string] },
+    jobTitles: {
+      head: ["Name", "Department"],
+      cells: (r) => {
+        const t = r as unknown as OrganizationQuery["jobTitles"][number];
+        return [t.name, t.department?.name ?? <span key="any" className="text-muted">Any department</span>];
+      },
+    },
     grades: {
       head: ["Rank", "Name", "Pay band (monthly)"],
       cells: (r) => [<span key="rank" className="tabular-nums">{r.rank as number}</span>, r.name as string,
