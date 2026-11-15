@@ -27,7 +27,7 @@ type Documents = {
     "\n  mutation SaveTimeEntry($input: TimeEntryInput!) { saveTimeEntry(input: $input) { entry { id } errors { field message } } }\n": typeof types.SaveTimeEntryDocument,
     "mutation DeleteTimeEntry($id: ID!) { deleteTimeEntry(id: $id) }": typeof types.DeleteTimeEntryDocument,
     "\n  query OvertimeToDecide { overtimeToDecide { id employeeName date minutes } }\n": typeof types.OvertimeToDecideDocument,
-    "\n  mutation DecideOvertime($id: ID!, $approve: Boolean!) { decideOvertime(id: $id, approve: $approve) { id status } }\n": typeof types.DecideOvertimeDocument,
+    "\n  mutation DecideOvertime($id: ID!, $approve: Boolean!, $note: String!) { decideOvertime(id: $id, approve: $approve, note: $note) { id status } }\n": typeof types.DecideOvertimeDocument,
     "\n  mutation ArchiveEmployee($id: ID!) {\n    archiveEmployee(id: $id) { employee { id } errors { field message } }\n  }\n": typeof types.ArchiveEmployeeDocument,
     "\n  mutation SendEmployeePasswordReset($employeeId: ID!) {\n    sendEmployeePasswordReset(employeeId: $employeeId)\n  }\n": typeof types.SendEmployeePasswordResetDocument,
     "\n  query EmployeeAccess($id: ID!) {\n    employee(id: $id) { id access { email roles isActive invitePending } }\n  }\n": typeof types.EmployeeAccessDocument,
@@ -340,7 +340,7 @@ const documents: Documents = {
     "\n  mutation SaveTimeEntry($input: TimeEntryInput!) { saveTimeEntry(input: $input) { entry { id } errors { field message } } }\n": types.SaveTimeEntryDocument,
     "mutation DeleteTimeEntry($id: ID!) { deleteTimeEntry(id: $id) }": types.DeleteTimeEntryDocument,
     "\n  query OvertimeToDecide { overtimeToDecide { id employeeName date minutes } }\n": types.OvertimeToDecideDocument,
-    "\n  mutation DecideOvertime($id: ID!, $approve: Boolean!) { decideOvertime(id: $id, approve: $approve) { id status } }\n": types.DecideOvertimeDocument,
+    "\n  mutation DecideOvertime($id: ID!, $approve: Boolean!, $note: String!) { decideOvertime(id: $id, approve: $approve, note: $note) { id status } }\n": types.DecideOvertimeDocument,
     "\n  mutation ArchiveEmployee($id: ID!) {\n    archiveEmployee(id: $id) { employee { id } errors { field message } }\n  }\n": types.ArchiveEmployeeDocument,
     "\n  mutation SendEmployeePasswordReset($employeeId: ID!) {\n    sendEmployeePasswordReset(employeeId: $employeeId)\n  }\n": types.SendEmployeePasswordResetDocument,
     "\n  query EmployeeAccess($id: ID!) {\n    employee(id: $id) { id access { email roles isActive invitePending } }\n  }\n": types.EmployeeAccessDocument,
@@ -709,7 +709,7 @@ export function graphql(source: "\n  query OvertimeToDecide { overtimeToDecide {
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation DecideOvertime($id: ID!, $approve: Boolean!) { decideOvertime(id: $id, approve: $approve) { id status } }\n"): (typeof documents)["\n  mutation DecideOvertime($id: ID!, $approve: Boolean!) { decideOvertime(id: $id, approve: $approve) { id status } }\n"];
+export function graphql(source: "\n  mutation DecideOvertime($id: ID!, $approve: Boolean!, $note: String!) { decideOvertime(id: $id, approve: $approve, note: $note) { id status } }\n"): (typeof documents)["\n  mutation DecideOvertime($id: ID!, $approve: Boolean!, $note: String!) { decideOvertime(id: $id, approve: $approve, note: $note) { id status } }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

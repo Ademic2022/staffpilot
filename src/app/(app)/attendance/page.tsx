@@ -7,7 +7,7 @@ import { Suspense, useEffect, useState } from "react";
 import { useMutation, useQuery } from "urql";
 
 import { IconPlus } from "@/components/icons";
-import { Badge, type BadgeTone, Button, Card, Dialog, ErrorNote, Field, IconButton, Input, Loading, Notice, PageHeader, Tabs } from "@/components/ui";
+import { ActionDialog, Badge, type BadgeTone, Button, Card, Dialog, ErrorNote, Field, IconButton, Input, Loading, Notice, PageHeader, Tabs } from "@/components/ui";
 import { graphql } from "@/gql";
 import type { MyAttendanceQuery } from "@/gql/graphql";
 import { errorMessage } from "@/lib/api";
@@ -51,7 +51,7 @@ const OvertimeDocument = graphql(`
   query OvertimeToDecide { overtimeToDecide { id employeeName date minutes } }
 `);
 const DecideDocument = graphql(`
-  mutation DecideOvertime($id: ID!, $approve: Boolean!) { decideOvertime(id: $id, approve: $approve) { id status } }
+  mutation DecideOvertime($id: ID!, $approve: Boolean!, $note: String!) { decideOvertime(id: $id, approve: $approve, note: $note) { id status } }
 `);
 
 type Day = MyAttendanceQuery["myAttendance"]["days"][number];
@@ -306,6 +306,7 @@ function Team() {
 function Approvals() {
   const [{ data, error }, reload] = useQuery({ query: OvertimeDocument, requestPolicy: "cache-and-network" });
   const [, decide] = useMutation(DecideDocument);
+  const [rejecting, setRejecting] = useState<{ id: string; name: string; amount: string } | null>(null);
   if (error) return <ErrorNote error={errorMessage(error)} />;
   if (!data) return <Loading shape="table" />;
   return (
@@ -316,13 +317,25 @@ function Approvals() {
             <li key={o.id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-3 text-sm">
               <span><span className="font-medium text-ink">{o.employeeName}</span> <span className="text-muted">{hm(o.minutes)} extra on {formatDate(o.date)}</span></span>
               <span className="flex gap-2">
-                <Button size="sm" onClick={async () => { await decide({ id: o.id, approve: true }); reload({ requestPolicy: "network-only" }); }}>Approve</Button>
-                <Button size="sm" variant="secondary" onClick={async () => { await decide({ id: o.id, approve: false }); reload({ requestPolicy: "network-only" }); }}>Reject</Button>
+                <Button size="sm" onClick={async () => { await decide({ id: o.id, approve: true, note: "" }); reload({ requestPolicy: "network-only" }); }}>Approve</Button>
+                <Button size="sm" variant="secondary" onClick={() => setRejecting({ id: o.id, name: o.employeeName, amount: `${hm(o.minutes)} on ${formatDate(o.date)}` })}>Reject</Button>
               </span>
             </li>
           ))}
         </ul>
       ) : <p className="p-5 text-sm text-muted">Nothing waiting.</p>}
+      {rejecting && (
+        <ActionDialog open onClose={() => setRejecting(null)} title={`Reject ${rejecting.name}'s overtime?`}
+          description={`${rejecting.amount}. ${rejecting.name.split(" ")[0]} is told, with your reason. If the time itself is wrong, correct it instead.`}
+          confirmLabel="Reject" tone="danger"
+          input={{ label: "Reason", placeholder: "Not agreed in advance", required: true }}
+          onConfirm={async (note) => {
+            if (!note) throw new Error("Say why, so they know.");
+            const r = await decide({ id: rejecting.id, approve: false, note });
+            if (r.error) throw new Error(errorMessage(r.error));
+            reload({ requestPolicy: "network-only" });
+          }} />
+      )}
     </Card>
   );
 }

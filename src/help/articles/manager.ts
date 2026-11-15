@@ -74,7 +74,7 @@ Corrected days are marked **Edited**, and the audit log keeps the times before a
 
 ## Overtime
 
-When someone works longer than their shift by more than your company's threshold, the extra time is recorded when they clock out. It appears under **Attendance** → **Approvals** → **Overtime to approve**. Approve it to pay it in the next payroll, or reject it. Nobody can approve their own overtime.
+When someone works longer than their shift by more than your company's threshold, the extra time is recorded when they clock out. It appears under **Attendance** → **Approvals** → **Overtime to approve**. Approve it to pay it in the next payroll, or reject it with a reason. Either way the person is told, and sees your reason if you reject it. If the time itself is wrong (a forgotten clock-out), correct it instead of rejecting: the overtime is worked out again. Nobody can approve their own overtime.
 
 ## Timesheets
 

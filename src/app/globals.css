@@ -2,6 +2,9 @@
 
 /* Design tokens. --brand is replaced at runtime with the tenant's own colour (ADM-05). */
 :root {
+  /* Lets the browser draw its own parts (date pickers, scrollbars, the calendar icon) in the
+     current theme: light on a light page, light-on-dark in dark mode. */
+  color-scheme: light;
   --brand: #0f3d2e;
   --background: #f6f6f3;
   --surface: #ffffff;
@@ -27,6 +30,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
+    color-scheme: dark;
     --background: #0e1111;
     --surface: #161a1a;
     --subtle: #1d2222;
@@ -161,4 +165,13 @@ input::-webkit-date-and-time-value {
 }
 input::-webkit-datetime-edit {
   padding: 0;
+}
+/* The calendar button on the far right, as in any other field. */
+input::-webkit-calendar-picker-indicator {
+  margin-left: auto;
+  cursor: pointer;
+  opacity: 0.7;
+}
+input::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
 }
