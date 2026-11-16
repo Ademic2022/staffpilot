@@ -30,8 +30,10 @@ function Ring({ percent, size = 56 }: { percent: number; size?: number }) {
  * What a record still needs, each item linking to the tab where it is filled in. Critical gaps
  * (payroll, emergencies) are marked and listed first. `self` words it for the person themself.
  */
-export function CompletenessCard({ data, employeeId, self, name, compact }: {
+export function CompletenessCard({ data, employeeId, self, name, compact, wide }: {
   data: Completeness; employeeId: string; self: boolean; name?: string; compact?: boolean;
+  /** Alone across the page: the list uses three columns on wide screens. */
+  wide?: boolean;
 }) {
   const [open, setOpen] = useState(!compact);
   if (data.percent >= 100 || !data.missing.length) return null;
@@ -50,7 +52,7 @@ export function CompletenessCard({ data, employeeId, self, name, compact }: {
               ? `${critical} ${critical === 1 ? "detail is" : "details are"} needed before ${self ? "you can be paid and reached" : "payroll and HR can rely on it"}.`
               : self ? "A few details left to make your profile complete." : "A few details left."}
           </p>
-          <ul className="mt-3 grid gap-1.5 sm:grid-cols-2">
+          <ul className={`mt-3 grid gap-1.5 sm:grid-cols-2 ${wide ? "xl:grid-cols-3" : ""}`}>
             {shown.map((m) => (
               <li key={m.key}>
                 <Link href={`/employees/${employeeId}?tab=${m.tab}`} title={m.why}

@@ -236,6 +236,9 @@ export default function HomePage() {
     done("Home page saved.");
   }
 
+  const myProfile = data?.home.myProfile;
+  const showProfile = Boolean(employeeId && myProfile && myProfile.percent < 100 && myProfile.missing.length);
+  const showGaps = Boolean(data?.home.dataGaps.length);
   return (
     <div className={editing ? "pb-56" : undefined}>
       <div className="flex flex-wrap items-center justify-between gap-4">
@@ -274,10 +277,11 @@ export default function HomePage() {
       <div className="mt-6 space-y-4">
         {notice && <Notice tone="success">{notice}</Notice>}
         {!editing && data?.home.setup && <div data-tour="setup"><SetupCard setup={data.home.setup} company={company} /></div>}
-        {!editing && (data?.home.myProfile?.missing.length || data?.home.dataGaps.length) ? (
-          <div className="grid items-start gap-4 lg:grid-cols-2">
-            {employeeId && data?.home.myProfile && <div data-tour="profile-card"><CompletenessCard data={data.home.myProfile} employeeId={employeeId} self compact /></div>}
-            {data?.home.dataGaps && <div data-tour="gaps"><DataGapsCard gaps={data.home.dataGaps} /></div>}
+        {!editing && (showProfile || showGaps) ? (
+          // Side by side only when both are shown; one card alone takes the full width.
+          <div className={`grid items-start gap-4 ${showProfile && showGaps ? "lg:grid-cols-2" : ""}`}>
+            {showProfile && myProfile && employeeId && <div data-tour="profile-card"><CompletenessCard data={myProfile} employeeId={employeeId} self compact wide={!showGaps} /></div>}
+            {showGaps && <div data-tour="gaps"><DataGapsCard gaps={data.home.dataGaps} /></div>}
           </div>
         ) : null}
         {expiring && expiring.expiringDocuments.length > 0 && !editing && (
