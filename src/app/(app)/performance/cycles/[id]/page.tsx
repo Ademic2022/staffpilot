@@ -16,7 +16,7 @@ import { formatDate } from "@/lib/format";
 const CycleDocument = graphql(`
   query CycleReviews($id: ID!) {
     reviewCycle(id: $id) { id name kind status templateId templateName periodStart periodEnd selfDue managerDue includeSelf includePeers departmentIds employeeIds
-      people selfDone managerDone shared }
+      people selfDone managerDone withReviewer shared }
     cycleReviews(cycleId: $id) { ...ReviewRowFields calibrationNote }
     reviewTemplates { id name isActive }
     departments { id name }
@@ -142,7 +142,8 @@ export default function CyclePage() {
           <div className="grid gap-3 sm:grid-cols-4">
             <Stat label="People" value={c.people} />
             {c.includeSelf && <Stat label="Self reviews done" value={`${c.selfDone} of ${c.people}`} hint={c.selfDue ? `Due ${formatDate(c.selfDue)}` : undefined} />}
-            <Stat label="Manager reviews done" value={`${c.managerDone} of ${c.people}`} hint={c.managerDue ? `Due ${formatDate(c.managerDue)}` : undefined} />
+            <Stat label="Manager reviews done" value={`${c.managerDone} of ${c.withReviewer}`}
+              hint={[c.people > c.withReviewer && `${c.people - c.withReviewer} with no reviewer`, c.managerDue && `Due ${formatDate(c.managerDue)}`].filter(Boolean).join(" · ") || undefined} />
             <Stat label="Shared" value={`${c.shared} of ${c.people}`} />
           </div>
           {scale.length > 0 && <Distribution rows={rows} scale={scale} />}

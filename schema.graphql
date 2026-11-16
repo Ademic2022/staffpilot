@@ -1505,7 +1505,9 @@ type LeaveApprovalStep {
   actedAt: DateTime
   note: String!
 
-  """HR decided this step in place of the approver."""
+  """
+  Someone with leave access (an owner or HR) decided this step in place of the approver.
+  """
   overridden: Boolean!
 }
 
@@ -3300,6 +3302,7 @@ type ReviewCycle {
   people: Int!
   selfDone: Int!
   managerDone: Int!
+  withReviewer: Int!
   shared: Int!
 }
 

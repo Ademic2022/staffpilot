@@ -593,7 +593,7 @@ function OneOnOnes() {
 const CyclesDocument = graphql(`
   query ReviewCycles {
     reviewCycles { id name kind status templateId templateName periodStart periodEnd selfDue managerDue includeSelf includePeers departmentIds employeeIds
-      people selfDone managerDone shared }
+      people selfDone managerDone withReviewer shared }
     reviewTemplates { id name isActive }
     departments { id name }
   }
@@ -618,8 +618,9 @@ function Cycles() {
                     <span className="block font-medium text-ink">{c.name}</span>
                     <span className="block text-xs text-muted">{CYCLE_KINDS[c.kind]} · {formatDate(c.periodStart)} to {formatDate(c.periodEnd)} · {c.people} people</span>
                   </span>
-                  <span>{c.status !== "draft" && <Progress value={c.people ? Math.round((c.managerDone * 100) / c.people) : 0} />}
-                    {c.status !== "draft" && <span className="text-xs text-muted">{c.managerDone} of {c.people} manager reviews done</span>}</span>
+                  <span>{c.status !== "draft" && <Progress value={c.withReviewer ? Math.round((c.managerDone * 100) / c.withReviewer) : 0} />}
+                    {c.status !== "draft" && <span className="text-xs text-muted">{c.managerDone} of {c.withReviewer} manager reviews done
+                      {c.people > c.withReviewer && ` · ${c.people - c.withReviewer} with no reviewer`}</span>}</span>
                   <span className="sm:text-right"><Badge tone={tone[c.status as keyof typeof tone] ?? "neutral"} dot>
                     {c.status === "active" ? "In progress" : c.status === "draft" ? "Draft" : "Closed"}</Badge></span>
                 </Link>

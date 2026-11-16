@@ -215,7 +215,7 @@ export default function ReviewPage() {
   const s = REVIEW_STATUS[r.status];
   return (
     <>
-      <PageHeader title={d.isEmployee ? `Your ${r.cycleName} review` : r.employeeName} back={{ href: "/performance?tab=reviews", label: "Reviews" }}
+      <PageHeader title={d.isEmployee ? `Your ${r.cycleName}${/\breview$/i.test(r.cycleName) ? "" : " review"}` : r.employeeName} back={{ href: "/performance?tab=reviews", label: "Reviews" }}
         subtitle={<>
           <span>{r.cycleName} · {formatDate(d.periodStart)} to {formatDate(d.periodEnd)}{r.managerName && ` · reviewer ${r.managerName}`}</span>
           {(d.canManage || d.isEmployee) && <Badge tone={s?.tone ?? "neutral"} dot>{s?.label ?? r.status}</Badge>}
