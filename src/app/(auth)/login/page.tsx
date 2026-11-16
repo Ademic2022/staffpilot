@@ -125,8 +125,10 @@ function LoginForm() {
   }
 
   function finish() {
-    reset();
-    router.replace(safeNext(params.get("next")));
+    // A full page load, not router.replace: the router may still hold the signed-out answer for the
+    // next page (a redirect back here, from before the session cookie existed), which left people
+    // stuck on "Verifying" until they reloaded. A fresh load also starts with a clean cache.
+    window.location.replace(safeNext(params.get("next")));
   }
 
   // No connection (a weak signal, the app waking up): say so, rather than "find your company".
