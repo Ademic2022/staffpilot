@@ -45,7 +45,12 @@ function HoverCard({ p, full, openSnapshot }: { p: OrgPerson; full: boolean; ope
           <p className="truncate text-sm text-muted">{p.jobTitle ?? "No job title"}</p>
         </div>
       </div>
-      {p.outUntil && <div className="mt-3"><Badge tone="warn" dot>{outLabel(p.outUntil)}</Badge></div>}
+      {(p.outUntil || p.onProbation) && (
+        <div className="mt-3 flex flex-wrap gap-2">
+          {p.outUntil && <Badge tone="warn" dot>{outLabel(p.outUntil)}</Badge>}
+          {p.onProbation && <Badge tone="neutral" dot>On probation</Badge>}
+        </div>
+      )}
       <ul className="mt-3 space-y-1 text-sm text-ink">
         {p.department && <li>{p.department}</li>}
         {p.place && <li className="text-muted">{p.place}</li>}

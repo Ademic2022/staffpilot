@@ -52,6 +52,8 @@ function Entry({ p, byId, onChart }: { p: OrgPerson; byId: Map<string, OrgPerson
             : <span className="font-display text-xl leading-tight text-brand-ink">{p.fullName}</span>}
           <TenureLabel hireDate={p.hireDate} founding={p.foundingMember} />
           {p.outUntil && <Badge tone="warn" dot>{outLabel(p.outUntil)}</Badge>}
+          {/* Sent only to HR and their managers: colleagues never see it. */}
+          {p.onProbation && <Badge tone="neutral" dot>On probation</Badge>}
         </p>
         {role && <p className="text-sm text-ink">{role}</p>}
         {(p.place || time) && (

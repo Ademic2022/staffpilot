@@ -9,7 +9,7 @@ const PeopleOrgDocument = graphql(`
   query PeopleOrg {
     orgChart {
       id fullName jobTitle departmentId department locationId location legalEntityId legalEntity place timezone
-      workEmail workPhone workPhoneExt photoUrl managerId managerName directReportCount outUntil employeeNumber hireDate foundingMember mobile linkedinUrl twitter facebook
+      workEmail workPhone workPhoneExt photoUrl managerId managerName directReportCount outUntil onProbation employeeNumber hireDate foundingMember mobile linkedinUrl twitter facebook
     }
   }
 `);

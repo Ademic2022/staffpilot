@@ -703,6 +703,11 @@ type DirectoryEntry {
 
   """Away on approved leave today, back after this date."""
   outUntil: Date
+
+  """
+  Still on probation. Only HR and people above them in the reporting line see true.
+  """
+  onProbation: Boolean!
   employeeNumber: String!
   hireDate: Date
   foundingMember: Boolean!
