@@ -18,11 +18,12 @@ import { TenureFrame } from "@/components/TenureMark";
 import { LocationWidget, PayRaiseWidget, TimeOffRequestsWidget, TimeOffUsedWidget } from "@/components/home/Expandable";
 import { EmployeeLeaveDocument, RequestLeaveDialog } from "@/components/leave/Leave";
 import { ClockPill } from "@/components/attendance/ClockPill";
-import { RemindersWidget } from "@/components/home/Reminders";
+import { inDays, RemindersWidget } from "@/components/home/Reminders";
 import { CompletenessCard, DataGapsCard } from "@/components/profile/Completeness";
 import { SetupCard } from "@/components/settings/SetupChecklist";
 import { Button, ErrorNote, Loading, Notice, cx } from "@/components/ui";
 import { graphql } from "@/gql";
+import { formatDate } from "@/lib/format";
 import { errorMessage } from "@/lib/api";
 import { PERMS } from "@/lib/permissions";
 import { useSession } from "@/lib/session";
@@ -30,6 +31,12 @@ import { useSession } from "@/lib/session";
 const ExpiringDocument = graphql(`
   query HomeExpiring {
     expiringDocuments(withinDays: 30) { id }
+  }
+`);
+
+const ProbationsDueDocument = graphql(`
+  query HomeProbationsDue {
+    probationsDue(withinDays: 14) { id fullName probationEndDate }
   }
 `);
 
@@ -102,6 +109,7 @@ export default function HomePage() {
   const [{ data, error }, reload] = useQuery({ query: HomeDataDocument });
   const [{ data: leaveData }, reloadLeave] = useQuery({ query: EmployeeLeaveDocument, variables: {}, pause: !employeeId });
   const [{ data: expiring }] = useQuery({ query: ExpiringDocument, pause: !can(PERMS.documentsManage) });
+  const [{ data: probations }] = useQuery({ query: ProbationsDueDocument, pause: !can(PERMS.employeesManage) });
   const [{ data: photo }] = useQuery({ query: MyPhotoDocument, variables: { id: employeeId ?? "" }, pause: !employeeId });
   const [, saveLayout] = useMutation(SaveLayoutDocument);
   const [dialog, setDialog] = useState<"request" | "post" | "all" | null>(null);
@@ -277,6 +285,9 @@ export default function HomePage() {
             <Link href="/files?view=employee" className="font-semibold underline-offset-2 hover:underline">See which ones</Link>
           </Notice>
         )}
+        {probations && probations.probationsDue.length > 0 && !editing && (
+          <ProbationNotice people={probations.probationsDue} />
+        )}
         {!employeeId && (
           <Notice tone="info" title="You do not have an employee record yet">
             {manage ? <>
@@ -367,5 +378,27 @@ export default function HomePage() {
           onDeleted={() => { setReading(null); done("Announcement deleted."); }} />
       )}
     </div>
+  );
+}
+
+/** Probations ended without a decision, or ending within two weeks: confirm, extend or end each one. */
+function ProbationNotice({ people }: { people: { id: string; fullName: string; probationEndDate?: string | null }[] }) {
+  const now = inDays(0);
+  const overdue = people.filter((p) => p.probationEndDate && p.probationEndDate < now).length;
+  const title = overdue
+    ? `${overdue} ${overdue === 1 ? "probation has" : "probations have"} ended without a decision`
+    : `${people.length} ${people.length === 1 ? "probation ends" : "probations end"} within two weeks`;
+  return (
+    <Notice tone={overdue ? "warning" : "info"} title={title}>
+      Confirm each person, extend their probation or end their employment from <strong>Change status</strong> on their profile.
+      <ul className="mt-2 space-y-1">
+        {people.map((p) => (
+          <li key={p.id}>
+            <Link href={`/employees/${p.id}`} className="font-semibold underline-offset-2 hover:underline">{p.fullName}</Link>
+            {p.probationEndDate && <span className="text-muted"> · {p.probationEndDate < now ? "ended" : "ends"} {formatDate(p.probationEndDate)}</span>}
+          </li>
+        ))}
+      </ul>
+    </Notice>
   );
 }

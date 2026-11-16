@@ -354,6 +354,11 @@ input ChangeStatusInput {
 
   """When leaving: why, for turnover."""
   terminationKind: TerminationKind = null
+
+  """
+  When going on probation, or a later date to extend a probation already running.
+  """
+  probationEndDate: Date = null
 }
 
 type Checklist {
@@ -2824,6 +2829,11 @@ type Query {
   aiWriting: Boolean!
   grades: [Grade!]!
   employees(filter: EmployeeFilter = null, first: Int! = 50, after: String = null, sort: String = null, descending: Boolean! = false): EmployeeConnection!
+
+  """
+  People still on probation whose end date has passed or is within the given days. HR only.
+  """
+  probationsDue(withinDays: Int! = 14): [Employee!]!
   employee(id: ID!): Employee!
   leaveTypes(includeInactive: Boolean! = false): [LeaveType!]!
   leavePolicies: [LeavePolicy!]!

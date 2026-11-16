@@ -183,6 +183,7 @@ On a person's profile, **Request a Change** has:
 - **Job information…** and **Promotion…**: dated entries in their employment history. A future date takes effect on that day.
 - **Compensation…**: a new pay record. Earlier records stay in the pay history.
 - **Employment status…**: probation, confirmation, leave and leaving. When someone leaves, record the **type of leaving** (voluntary, involuntary or other); it is used in turnover reports.
+- **Probation** always has an end date. Nothing changes by itself when it passes: HR and the manager are reminded a week before, on the day, and every week after until someone decides. Choose **Confirm** (Active), **Extend probation** (a later end date; the old one stays in the history) or **End employment**. Someone already Active can be **put back on probation** with a new end date. People whose probation has ended or ends within two weeks are listed on Home and on their profile.
 - **Asset request…**: equipment such as a laptop.
 
 If your company has approval steps for pay or job changes, they wait for approval first. See [Approval settings](/help/approval-settings).

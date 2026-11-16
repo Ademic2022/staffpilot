@@ -11,6 +11,7 @@ import { graphql } from "@/gql";
 import type { EmployeeProfileQuery, EmployeeStatus, EmploymentType, JobChangeType, OvertimeStatus, PayFrequency, PaySchedule, PayType } from "@/gql/graphql";
 import { genderOptions } from "@/components/profile/fields";
 import { ListInput } from "@/components/settings/OptionLists";
+import { formatDate } from "@/lib/format";
 import { reportErrors, today } from "@/lib/forms";
 import { useSession } from "@/lib/session";
 
@@ -426,10 +427,11 @@ const ChangeStatusDocument = graphql(`
 `);
 
 // Mirrors STATUS_TRANSITIONS in apps/core_hr/models.py; the API has the final say.
-const NEXT_STATUSES: Record<EmployeeStatus, { value: EmployeeStatus; label: string }[]> = {
+const NEXT_STATUSES: Record<EmployeeStatus, { value: EmployeeStatus | "EXTEND"; label: string }[]> = {
   CANDIDATE: [{ value: "PROBATION", label: "Start probation" }, { value: "ACTIVE", label: "Make active" }, { value: "TERMINATED", label: "Did not join" }],
-  PROBATION: [{ value: "ACTIVE", label: "Confirm (probation passed)" }, { value: "ON_LEAVE", label: "Put on leave" }, { value: "TERMINATED", label: "End employment" }],
-  ACTIVE: [{ value: "ON_LEAVE", label: "Put on leave" }, { value: "TERMINATED", label: "End employment" }],
+  PROBATION: [{ value: "ACTIVE", label: "Confirm (probation passed)" }, { value: "EXTEND", label: "Extend probation" },
+    { value: "ON_LEAVE", label: "Put on leave" }, { value: "TERMINATED", label: "End employment" }],
+  ACTIVE: [{ value: "ON_LEAVE", label: "Put on leave" }, { value: "PROBATION", label: "Put back on probation" }, { value: "TERMINATED", label: "End employment" }],
   ON_LEAVE: [{ value: "ACTIVE", label: "Return to work" }, { value: "PROBATION", label: "Return on probation" }, { value: "TERMINATED", label: "End employment" }],
   TERMINATED: [],
 };
@@ -439,13 +441,24 @@ export function canChangeStatus(status: EmployeeStatus) {
 }
 
 const statusSchema = z.object({
-  status: z.enum(["CANDIDATE", "PROBATION", "ACTIVE", "ON_LEAVE", "TERMINATED"]),
+  // EXTEND is PROBATION again with a later end date.
+  status: z.enum(["CANDIDATE", "PROBATION", "EXTEND", "ACTIVE", "ON_LEAVE", "TERMINATED"]),
   effectiveDate: z.iso.date("Choose a date."),
+  probationEndDate: optionalDate,
   reason: z.string().trim().max(255),
   terminationKind: z.enum(["VOLUNTARY", "INVOLUNTARY", "OTHER"]),
 }).refine((v) => v.status !== "TERMINATED" || v.reason.length > 0, {
   path: ["reason"], message: "Give a reason for leaving. It is kept on the record.",
+}).refine((v) => (v.status !== "PROBATION" && v.status !== "EXTEND") || v.probationEndDate, {
+  path: ["probationEndDate"], message: "Choose when the probation ends.",
 });
+
+/** The same day some months later, as YYYY-MM-DD (the 31st falls back to the month's last day). */
+function monthsAfter(iso: string, months: number) {
+  const [y, m, d] = iso.split("-").map(Number);
+  const last = new Date(Date.UTC(y, m - 1 + months + 1, 0)).getUTCDate();
+  return new Date(Date.UTC(y, m - 1 + months, Math.min(d, last))).toISOString().slice(0, 10);
+}
 
 type StatusValues = z.infer<typeof statusSchema>;
 
@@ -453,20 +466,29 @@ export function ChangeStatusDialog({ employee: e, onClose, onSaved }: DialogProp
   const [, changeStatus] = useMutation(ChangeStatusDocument);
   const [formError, setFormError] = useState<string>();
   const options = NEXT_STATUSES[e.status];
-  const { register, handleSubmit, control, setError, formState: { errors, isSubmitting } } = useForm<StatusValues>({
+  // A later end date to extend to: three months after the current one, or after today if it has passed.
+  const extendFrom = e.probationEndDate && e.probationEndDate > today() ? e.probationEndDate : today();
+  const { register, handleSubmit, control, setError, setValue, formState: { errors, isSubmitting } } = useForm<StatusValues>({
     resolver: zodResolver(statusSchema),
-    defaultValues: { status: options[0]?.value, effectiveDate: today(), reason: "", terminationKind: "VOLUNTARY" },
+    defaultValues: { status: options[0]?.value, effectiveDate: today(), probationEndDate: "", reason: "", terminationKind: "VOLUNTARY" },
   });
   const status = useWatch({ control, name: "status" });
   const leaving = status === "TERMINATED";
+  const extending = status === "EXTEND";
+  const probation = status === "PROBATION" || extending;
+  useEffect(() => {
+    if (extending) setValue("probationEndDate", monthsAfter(extendFrom, 3));
+    else if (status === "PROBATION") setValue("probationEndDate", e.status === "ON_LEAVE" && e.probationEndDate ? e.probationEndDate : monthsAfter(today(), 3));
+  }, [status, extending, extendFrom, e.status, e.probationEndDate, setValue]);
 
   async function onSubmit(v: StatusValues) {
     setFormError(undefined);
     const result = await changeStatus({ input: {
-      id: e.id, status: v.status, effectiveDate: v.effectiveDate, reason: v.reason || null,
+      id: e.id, status: v.status === "EXTEND" ? "PROBATION" : v.status, effectiveDate: v.effectiveDate, reason: v.reason || null,
       terminationKind: v.status === "TERMINATED" ? v.terminationKind : null,
+      probationEndDate: v.status === "PROBATION" || v.status === "EXTEND" ? v.probationEndDate : null,
     } });
-    const failed = reportErrors(result, result.data?.changeEmployeeStatus.errors, ["status", "effectiveDate", "reason"] as const,
+    const failed = reportErrors(result, result.data?.changeEmployeeStatus.errors, ["status", "effectiveDate", "probationEndDate", "reason"] as const,
       (f, message) => setError(f, { message }), setFormError);
     if (!failed) onSaved();
   }
@@ -476,7 +498,7 @@ export function ChangeStatusDialog({ employee: e, onClose, onSaved }: DialogProp
       footer={<>
         <Button variant="secondary" onClick={onClose} disabled={isSubmitting}>Cancel</Button>
         <Button type="submit" form="status-form" variant={leaving ? "danger" : "primary"} busy={isSubmitting}>
-          {leaving ? "End employment" : "Save status"}
+          {leaving ? "End employment" : extending ? "Extend probation" : "Save status"}
         </Button>
       </>}>
       <form id="status-form" onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
@@ -486,9 +508,17 @@ export function ChangeStatusDialog({ employee: e, onClose, onSaved }: DialogProp
             {options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
           </Select>
         </Field>
-        <Field label={leaving ? "Last working day" : "Effective from"} error={errors.effectiveDate?.message}>
-          <Input type="date" aria-invalid={!!errors.effectiveDate} {...register("effectiveDate")} />
-        </Field>
+        {!extending && (
+          <Field label={leaving ? "Last working day" : "Effective from"} error={errors.effectiveDate?.message}>
+            <Input type="date" aria-invalid={!!errors.effectiveDate} {...register("effectiveDate")} />
+          </Field>
+        )}
+        {probation && (
+          <Field label={extending ? "New end date" : "Probation ends"} error={errors.probationEndDate?.message}
+            hint={extending && e.probationEndDate ? `Currently ends ${formatDate(e.probationEndDate)}. The old date stays in the history.` : "You will be reminded a week before and on the day."}>
+            <Input type="date" aria-invalid={!!errors.probationEndDate} {...register("probationEndDate")} />
+          </Field>
+        )}
         {leaving && (
           <Field label="Type of leaving" hint="Counted in turnover as voluntary, involuntary or other.">
             <Select {...register("terminationKind")}>

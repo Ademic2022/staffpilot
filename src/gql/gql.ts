@@ -58,6 +58,7 @@ type Documents = {
     "\n  query FileAcknowledgements($id: ID!) { fileAcknowledgements(id: $id) { name email acknowledgedAt } }\n": typeof types.FileAcknowledgementsDocument,
     "\n  mutation CompanyFileDownloadUrl($id: ID!) {\n    companyFileDownloadUrl(id: $id)\n  }\n": typeof types.CompanyFileDownloadUrlDocument,
     "\n  query HomeExpiring {\n    expiringDocuments(withinDays: 30) { id }\n  }\n": typeof types.HomeExpiringDocument,
+    "\n  query HomeProbationsDue {\n    probationsDue(withinDays: 14) { id fullName probationEndDate }\n  }\n": typeof types.HomeProbationsDueDocument,
     "\n  query HomeMyPhoto($id: ID!) {\n    employee(id: $id) { id photoUrl hireDate foundingMember }\n  }\n": typeof types.HomeMyPhotoDocument,
     "\n  mutation SaveHomeLayout($widgets: JSON!) {\n    saveHomeLayout(widgets: $widgets) { key hidden }\n  }\n": typeof types.SaveHomeLayoutDocument,
     "\n  mutation AddMeAsEmployee { addMeAsEmployee { employee { id } errors { message } } }\n": typeof types.AddMeAsEmployeeDocument,
@@ -371,6 +372,7 @@ const documents: Documents = {
     "\n  query FileAcknowledgements($id: ID!) { fileAcknowledgements(id: $id) { name email acknowledgedAt } }\n": types.FileAcknowledgementsDocument,
     "\n  mutation CompanyFileDownloadUrl($id: ID!) {\n    companyFileDownloadUrl(id: $id)\n  }\n": types.CompanyFileDownloadUrlDocument,
     "\n  query HomeExpiring {\n    expiringDocuments(withinDays: 30) { id }\n  }\n": types.HomeExpiringDocument,
+    "\n  query HomeProbationsDue {\n    probationsDue(withinDays: 14) { id fullName probationEndDate }\n  }\n": types.HomeProbationsDueDocument,
     "\n  query HomeMyPhoto($id: ID!) {\n    employee(id: $id) { id photoUrl hireDate foundingMember }\n  }\n": types.HomeMyPhotoDocument,
     "\n  mutation SaveHomeLayout($widgets: JSON!) {\n    saveHomeLayout(widgets: $widgets) { key hidden }\n  }\n": types.SaveHomeLayoutDocument,
     "\n  mutation AddMeAsEmployee { addMeAsEmployee { employee { id } errors { message } } }\n": types.AddMeAsEmployeeDocument,
@@ -830,6 +832,10 @@ export function graphql(source: "\n  mutation CompanyFileDownloadUrl($id: ID!) {
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  query HomeExpiring {\n    expiringDocuments(withinDays: 30) { id }\n  }\n"): (typeof documents)["\n  query HomeExpiring {\n    expiringDocuments(withinDays: 30) { id }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query HomeProbationsDue {\n    probationsDue(withinDays: 14) { id fullName probationEndDate }\n  }\n"): (typeof documents)["\n  query HomeProbationsDue {\n    probationsDue(withinDays: 14) { id fullName probationEndDate }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

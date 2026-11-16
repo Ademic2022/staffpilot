@@ -8,7 +8,7 @@ import { ChangeJobDialog, ChangePayDialog, ChangeStatusDialog, OVERTIME, PAY_SCH
 import { IconPlus, IconTrash } from "@/components/icons";
 import { inDays } from "@/components/home/Reminders";
 import { AdjustBalanceDialog, BalanceCards, EmployeeLeaveDocument, RequestLeaveDialog } from "@/components/leave/Leave";
-import { Badge, Button, Dialog, ErrorNote, Field, IconButton, Input, StatusBadge, Table, TD, TH, Textarea } from "@/components/ui";
+import { Badge, Button, Dialog, ErrorNote, Field, IconButton, Input, Notice, StatusBadge, Table, TD, TH, Textarea } from "@/components/ui";
 import { graphql } from "@/gql";
 import { errorMessage } from "@/lib/api";
 import { formatDate, formatFrequency, formatMoney, humanize } from "@/lib/format";
@@ -44,6 +44,7 @@ export function JobSummaryBlock({ e, title, icon, onSaved, canManage }: BlockPro
         {canChangeStatus(e.status) && <Button size="sm" variant="secondary" onClick={() => setOpen("status")}>Change status</Button>}
       </>
     ) : undefined}>
+      {canManage && <ProbationDue e={e} onDecide={() => setOpen("status")} />}
       <dl className="grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3">
         <Detail label="Status"><StatusBadge status={e.status} /></Detail>
         <Detail label="Job title">{e.jobTitle?.name}</Detail>
@@ -69,6 +70,20 @@ export function JobSummaryBlock({ e, title, icon, onSaved, canManage }: BlockPro
       {open === "job" && <ChangeJobDialog employee={e} onClose={() => setOpen(null)} onSaved={() => { setOpen(null); onSaved("Job change recorded."); }} />}
       {open === "status" && <ChangeStatusDialog employee={e} onClose={() => setOpen(null)} onSaved={() => { setOpen(null); onSaved("Status updated."); }} />}
     </ProfileSection>
+  );
+}
+
+/** On probation, ended or ending within two weeks: nothing changes by itself, so ask HR to decide. */
+function ProbationDue({ e, onDecide }: { e: Profile; onDecide: () => void }) {
+  if (e.status !== "PROBATION" || !e.probationEndDate) return null;
+  const end = e.probationEndDate, now = inDays(0);
+  if (end > inDays(14)) return null;
+  const when = end < now ? `ended ${formatDate(end)}` : end === now ? "ends today" : `ends ${formatDate(end)}`;
+  return (
+    <div className="mb-5"><Notice tone={end < now ? "warning" : "info"} title={`Probation ${when}`}>
+      {e.firstName} stays on probation until you decide: confirm them, extend the probation or end their employment.
+      <div className="mt-3"><Button size="sm" onClick={onDecide}>Decide</Button></div>
+    </Notice></div>
   );
 }
 
