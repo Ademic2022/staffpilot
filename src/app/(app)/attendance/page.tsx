@@ -307,18 +307,36 @@ function Approvals() {
   const [{ data, error }, reload] = useQuery({ query: OvertimeDocument, requestPolicy: "cache-and-network" });
   const [, decide] = useMutation(DecideDocument);
   const [rejecting, setRejecting] = useState<{ id: string; name: string; amount: string } | null>(null);
+  // Approved here: hidden at once and the button locked, so a second click cannot approve it again.
+  const [busy, setBusy] = useState<string>();
+  const [gone, setGone] = useState<Set<string>>(new Set());
+  const [problem, setProblem] = useState<string>();
   if (error) return <ErrorNote error={errorMessage(error)} />;
   if (!data) return <Loading shape="table" />;
+  const waiting = data.overtimeToDecide.filter((o) => !gone.has(o.id));
+
+  async function approve(id: string) {
+    if (busy) return;
+    setBusy(id);
+    setProblem(undefined);
+    const r = await decide({ id, approve: true, note: "" });
+    setBusy(undefined);
+    if (r.error) return setProblem(errorMessage(r.error));
+    setGone((g) => new Set(g).add(id));
+    reload({ requestPolicy: "network-only" });
+  }
+
   return (
     <Card flush title="Overtime to approve" description="Approved overtime is paid in the next payroll.">
-      {data.overtimeToDecide.length ? (
+      {problem && <div className="px-5 pt-4"><ErrorNote error={problem} /></div>}
+      {waiting.length ? (
         <ul className="divide-y divide-line">
-          {data.overtimeToDecide.map((o) => (
+          {waiting.map((o) => (
             <li key={o.id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-3 text-sm">
               <span><span className="font-medium text-ink">{o.employeeName}</span> <span className="text-muted">{hm(o.minutes)} extra on {formatDate(o.date)}</span></span>
               <span className="flex gap-2">
-                <Button size="sm" onClick={async () => { await decide({ id: o.id, approve: true, note: "" }); reload({ requestPolicy: "network-only" }); }}>Approve</Button>
-                <Button size="sm" variant="secondary" onClick={() => setRejecting({ id: o.id, name: o.employeeName, amount: `${hm(o.minutes)} on ${formatDate(o.date)}` })}>Reject</Button>
+                <Button size="sm" busy={busy === o.id} disabled={!!busy} onClick={() => approve(o.id)}>Approve</Button>
+                <Button size="sm" variant="secondary" disabled={!!busy} onClick={() => setRejecting({ id: o.id, name: o.employeeName, amount: `${hm(o.minutes)} on ${formatDate(o.date)}` })}>Reject</Button>
               </span>
             </li>
           ))}
@@ -333,6 +351,7 @@ function Approvals() {
             if (!note) throw new Error("Say why, so they know.");
             const r = await decide({ id: rejecting.id, approve: false, note });
             if (r.error) throw new Error(errorMessage(r.error));
+            setGone((g) => new Set(g).add(rejecting.id));
             reload({ requestPolicy: "network-only" });
           }} />
       )}
