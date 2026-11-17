@@ -21,7 +21,7 @@ import { useSession } from "@/lib/session";
 const CompanySettingsDocument = graphql(`
   query CompanySettings {
     companySettings {
-      name country currency timezone primaryColor logoUrl requireAdminMfa sessionTimeoutMinutes ipAllowlist yourIp
+      name country currency timezone primaryColor logoUrl requireAdminMfa sessionTimeoutMinutes auditRetentionYears ipAllowlist yourIp
       dateFormat nameFormat showCurrencyCode employeesEditOwnPhoto expandedGender employeeUploads payrollEnabled showTenure
     }
   }
@@ -57,7 +57,7 @@ function Form({ initial, section, onSaved }: { initial: Settings; section: Compa
   const [v, setV] = useState({
     name: initial.name, country: initial.country, currency: initial.currency, timezone: initial.timezone,
     primaryColor: initial.primaryColor || "#0F3D2E", requireAdminMfa: initial.requireAdminMfa,
-    sessionTimeoutMinutes: initial.sessionTimeoutMinutes, ipAllowlist: initial.ipAllowlist.join("\n"),
+    sessionTimeoutMinutes: initial.sessionTimeoutMinutes, auditRetentionYears: initial.auditRetentionYears ?? null, ipAllowlist: initial.ipAllowlist.join("\n"),
     dateFormat: initial.dateFormat, nameFormat: initial.nameFormat, showCurrencyCode: initial.showCurrencyCode,
     employeesEditOwnPhoto: initial.employeesEditOwnPhoto, expandedGender: initial.expandedGender, employeeUploads: initial.employeeUploads, showTenure: initial.showTenure,
     payrollEnabled: initial.payrollEnabled,
@@ -109,7 +109,7 @@ function Form({ initial, section, onSaved }: { initial: Settings; section: Compa
     setBusy(false);
     const found: Record<string, string> = {};
     const failed = reportErrors(result, result.data?.updateCompanySettings.errors,
-      ["name", "country", "currency", "timezone", "primaryColor", "requireAdminMfa", "sessionTimeoutMinutes", "ipAllowlist", "dateFormat", "nameFormat"] as const,
+      ["name", "country", "currency", "timezone", "primaryColor", "requireAdminMfa", "sessionTimeoutMinutes", "auditRetentionYears", "ipAllowlist", "dateFormat", "nameFormat"] as const,
       (f, m) => { found[f] = m; }, setFormError);
     setErrors(found);
     if (!failed) {
@@ -242,7 +242,7 @@ function Form({ initial, section, onSaved }: { initial: Settings; section: Compa
           <div className="space-y-5">
             <div>
               <Checkbox label="Admins must use two-step sign-in" checked={v.requireAdminMfa} onChange={(c) => set("requireAdminMfa", c)}
-                description="Anyone who manages people, pay, leave, documents, users or settings needs an authenticator app. Until they set it up, they can only use the app as an employee." />
+                description="Anyone who manages people, pay, leave, documents, users or settings needs a passkey or an authenticator app. Until they set one up, they can only use the app as an employee." />
               {errors.requireAdminMfa && <p className="mt-1.5 text-xs text-red-600">{errors.requireAdminMfa}</p>}
               {v.requireAdminMfa && !me?.mfaEnabled && <p className="mt-1.5 text-xs text-muted">Set it up for yourself first on your account page.</p>}
             </div>
@@ -251,6 +251,14 @@ function Form({ initial, section, onSaved }: { initial: Settings; section: Compa
                 {[...new Set([...TIMEOUTS, v.sessionTimeoutMinutes])].sort((a, b) => a - b).map((m) => (
                   <option key={m} value={m}>{m < 60 ? `${m} minutes` : m === 60 ? "1 hour" : m === 1440 ? "24 hours" : `${m / 60} hours`}</option>
                 ))}
+              </Select>
+            </Field>
+            <Field label="Keep the audit log for" error={errors.auditRetentionYears}
+              hint="Older entries are deleted each night. Tax and employment records are usually kept 6 to 7 years.">
+              <Select value={v.auditRetentionYears == null ? "forever" : String(v.auditRetentionYears)}
+                onChange={(e) => set("auditRetentionYears", e.target.value === "forever" ? null : Number(e.target.value))}>
+                {[1, 2, 3, 5, 7, 10].map((y) => <option key={y} value={y}>{y === 1 ? "1 year" : `${y} years`}</option>)}
+                <option value="forever">For good (never delete)</option>
               </Select>
             </Field>
             <Field label="Only allow these networks" optional error={errors.ipAllowlist}

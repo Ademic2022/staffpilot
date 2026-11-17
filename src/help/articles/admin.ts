@@ -100,6 +100,7 @@ Upload a PNG, JPG or WebP logo (up to 2 MB) and choose your colour. They appear 
 
 - **Admins must use two-step sign-in**: everyone with admin access must set up a passkey or an authenticator app. Set it up for yourself first on Your account.
 - **Sign people out after** a period of no activity. Shorter is safer on shared computers.
+- **Keep the audit log for** 1, 2, 3, 5, 7 (the default) or 10 years, or for good. Older entries are deleted each night, and the log notes how many went.
 - **Only allow these networks**: restrict sign-in to your office network addresses.
 
 ## Data and account

@@ -101,6 +101,7 @@ export default function PrivacyPage() {
       <Clause id="keep" title="6. How long we keep it">
         <ul>
           <li>While a company uses {SITE.name}, we keep its data for as long as the company keeps it in the app. The company decides when records are removed.</li>
+          <li>The audit log of changes is kept for 7 years by default, then deleted. A company&apos;s owner can choose 1 to 10 years, or to keep it for good.</li>
           <li>A company&apos;s owner can download all of its data, as a ZIP of spreadsheets, files and payslips, at any time from Settings.</li>
           <li>When a company closes its account, it has 30 days of read-only access to download its data. The account is then closed and hidden, and is deleted permanently one year later. The owner is emailed before deletion.</li>
           <li>Backups are kept for up to 35 days, so deleted data disappears from backups within 35 days after it is deleted from the live system.</li>

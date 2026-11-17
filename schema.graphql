@@ -463,6 +463,9 @@ type CompanySettings {
   logoUrl: String
   requireAdminMfa: Boolean!
   sessionTimeoutMinutes: Int!
+
+  """Years the audit log is kept; null keeps it for good."""
+  auditRetentionYears: Int
   ipAllowlist: [String!]!
   dateFormat: String!
   nameFormat: String!
@@ -485,6 +488,9 @@ input CompanySettingsInput {
   primaryColor: String
   requireAdminMfa: Boolean
   sessionTimeoutMinutes: Int
+
+  """1, 2, 3, 5, 7 or 10 years; null keeps it for good."""
+  auditRetentionYears: Int
   ipAllowlist: [String!]
   dateFormat: String
   nameFormat: String
@@ -2976,7 +2982,7 @@ type Query {
   expiringDocuments(withinDays: Int! = 30): [EmployeeDocument!]!
 
   """
-  Nigerian banks to choose from, when bank checks are set up (empty otherwise: type the bank).
+  Nigerian banks to choose from: Paystack's list when bank checks are set up, otherwise a built-in one.
   """
   banks: [String!]!
 
