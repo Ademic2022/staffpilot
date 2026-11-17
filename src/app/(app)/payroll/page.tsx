@@ -77,7 +77,8 @@ function NewRunDialog({ groups, onClose }: { groups: PayrollHomeQuery["payGroups
         <Field label="Pay group" error={errors.payGroup}>
           <Select value={group} onChange={(e) => setGroup(e.target.value)}>{active.map((g) => <option key={g.id} value={g.id}>{g.name}</option>)}</Select>
         </Field>
-        <Field label="A day in the period" error={errors.periodStart} hint="The pay period that contains this day is used.">
+        <Field label="Which pay period" error={errors.periodStart}
+          hint="Pick any date inside the period you are paying for. For a monthly group, any day in that month: 17 Nov means November's payroll.">
           <Input type="date" value={start} onChange={(e) => setStart(e.target.value)} />
         </Field>
         <Checkbox label="Off-cycle payroll" description="An extra run in the same period, for back pay or corrections." checked={offCycle} onChange={setOffCycle} />
