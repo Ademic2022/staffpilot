@@ -3,6 +3,9 @@
 import { useState, type FormEvent } from "react";
 import { useMutation } from "urql";
 
+import { PasskeysCard } from "@/components/account/Passkeys";
+import { RecoveryCodes } from "@/components/account/RecoveryCodes";
+
 import { IconCheck, IconLock } from "@/components/icons";
 import { Badge, Button, Card, ErrorNote, Field, Input, Notice, PageHeader, PasswordInput } from "@/components/ui";
 import { CalendarFeeds, EmailPreferences } from "@/components/settings/Integrations";
@@ -36,26 +39,6 @@ const NewCodesDocument = graphql(`
   }
 `);
 
-function RecoveryCodes({ codes, onDone }: { codes: string[]; onDone: () => void }) {
-  const text = codes.join("\n");
-  return (
-    <div className="space-y-4">
-      <Notice tone="warning" title="Save these recovery codes now">
-        Each code signs you in once if you lose your phone. They will not be shown again.
-      </Notice>
-      <ul className="grid grid-cols-2 gap-2 rounded-lg border border-line bg-subtle/60 p-4 font-mono text-sm sm:grid-cols-5">
-        {codes.map((c) => <li key={c}>{c}</li>)}
-      </ul>
-      <div className="flex flex-wrap gap-2">
-        <Button variant="secondary" onClick={() => void navigator.clipboard?.writeText(text)}>Copy</Button>
-        <a className="inline-flex h-10 items-center rounded-lg border border-line-strong bg-surface px-4 text-sm font-medium text-ink shadow-sm hover:bg-subtle"
-          href={`data:text/plain;charset=utf-8,${encodeURIComponent(text + "\n")}`} download="recovery-codes.txt">Download</a>
-        <Button onClick={onDone}>I have saved them</Button>
-      </div>
-    </div>
-  );
-}
-
 function TwoStepCard() {
   const { me, reset } = useSession();
   const [, start] = useMutation(StartMfaDocument);
@@ -84,17 +67,17 @@ function TwoStepCard() {
 
   if (codes) {
     return (
-      <Card title="Two-step sign-in">
+      <Card title="Authenticator app">
         <RecoveryCodes codes={codes} onDone={() => { setCodes(null); setSetup(null); setMode("idle"); reset(); }} />
       </Card>
     );
   }
 
   return (
-    <Card title={<span className="flex items-center gap-2"><IconLock size={15} className="text-muted" />Two-step sign-in</span>}
-      actions={me.mfaEnabled ? <Badge tone="good" dot>On</Badge> : <Badge>Off</Badge>}>
+    <Card title={<span className="flex items-center gap-2"><IconLock size={15} className="text-muted" />Authenticator app</span>}
+      actions={me.mfaAppEnabled ? <Badge tone="good" dot>On</Badge> : <Badge>Off</Badge>}>
       {error && <div className="mb-4"><ErrorNote error={error} /></div>}
-      {me.mfaEnabled ? (
+      {me.mfaAppEnabled ? (
         mode === "idle" ? (
           <div className="space-y-4">
             <p className="text-sm text-muted">
@@ -114,8 +97,8 @@ function TwoStepCard() {
             setCodes(result.data?.newRecoveryCodes.codes ?? []);
             setCode("");
           }}>
-            <Field label="A code from your app" hint="Your old recovery codes stop working.">
-              <Input value={code} inputMode="numeric" autoComplete="one-time-code" onChange={(e) => setCode(e.target.value)} />
+            <Field label="A code from your app, or a recovery code" hint="Your old recovery codes stop working.">
+              <Input value={code} autoComplete="one-time-code" onChange={(e) => setCode(e.target.value)} />
             </Field>
             <div className="flex gap-2"><Button type="submit" busy={busy}>Make new codes</Button><Button variant="ghost" onClick={() => setMode("idle")}>Cancel</Button></div>
           </form>
@@ -129,7 +112,8 @@ function TwoStepCard() {
             setMode("idle");
             reset();
           }}>
-            <Field label="Your password" hint="Turning it off makes your account easier to break into.">
+            <Field label="Your password" hint={me.mfaEnabled && !me.mfaAppEnabled ? undefined : me.mfaEnabled
+              ? "Your passkeys still protect your account." : "Turning it off makes your account easier to break into."}>
               <PasswordInput value={password} autoComplete="current-password" onChange={(e) => setPassword(e.target.value)} />
             </Field>
             <div className="flex gap-2"><Button type="submit" variant="danger" busy={busy}>Turn off</Button><Button variant="ghost" onClick={() => setMode("idle")}>Cancel</Button></div>
@@ -179,12 +163,12 @@ function TwoStepCard() {
         </form>
       ) : (
         <div className="space-y-4">
-          <p className="text-sm text-muted">After your password, signing in also asks for a code from an app on your phone, so a stolen password alone is not enough.</p>
-          <Button busy={busy} onClick={async () => {
+          <p className="text-sm text-muted">After your password, signing in can also ask for a code from an app on your phone, so a stolen password alone is not enough.</p>
+          <Button variant={me.mfaEnabled ? "secondary" : "primary"} busy={busy} onClick={async () => {
             const result = await run(() => start({}));
             if (result.data) setSetup(result.data.startMfaSetup);
             else setError(errorMessage(result.error));
-          }}>Set up two-step sign-in</Button>
+          }}>Set up the app</Button>
         </div>
       )}
     </Card>
@@ -244,6 +228,7 @@ export default function AccountPage() {
         <Notice tone="warning" title="Your role needs two-step sign-in">Set it up below to use your admin access.</Notice>
       )}
       <div className="grid gap-5 lg:grid-cols-2">
+        <PasskeysCard />
         <TwoStepCard />
         <PasswordCard />
         <ThisDevice />

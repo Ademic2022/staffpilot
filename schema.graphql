@@ -1791,8 +1791,16 @@ input LoginInput {
 type LoginPayload {
   me: Me
 
-  """The password was right; now send verifyMfa a code."""
+  """The password was right; now send verifyMfa a code, or verifyPasskey."""
   mfaRequired: Boolean!
+
+  """
+  The second step can be a passkey (startPasskeySignIn, then verifyPasskey).
+  """
+  passkeyAvailable: Boolean!
+
+  """The second step can be a code from the authenticator app."""
+  appAvailable: Boolean!
   errors: [FieldError!]!
 }
 
@@ -1811,7 +1819,12 @@ type Me {
 
   """Your own employee record, if you have one."""
   employee: Employee
+
+  """Two-step sign-in is on: the authenticator app, a passkey, or both."""
   mfaEnabled: Boolean!
+
+  """The authenticator app is one of the second steps."""
+  mfaAppEnabled: Boolean!
 
   """
   Your role needs two-step sign-in here and you have not set it up: admin permissions wait until you do.
@@ -1887,6 +1900,14 @@ type Mutation {
   """Go back to your own view."""
   stopViewAs: Me
   login(input: LoginInput!): LoginPayload!
+
+  """
+  The second step of signing in with a passkey: options for navigator.credentials.get().
+  """
+  startPasskeySignIn: JSON
+
+  """The second step of signing in with a passkey: the browser's answer."""
+  verifyPasskey(response: JSON!): LoginPayload!
 
   """
   The second step of signing in: a code from the authenticator app, or a recovery code.
@@ -2021,6 +2042,17 @@ type Mutation {
   confirmMfaSetup(code: String!): RecoveryCodesPayload!
   disableMfa(password: String!): AccountPayload!
   newRecoveryCodes(code: String!): RecoveryCodesPayload!
+
+  """
+  Start adding a passkey: options for the browser's navigator.credentials.create().
+  """
+  startPasskeySetup: JSON!
+
+  """
+  Finish adding a passkey with the browser's answer. Recovery codes come back if this turned two-step sign-in on.
+  """
+  addPasskey(response: JSON!, name: String! = ""): RecoveryCodesPayload!
+  removePasskey(id: ID!, password: String!): AccountPayload!
   updateCompanySettings(input: CompanySettingsInput!): CompanySettingsPayload!
   removeCompanyLogo: Boolean!
   signUp(input: SignUpInput!): SignUpPayload!
@@ -2410,6 +2442,13 @@ enum OvertimeStatus {
 type PageInfo {
   hasNextPage: Boolean!
   endCursor: String
+}
+
+type Passkey {
+  id: ID!
+  name: String!
+  createdAt: DateTime!
+  lastUsedAt: DateTime
 }
 
 type PayComponent {
@@ -3184,6 +3223,9 @@ type Query {
   """This company's data exports, newest first."""
   dataExports: [DataExport!]!
   accountClosure: AccountClosure!
+
+  """Your passkeys for the second sign-in step."""
+  myPasskeys: [Passkey!]!
 }
 
 type RecoveryCodesPayload {

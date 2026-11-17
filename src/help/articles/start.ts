@@ -14,7 +14,7 @@ export const START: Article[] = [
 
 Your company has its own web address (HR sends it with your invitation). Sign in there with your work email and password. If you were invited, the email has a link to set your password first. Forgot it? Use **Forgot password** on the sign-in page and follow the link we email you.
 
-If your role needs two-step sign-in, you are asked for a code from your authenticator app after your password. See [Your account and security](/help/your-account).
+If your role needs two-step sign-in, you are asked for your passkey or a code from your authenticator app after your password. See [Your account and security](/help/your-account).
 
 ## The menu
 
@@ -61,15 +61,27 @@ Enter your current password and the new one, then **Change password**. Other dev
 
 ## Two-step sign-in
 
-Two-step sign-in asks for a six-digit code from an app on your phone each time you sign in, so a stolen password is not enough. Owners and HR can require it for everyone with admin access.
+Two-step sign-in asks for a second proof after your password each time you sign in, so a stolen password is not enough. Owners and HR can require it for everyone with admin access. You can use a passkey, an authenticator app, or both.
+
+### With a passkey
+
+A passkey uses Face ID, Touch ID, Windows Hello, your phone or a security key. There is nothing to type, and it does not work on fake sign-in pages.
+
+1. On Your account, under **Passkeys**, choose **Add a passkey**.
+2. Give it a name, such as the device it is on, and choose **Continue**.
+3. Confirm with your fingerprint, face or device PIN.
+
+Add a passkey on each device you sign in from. If it is your first second step, you also get ten recovery codes: save them. To remove a passkey, choose the bin beside it and enter your password. When signing in, **Use a recovery code** works if the device is lost.
+
+### With an authenticator app
 
 1. Install an authenticator app, such as Google Authenticator, Microsoft Authenticator or 1Password.
-2. On Your account, choose **Set up two-step sign-in**.
+2. On Your account, under **Authenticator app**, choose **Set up the app**.
 3. Scan the code with the app (or type the key it shows).
 4. Enter the code the app shows to finish.
 5. Save the **recovery codes** somewhere safe. Each one works once if you lose your phone.
 
-Run low on recovery codes? Choose **Make new codes**; the old ones stop working.
+Run low on recovery codes? Choose **New recovery codes** and enter a code from the app or one of your recovery codes; the old ones stop working. Turning the app off keeps two-step sign-in on if you also have a passkey.
 
 Each code works only once. If you sign in again within a minute or two (on another device, or another company with the same account), the code still showing has just been used: wait a few seconds for the next one. If every code is refused, set your phone's date and time to set automatically, as a clock that is out by more than about 30 seconds gives the wrong codes.
 

@@ -98,7 +98,7 @@ Upload a PNG, JPG or WebP logo (up to 2 MB) and choose your colour. They appear 
 
 ## Login and security
 
-- **Admins must use two-step sign-in**: everyone with admin access must set up an authenticator app. Set it up for yourself first on Your account.
+- **Admins must use two-step sign-in**: everyone with admin access must set up a passkey or an authenticator app. Set it up for yourself first on Your account.
 - **Sign people out after** a period of no activity. Shorter is safer on shared computers.
 - **Only allow these networks**: restrict sign-in to your office network addresses.
 

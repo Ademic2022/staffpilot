@@ -165,8 +165,10 @@ type Documents = {
     "\n  mutation CancelInvite($id: ID!) {\n    cancelInvite(id: $id) { errors { field message } }\n  }\n": typeof types.CancelInviteDocument,
     "\n  mutation ResendInvite($id: ID!) {\n    resendInvite(id: $id)\n  }\n": typeof types.ResendInviteDocument,
     "\n  mutation RequestPasswordReset($email: String!) {\n    requestPasswordReset(email: $email)\n  }\n": typeof types.RequestPasswordResetDocument,
-    "\n  mutation Login($input: LoginInput!) {\n    login(input: $input) {\n      mfaRequired\n      me { permissions }\n      errors { field message }\n    }\n  }\n": typeof types.LoginDocument,
+    "\n  mutation Login($input: LoginInput!) {\n    login(input: $input) {\n      mfaRequired passkeyAvailable appAvailable\n      me { permissions }\n      errors { field message }\n    }\n  }\n": typeof types.LoginDocument,
     "\n  mutation VerifyMfa($code: String!) {\n    verifyMfa(code: $code) {\n      me { permissions }\n      errors { field message }\n    }\n  }\n": typeof types.VerifyMfaDocument,
+    "\n  mutation StartPasskeySignIn { startPasskeySignIn }\n": typeof types.StartPasskeySignInDocument,
+    "\n  mutation VerifyPasskey($response: JSON!) {\n    verifyPasskey(response: $response) {\n      me { permissions }\n      errors { field message }\n    }\n  }\n": typeof types.VerifyPasskeyDocument,
     "\n  query PasswordLink($uid: String!, $token: String!) {\n    passwordLink(uid: $uid, token: $token)\n  }\n": typeof types.PasswordLinkDocument,
     "\n  mutation SetPassword($input: SetPasswordInput!) {\n    setPassword(input: $input) { ok errors { field message } }\n  }\n": typeof types.SetPasswordDocument,
     "\n  mutation RedeemWelcome($token: String!) {\n    redeemWelcome(token: $token) { me { mfaSetupRequired } errors { message } }\n  }\n": typeof types.RedeemWelcomeDocument,
@@ -183,6 +185,10 @@ type Documents = {
     "query PushPublicKey { pushPublicKey }": typeof types.PushPublicKeyDocument,
     "\n  mutation SavePushSubscription($endpoint: String!, $p256dh: String!, $auth: String!, $userAgent: String!) {\n    savePushSubscription(endpoint: $endpoint, p256dh: $p256dh, auth: $auth, userAgent: $userAgent)\n  }\n": typeof types.SavePushSubscriptionDocument,
     "mutation RemovePushSubscription($endpoint: String!) { removePushSubscription(endpoint: $endpoint) }": typeof types.RemovePushSubscriptionDocument,
+    "\n  query MyPasskeys { myPasskeys { id name createdAt lastUsedAt } }\n": typeof types.MyPasskeysDocument,
+    "\n  mutation StartPasskeySetup { startPasskeySetup }\n": typeof types.StartPasskeySetupDocument,
+    "\n  mutation AddPasskey($response: JSON!, $name: String!) {\n    addPasskey(response: $response, name: $name) { codes errors { field message } }\n  }\n": typeof types.AddPasskeyDocument,
+    "\n  mutation RemovePasskey($id: ID!, $password: String!) {\n    removePasskey(id: $id, password: $password) { ok errors { field message } }\n  }\n": typeof types.RemovePasskeyDocument,
     "\n  query PendingPayJobChanges {\n    pendingChanges { id kind kindName employeeId employeeName summary status step stepCount requestedBy createdAt canDecide canCancel }\n  }\n": typeof types.PendingPayJobChangesDocument,
     "\n  mutation DecidePendingChange($id: ID!, $approve: Boolean!, $note: String) {\n    decidePendingChange(id: $id, approve: $approve, note: $note) { change { id status } errors { message } }\n  }\n": typeof types.DecidePendingChangeDocument,
     "\n  mutation CancelPendingChange($id: ID!) {\n    cancelPendingChange(id: $id) { change { id status } errors { message } }\n  }\n": typeof types.CancelPendingChangeDocument,
@@ -325,7 +331,7 @@ type Documents = {
     "\n  query ReportCatalog {\n    reportCatalog { key title description usesRange groupings category favorite lastViewed }\n  }\n": typeof types.ReportCatalogDocument,
     "\n  query CustomReports {\n    customReports { id name description fields filter showing shared ownerName mine favorite lastViewed }\n  }\n": typeof types.CustomReportsDocument,
     "\n  mutation SetFavoriteReport($favorite: Boolean!, $key: String, $customId: ID) {\n    setFavoriteReport(favorite: $favorite, key: $key, customId: $customId)\n  }\n": typeof types.SetFavoriteReportDocument,
-    "\n  query Me {\n    me {\n      permissions\n      roles\n      user { id email fullName }\n      employee { id fullName jobTitle { name } }\n      hasPayslips\n      mfaEnabled mfaSetupRequired recoveryCodesLeft\n      viewingAs { name realName startedAt }\n    }\n    tenant {\n      name slug primaryColor country currency logoUrl\n      dateFormat nameFormat showCurrencyCode employeesEditOwnPhoto expandedGender employeeUploads showTenure attendanceEnabled expensesEnabled timesheetsEnabled payrollEnabled status closesOn\n    }\n  }\n": typeof types.MeDocument,
+    "\n  query Me {\n    me {\n      permissions\n      roles\n      user { id email fullName }\n      employee { id fullName jobTitle { name } }\n      hasPayslips\n      mfaEnabled mfaAppEnabled mfaSetupRequired recoveryCodesLeft\n      viewingAs { name realName startedAt }\n    }\n    tenant {\n      name slug primaryColor country currency logoUrl\n      dateFormat nameFormat showCurrencyCode employeesEditOwnPhoto expandedGender employeeUploads showTenure attendanceEnabled expensesEnabled timesheetsEnabled payrollEnabled status closesOn\n    }\n  }\n": typeof types.MeDocument,
 };
 const documents: Documents = {
     "\n  mutation ChangePassword($current: String!, $new: String!) {\n    changePassword(current: $current, new: $new) { ok errors { field message } }\n  }\n": types.ChangePasswordDocument,
@@ -479,8 +485,10 @@ const documents: Documents = {
     "\n  mutation CancelInvite($id: ID!) {\n    cancelInvite(id: $id) { errors { field message } }\n  }\n": types.CancelInviteDocument,
     "\n  mutation ResendInvite($id: ID!) {\n    resendInvite(id: $id)\n  }\n": types.ResendInviteDocument,
     "\n  mutation RequestPasswordReset($email: String!) {\n    requestPasswordReset(email: $email)\n  }\n": types.RequestPasswordResetDocument,
-    "\n  mutation Login($input: LoginInput!) {\n    login(input: $input) {\n      mfaRequired\n      me { permissions }\n      errors { field message }\n    }\n  }\n": types.LoginDocument,
+    "\n  mutation Login($input: LoginInput!) {\n    login(input: $input) {\n      mfaRequired passkeyAvailable appAvailable\n      me { permissions }\n      errors { field message }\n    }\n  }\n": types.LoginDocument,
     "\n  mutation VerifyMfa($code: String!) {\n    verifyMfa(code: $code) {\n      me { permissions }\n      errors { field message }\n    }\n  }\n": types.VerifyMfaDocument,
+    "\n  mutation StartPasskeySignIn { startPasskeySignIn }\n": types.StartPasskeySignInDocument,
+    "\n  mutation VerifyPasskey($response: JSON!) {\n    verifyPasskey(response: $response) {\n      me { permissions }\n      errors { field message }\n    }\n  }\n": types.VerifyPasskeyDocument,
     "\n  query PasswordLink($uid: String!, $token: String!) {\n    passwordLink(uid: $uid, token: $token)\n  }\n": types.PasswordLinkDocument,
     "\n  mutation SetPassword($input: SetPasswordInput!) {\n    setPassword(input: $input) { ok errors { field message } }\n  }\n": types.SetPasswordDocument,
     "\n  mutation RedeemWelcome($token: String!) {\n    redeemWelcome(token: $token) { me { mfaSetupRequired } errors { message } }\n  }\n": types.RedeemWelcomeDocument,
@@ -497,6 +505,10 @@ const documents: Documents = {
     "query PushPublicKey { pushPublicKey }": types.PushPublicKeyDocument,
     "\n  mutation SavePushSubscription($endpoint: String!, $p256dh: String!, $auth: String!, $userAgent: String!) {\n    savePushSubscription(endpoint: $endpoint, p256dh: $p256dh, auth: $auth, userAgent: $userAgent)\n  }\n": types.SavePushSubscriptionDocument,
     "mutation RemovePushSubscription($endpoint: String!) { removePushSubscription(endpoint: $endpoint) }": types.RemovePushSubscriptionDocument,
+    "\n  query MyPasskeys { myPasskeys { id name createdAt lastUsedAt } }\n": types.MyPasskeysDocument,
+    "\n  mutation StartPasskeySetup { startPasskeySetup }\n": types.StartPasskeySetupDocument,
+    "\n  mutation AddPasskey($response: JSON!, $name: String!) {\n    addPasskey(response: $response, name: $name) { codes errors { field message } }\n  }\n": types.AddPasskeyDocument,
+    "\n  mutation RemovePasskey($id: ID!, $password: String!) {\n    removePasskey(id: $id, password: $password) { ok errors { field message } }\n  }\n": types.RemovePasskeyDocument,
     "\n  query PendingPayJobChanges {\n    pendingChanges { id kind kindName employeeId employeeName summary status step stepCount requestedBy createdAt canDecide canCancel }\n  }\n": types.PendingPayJobChangesDocument,
     "\n  mutation DecidePendingChange($id: ID!, $approve: Boolean!, $note: String) {\n    decidePendingChange(id: $id, approve: $approve, note: $note) { change { id status } errors { message } }\n  }\n": types.DecidePendingChangeDocument,
     "\n  mutation CancelPendingChange($id: ID!) {\n    cancelPendingChange(id: $id) { change { id status } errors { message } }\n  }\n": types.CancelPendingChangeDocument,
@@ -639,7 +651,7 @@ const documents: Documents = {
     "\n  query ReportCatalog {\n    reportCatalog { key title description usesRange groupings category favorite lastViewed }\n  }\n": types.ReportCatalogDocument,
     "\n  query CustomReports {\n    customReports { id name description fields filter showing shared ownerName mine favorite lastViewed }\n  }\n": types.CustomReportsDocument,
     "\n  mutation SetFavoriteReport($favorite: Boolean!, $key: String, $customId: ID) {\n    setFavoriteReport(favorite: $favorite, key: $key, customId: $customId)\n  }\n": types.SetFavoriteReportDocument,
-    "\n  query Me {\n    me {\n      permissions\n      roles\n      user { id email fullName }\n      employee { id fullName jobTitle { name } }\n      hasPayslips\n      mfaEnabled mfaSetupRequired recoveryCodesLeft\n      viewingAs { name realName startedAt }\n    }\n    tenant {\n      name slug primaryColor country currency logoUrl\n      dateFormat nameFormat showCurrencyCode employeesEditOwnPhoto expandedGender employeeUploads showTenure attendanceEnabled expensesEnabled timesheetsEnabled payrollEnabled status closesOn\n    }\n  }\n": types.MeDocument,
+    "\n  query Me {\n    me {\n      permissions\n      roles\n      user { id email fullName }\n      employee { id fullName jobTitle { name } }\n      hasPayslips\n      mfaEnabled mfaAppEnabled mfaSetupRequired recoveryCodesLeft\n      viewingAs { name realName startedAt }\n    }\n    tenant {\n      name slug primaryColor country currency logoUrl\n      dateFormat nameFormat showCurrencyCode employeesEditOwnPhoto expandedGender employeeUploads showTenure attendanceEnabled expensesEnabled timesheetsEnabled payrollEnabled status closesOn\n    }\n  }\n": types.MeDocument,
 };
 
 /**
@@ -1263,11 +1275,19 @@ export function graphql(source: "\n  mutation RequestPasswordReset($email: Strin
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation Login($input: LoginInput!) {\n    login(input: $input) {\n      mfaRequired\n      me { permissions }\n      errors { field message }\n    }\n  }\n"): (typeof documents)["\n  mutation Login($input: LoginInput!) {\n    login(input: $input) {\n      mfaRequired\n      me { permissions }\n      errors { field message }\n    }\n  }\n"];
+export function graphql(source: "\n  mutation Login($input: LoginInput!) {\n    login(input: $input) {\n      mfaRequired passkeyAvailable appAvailable\n      me { permissions }\n      errors { field message }\n    }\n  }\n"): (typeof documents)["\n  mutation Login($input: LoginInput!) {\n    login(input: $input) {\n      mfaRequired passkeyAvailable appAvailable\n      me { permissions }\n      errors { field message }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation VerifyMfa($code: String!) {\n    verifyMfa(code: $code) {\n      me { permissions }\n      errors { field message }\n    }\n  }\n"): (typeof documents)["\n  mutation VerifyMfa($code: String!) {\n    verifyMfa(code: $code) {\n      me { permissions }\n      errors { field message }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation StartPasskeySignIn { startPasskeySignIn }\n"): (typeof documents)["\n  mutation StartPasskeySignIn { startPasskeySignIn }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation VerifyPasskey($response: JSON!) {\n    verifyPasskey(response: $response) {\n      me { permissions }\n      errors { field message }\n    }\n  }\n"): (typeof documents)["\n  mutation VerifyPasskey($response: JSON!) {\n    verifyPasskey(response: $response) {\n      me { permissions }\n      errors { field message }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -1332,6 +1352,22 @@ export function graphql(source: "\n  mutation SavePushSubscription($endpoint: St
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "mutation RemovePushSubscription($endpoint: String!) { removePushSubscription(endpoint: $endpoint) }"): (typeof documents)["mutation RemovePushSubscription($endpoint: String!) { removePushSubscription(endpoint: $endpoint) }"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query MyPasskeys { myPasskeys { id name createdAt lastUsedAt } }\n"): (typeof documents)["\n  query MyPasskeys { myPasskeys { id name createdAt lastUsedAt } }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation StartPasskeySetup { startPasskeySetup }\n"): (typeof documents)["\n  mutation StartPasskeySetup { startPasskeySetup }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation AddPasskey($response: JSON!, $name: String!) {\n    addPasskey(response: $response, name: $name) { codes errors { field message } }\n  }\n"): (typeof documents)["\n  mutation AddPasskey($response: JSON!, $name: String!) {\n    addPasskey(response: $response, name: $name) { codes errors { field message } }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation RemovePasskey($id: ID!, $password: String!) {\n    removePasskey(id: $id, password: $password) { ok errors { field message } }\n  }\n"): (typeof documents)["\n  mutation RemovePasskey($id: ID!, $password: String!) {\n    removePasskey(id: $id, password: $password) { ok errors { field message } }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -1903,7 +1939,7 @@ export function graphql(source: "\n  mutation SetFavoriteReport($favorite: Boole
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query Me {\n    me {\n      permissions\n      roles\n      user { id email fullName }\n      employee { id fullName jobTitle { name } }\n      hasPayslips\n      mfaEnabled mfaSetupRequired recoveryCodesLeft\n      viewingAs { name realName startedAt }\n    }\n    tenant {\n      name slug primaryColor country currency logoUrl\n      dateFormat nameFormat showCurrencyCode employeesEditOwnPhoto expandedGender employeeUploads showTenure attendanceEnabled expensesEnabled timesheetsEnabled payrollEnabled status closesOn\n    }\n  }\n"): (typeof documents)["\n  query Me {\n    me {\n      permissions\n      roles\n      user { id email fullName }\n      employee { id fullName jobTitle { name } }\n      hasPayslips\n      mfaEnabled mfaSetupRequired recoveryCodesLeft\n      viewingAs { name realName startedAt }\n    }\n    tenant {\n      name slug primaryColor country currency logoUrl\n      dateFormat nameFormat showCurrencyCode employeesEditOwnPhoto expandedGender employeeUploads showTenure attendanceEnabled expensesEnabled timesheetsEnabled payrollEnabled status closesOn\n    }\n  }\n"];
+export function graphql(source: "\n  query Me {\n    me {\n      permissions\n      roles\n      user { id email fullName }\n      employee { id fullName jobTitle { name } }\n      hasPayslips\n      mfaEnabled mfaAppEnabled mfaSetupRequired recoveryCodesLeft\n      viewingAs { name realName startedAt }\n    }\n    tenant {\n      name slug primaryColor country currency logoUrl\n      dateFormat nameFormat showCurrencyCode employeesEditOwnPhoto expandedGender employeeUploads showTenure attendanceEnabled expensesEnabled timesheetsEnabled payrollEnabled status closesOn\n    }\n  }\n"): (typeof documents)["\n  query Me {\n    me {\n      permissions\n      roles\n      user { id email fullName }\n      employee { id fullName jobTitle { name } }\n      hasPayslips\n      mfaEnabled mfaAppEnabled mfaSetupRequired recoveryCodesLeft\n      viewingAs { name realName startedAt }\n    }\n    tenant {\n      name slug primaryColor country currency logoUrl\n      dateFormat nameFormat showCurrencyCode employeesEditOwnPhoto expandedGender employeeUploads showTenure attendanceEnabled expensesEnabled timesheetsEnabled payrollEnabled status closesOn\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

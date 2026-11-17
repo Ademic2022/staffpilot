@@ -17,7 +17,7 @@ export const MeDocument = graphql(`
       user { id email fullName }
       employee { id fullName jobTitle { name } }
       hasPayslips
-      mfaEnabled mfaSetupRequired recoveryCodesLeft
+      mfaEnabled mfaAppEnabled mfaSetupRequired recoveryCodesLeft
       viewingAs { name realName startedAt }
     }
     tenant {
