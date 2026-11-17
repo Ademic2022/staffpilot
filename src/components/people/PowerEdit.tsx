@@ -161,7 +161,7 @@ function PersonLine({ p, action }: { p: Person; action: React.ReactNode }) {
     <li className="flex items-center gap-3 px-3 py-2">
       <Photo name={p.fullName} src={p.photoUrl} size={32} />
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-sm text-ink">{p.lastName}, {p.preferredName || p.firstName}</span>
+        <span className="block truncate text-sm text-ink">{p.fullName}</span>
         <span className="block truncate text-xs text-muted">{p.employeeNumber}</span>
       </span>
       {action}
@@ -357,7 +357,7 @@ export function PowerEdit() {
                   <tbody className="divide-y divide-line">
                     {people.map((p) => (
                       <tr key={p.id}>
-                        <td className="sticky left-0 bg-surface px-4 py-2 whitespace-nowrap text-ink">{p.lastName}, {p.preferredName || p.firstName}</td>
+                        <td className="sticky left-0 bg-surface px-4 py-2 whitespace-nowrap text-ink">{p.fullName}</td>
                         {chosen.map((d) => {
                           const v = valueOf(p, d);
                           return (

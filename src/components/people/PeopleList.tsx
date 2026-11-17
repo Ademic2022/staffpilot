@@ -464,7 +464,7 @@ function cell(key: string, e: Person, openSnapshot: () => void): ReactNode {
     case "number": return <span className="tabular-nums text-ink">{e.employeeNumber}</span>;
     case "name": return (
       <Link href={`/employees/${e.id}`} className="font-medium text-brand-ink hover:underline">
-        {e.lastName}, {e.preferredName || e.firstName}
+        {e.fullName}
       </Link>
     );
     case "jobTitle": return e.jobTitle?.name ?? dash;

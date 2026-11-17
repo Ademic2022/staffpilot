@@ -76,7 +76,7 @@ export const TENURE_OPTIONS = ["Under 1 year", "1–3 years", "3–5 years", "5�
 export const COLUMNS: { key: string; label: string; sort?: string }[] = [
   { key: "photo", label: "Photo" },
   { key: "number", label: "Employee #", sort: "number" },
-  { key: "name", label: "Last name, first name", sort: "name" },
+  { key: "name", label: "Name", sort: "name" },
   { key: "jobTitle", label: "Job title", sort: "job_title" },
   { key: "location", label: "Location", sort: "location" },
   { key: "employmentType", label: "Employment type", sort: "employment_type" },
