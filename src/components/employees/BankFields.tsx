@@ -76,7 +76,7 @@ export function BankFields({ values, onChange, errors, numberHint }: {
           aria-invalid={!!(errors.bankAccountNumber ?? found?.problem)} onChange={(e) => onChange("bankAccountNumber", e.target.value)} />
       </Field>
       <Field label="Account name" error={errors.bankAccountName}
-        hint={found?.name ? "Confirmed by the bank." : listed ? "Filled in by the bank once the account number is complete." : undefined}>
+        hint={found?.name ? "Confirmed by the bank." : undefined}>
         <Input value={values.bankAccountName} readOnly={Boolean(found?.name)} autoComplete="off" aria-invalid={!!errors.bankAccountName}
           onChange={(e) => onChange("bankAccountName", e.target.value)} />
       </Field>
