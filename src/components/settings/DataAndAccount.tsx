@@ -59,7 +59,8 @@ function Exports({ data, onChanged }: { data: AccountDataQuery; onChanged: () =>
         {busy ? "Preparing…" : "Export all data"}</Button>}>
       <div className="grid gap-4 text-sm">
         <ul className="grid list-disc gap-1 pl-5 text-muted">
-          <li>A spreadsheet (CSV) for every kind of record: people, job and pay history, leave, payroll, attendance, reviews, goals, expenses, documents and the audit log.</li>
+          <li>An Excel workbook, with a sheet for each kind of record: people, job and pay history, payroll and payslips, leave, attendance, reviews, goals, expenses, documents, the audit log and more. Names instead of codes, so it reads as is.</li>
+          <li>The same records as CSV files, with the exact codes, for moving to another system.</li>
           <li>Every stored file: documents, receipts, photos and company files, plus a PDF of every approved payslip.</li>
           <li>A README explaining the files. Passwords, sign-in secrets and API keys are never included.</li>
         </ul>

@@ -531,7 +531,8 @@ Both are under **Settings** → **Company** → **Data and account**, and only o
 
 Choose **Export all data**. StaffPilot prepares one ZIP file in the background and emails you when it is ready, usually within minutes. It holds:
 
-- **tables/**: a spreadsheet (CSV, opens in Excel) for every kind of record: employees, job and pay history, leave requests and balances, payroll runs and payslip lines, attendance, timesheets, reviews, goals, feedback, expense claims, documents, settings and the audit log. A **people_who_can_sign_in** file lists everyone's name, email and access level.
+- **company-data.xlsx**: start here. One Excel workbook with a **Summary** sheet and a sheet for each kind of record, with names instead of ID codes, real dates and numbers, and payslip tax, pension and NHF in their own columns.
+- **tables/**: the same records as CSV files with exact ID codes, for moving to another system: employees, job and pay history, leave requests and balances, payroll runs and payslip lines, attendance, timesheets, reviews, goals, feedback, expense claims, documents, settings and the audit log. A **people_who_can_sign_in** file lists everyone's name, email and access level.
 - **files/**: every stored file: employee documents, company files, receipts, photos and logos.
 - **payslips/**: a PDF of every approved payslip, by month.
 - **README.txt**: what each file holds and how the tables link together.
