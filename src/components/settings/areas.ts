@@ -85,7 +85,7 @@ export const AREAS: SettingsArea[] = [
     keywords: "salary pay",
     tabs: [{ key: "groups", label: "Pay groups", keywords: "pay day monthly biweekly schedule" },
       { key: "components", label: "Pay components", keywords: "salary split basic housing transport allowances deductions" },
-      { key: "rules", label: "Tax and contributions", keywords: "paye pension nhf nsitf ssnit statutory rules" }],
+      { key: "rules", label: "Tax and contributions", keywords: "paye pension nhf nsitf statutory rules" }],
   },
   { href: "/settings/benefits", label: "Benefits", icon: faHeartPulse, permission: PERMS.employeesManage, keywords: "hmo health insurance" },
   {

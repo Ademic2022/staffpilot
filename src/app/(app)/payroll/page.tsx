@@ -159,7 +159,6 @@ function DetailsDialog({ profile, name, data, onClose, onSaved }: { profile: Pro
           <Field label="State of residence" optional hint="Nigeria: the state that receives PAYE."><Input value={v.taxState} onChange={(e) => set("taxState", e.target.value)} /></Field>
           <Field label="Pension provider" optional><Input value={v.pensionProvider} onChange={(e) => set("pensionProvider", e.target.value)} /></Field>
           <Field label="NHF number" optional><Input value={v.nhfNumber} onChange={(e) => set("nhfNumber", e.target.value)} /></Field>
-          <Field label="SSNIT number" optional hint="Ghana."><Input value={v.socialSecurityNumber} onChange={(e) => set("socialSecurityNumber", e.target.value)} /></Field>
           <Field label="Voluntary pension (%)" optional><Input inputMode="decimal" value={String(v.voluntaryPensionPercent)} onChange={(e) => set("voluntaryPensionPercent", e.target.value)} /></Field>
           <Field label="Annual rent" optional hint="Nigeria: 20% of it, up to ₦500,000, reduces tax."><Input inputMode="decimal" value={String(v.annualRent)} onChange={(e) => set("annualRent", e.target.value)} /></Field>
           <Field label="Annual life insurance" optional><Input inputMode="decimal" value={String(v.annualLifeInsurance)} onChange={(e) => set("annualLifeInsurance", e.target.value)} /></Field>

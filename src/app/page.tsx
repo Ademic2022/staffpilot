@@ -28,8 +28,8 @@ function structuredData() {
     {
       "@context": "https://schema.org", "@type": "SoftwareApplication", name: SITE.name, url, applicationCategory: "BusinessApplication",
       applicationSubCategory: "HR and payroll software", operatingSystem: "Web browser, any phone", description: SEO.description,
-      areaServed: ["Nigeria", "Ghana"],
-      featureList: ["Employee records", "Leave management", "Payroll with PAYE, pension, NHF and SSNIT", "Attendance and timesheets",
+      areaServed: ["Nigeria"],
+      featureList: ["Employee records", "Leave management", "Payroll with PAYE, pension, NHF and NSITF", "Attendance and timesheets",
         "Performance reviews and goals", "Expense claims", "Employee self-service", "Reports"],
     },
     {

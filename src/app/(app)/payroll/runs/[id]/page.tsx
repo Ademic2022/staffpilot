@@ -201,7 +201,7 @@ export default function PayrollRunPage() {
           </Card>
           <Card title="Statutory schedules" description="What to remit, and for whom.">
             <ul className="space-y-1.5 text-sm">
-              {[["paye", "PAYE (income tax)"], ["pension", "Pension"], ["nhf", "National Housing Fund"], ["ssnit", "SSNIT (Ghana)"]].map(([k, label]) => (
+              {[["paye", "PAYE (income tax)"], ["pension", "Pension"], ["nhf", "National Housing Fund"]].map(([k, label]) => (
                 <li key={k} className="flex items-center justify-between gap-3"><span className="text-ink">{label}</span>
                   <span className="flex gap-3"><a className="font-medium text-brand-ink hover:underline" href={file(k, "xlsx")}>Excel</a>
                     <a className="font-medium text-brand-ink hover:underline" href={file(k, "csv")}>CSV</a></span></li>

@@ -93,7 +93,7 @@ If your company runs payroll in StaffPilot, open **My payslips** in the menu. Ea
 Choose a payslip to see its lines, or download the **PDF**.
 
 - **Earnings**: your basic pay and allowances (such as housing and transport), overtime and any one-off payments. Together they make **gross pay**.
-- **Deductions**: income tax (PAYE), pension, the National Housing Fund in Nigeria or SSNIT in Ghana, loan repayments and other deductions.
+- **Deductions**: income tax (PAYE), pension, the National Housing Fund (NHF), loan repayments and other deductions.
 - **Expenses paid back**: approved expense claims. These are not pay, so they are not taxed; they are added to your net pay.
 - **Net pay**: what is paid into your bank account.
 

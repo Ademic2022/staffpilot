@@ -85,7 +85,7 @@ function Hero() {
         <div>
           <div className="lp-rise mb-6 inline-flex items-center gap-2 rounded-full border border-[var(--lp-green)]/15 bg-[var(--lp-card)] py-1 pl-1 pr-3 text-[13px] text-[var(--lp-muted)]" style={{ animationDelay: "0.05s" }}>
             <span className="rounded-full bg-[var(--lp-green)] px-2 py-0.5 text-[11px] font-semibold text-[var(--lp-saffron)]">New</span>
-            Payroll for Nigeria and Ghana
+            Payroll for Nigeria
           </div>
           <h1 className="lp-rise font-display text-[44px] font-medium leading-[1.02] tracking-[-0.02em] text-[var(--lp-green)] sm:text-[60px] lg:text-[68px]" style={{ animationDelay: "0.12s" }}>
             Your people,<br />
@@ -127,7 +127,7 @@ function Strip() {
   const facts = [
     ["One record per person", "Job, pay history, contacts, bank details and documents"],
     ["Leave that adds up", "Balances, accruals, carry-over and public holidays"],
-    ["Payroll that files", "PAYE, pension, NHF and SSNIT, payslips and bank files"],
+    ["Payroll that files", "PAYE, pension, NHF and NSITF, payslips and bank files"],
     ["Time, reviews, expenses", "Clock-in, timesheets, review cycles and receipts"],
   ];
   return (
@@ -208,7 +208,7 @@ function Features() {
     ["Manager view", "Line managers see their own team: records, leave and approvals. Nothing else."],
     ["Reports", "Headcount, joiners and leavers, attrition, leave taken, workforce make-up and pay totals. PDF, Excel or CSV."],
     ["Directory and org chart", "Everyone can find a colleague's role, team and work email. Personal details stay private."],
-    ["Payroll", "Gross-to-net for Nigeria and Ghana: PAYE, pension, NHF and SSNIT, maker-checker approval, payslips and bank files."],
+    ["Payroll", "Gross-to-net for Nigeria: PAYE, pension, NHF and NSITF, maker-checker approval, payslips and bank files."],
     ["Attendance and timesheets", "Clock in from a phone with an optional site check, shifts and overtime, and weekly hours by project."],
     ["Performance", "Goals and key results, self, manager and peer reviews, calibration, feedback and one-to-ones."],
     ["Expense claims", "Receipts from a phone camera, limits by category, manager and finance approval, paid back with pay."],

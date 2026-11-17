@@ -16,10 +16,10 @@ export const SITE = {
 };
 
 export const SEO = {
-  title: "HR and payroll software for growing companies in Nigeria and Ghana",
+  title: "HR and payroll software for growing companies in Nigeria",
   description:
     "StaffPilot keeps employee records, leave, payroll with PAYE, pension and NHF, attendance, performance reviews and expense claims in one secure place, with self-service on any phone.",
-  keywords: ["HR software Nigeria", "payroll software Nigeria", "HRMS Nigeria", "payroll software Ghana", "leave management",
+  keywords: ["HR software Nigeria", "payroll software Nigeria", "HRMS Nigeria", "leave management",
     "attendance software", "PAYE calculator", "employee self-service", "performance reviews", "expense claims"],
 };
 

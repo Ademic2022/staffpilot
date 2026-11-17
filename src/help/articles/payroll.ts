@@ -19,7 +19,7 @@ Payroll turns each person's salary, time off, overtime, expenses and loans into 
 | The payroll switch | Settings → Company → General settings | Payroll is off until an owner switches it on |
 | Pay groups | Settings → Payroll | Who is paid together, how often (monthly or every two weeks) and on what day |
 | Salary split | Settings → Payroll → Pay components | Divides gross pay into basic, housing, transport and other allowances. Starts at 50%, 25%, 10% and the rest |
-| Statutory rules | Settings → Payroll → Statutory rules | Tax bands and contribution rates for Nigeria and Ghana, by date |
+| Statutory rules | Settings → Payroll → Statutory rules | Nigeria's tax bands and contribution rates, by date |
 | Salary | Each profile → Job → Compensation | Monthly or yearly pay. Hourly pay is not supported yet |
 | Payroll details | Payroll → People | Pay group, tax state, pension and NHF choices, rent and life insurance for tax relief, extra allowances and deductions |
 | Bank and ID details | Each profile → Personal | Bank account, tax ID and pension PIN. Stored encrypted |
@@ -48,8 +48,8 @@ For each person, in this order:
 1. **This period's pay.** Monthly salary for a monthly group; monthly salary × 12 ÷ 26 for a two-weekly group.
 2. **The share they are paid for**, counted in working days. Days before they joined or after they left, **unpaid leave**, and **absences without leave** (only if your company treats those as unpaid) are taken off. Each case shows as a note on the payslip.
 3. **Earnings.** The salary split (basic, housing, transport, other), then **approved overtime** at their hourly rate times your overtime rate, their **extra allowances**, and, when someone leaves, **unused leave paid out**.
-4. **Pension and contributions.** In Nigeria, pension of 8% from the employee and 10% from the employer, on basic, housing and transport, and NHF of 2.5% of basic. In Ghana, SSNIT of 5.5% and 13% on basic. Anyone marked as not in the pension scheme or not paying NHF is skipped.
-5. **Tax (PAYE).** Taxable pay, less pension, NHF and reliefs (rent relief and life insurance in Nigeria), is run through the tax bands. Nigeria's bands are yearly, so the month is scaled to a year, taxed, and divided back to a month. In Nigeria, anyone earning the national minimum wage or less pays no tax.
+4. **Pension and contributions.** Pension of 8% from the employee and 10% from the employer, on basic, housing and transport, and NHF of 2.5% of basic. Anyone marked as not in the pension scheme or not paying NHF is skipped.
+5. **Tax (PAYE).** Taxable pay, less pension, NHF and reliefs (rent relief and life insurance), is run through the tax bands. The bands are yearly, so the month is scaled to a year, taxed, and divided back to a month. Anyone earning the national minimum wage or less pays no tax.
 6. **Other deductions.** Loan and advance instalments (someone leaving repays the whole balance) and their extra deductions.
 7. **Paid back on top.** Approved expense claims. They are not pay, so they are not taxed.
 
@@ -97,16 +97,16 @@ How the PAYE is worked out:
 - **Payslips** (one A4 page each), published to each person.
 - **Payroll register**: every line for every person, for checking and your records.
 - **Bank file**: name, bank, account number and amount for each person, ready for your bank's bulk transfer. Opening it is recorded in the audit log.
-- **Remittance schedules**: PAYE (with tax IDs and states), pension (with PINs), NHF and, in Ghana, SSNIT.
+- **Remittance schedules**: PAYE (with tax IDs and states), pension (with PINs) and NHF.
 
 See [Payroll files and payments](/help/payroll-files).
 
 ## Good to know
 
-- Only **Nigeria** and **Ghana** are supported. A payroll for an entity in another country cannot be started.
+- Only **Nigeria** is supported. A payroll for an entity in another country cannot be started.
 - **Hourly pay** is not worked out yet: enter it as an allowance.
 - Tax is worked out on **each period's pay as if it continued all year**. If someone's pay changes during the year, earlier months are not adjusted.
-- The tax rules follow the published law (Nigeria Tax Act 2025; Ghana's Act 1178). Have your accountant check your first payroll before you pay from it.
+- The tax rules follow the published law (Nigeria Tax Act 2025). Have your accountant check your first payroll before you pay from it.
 `,
   },
   {
@@ -116,7 +116,7 @@ See [Payroll files and payments](/help/payroll-files).
     audience: PAY,
     paths: ["/settings/payroll", "/payroll?tab=people"],
     body: `
-Payroll works for companies in **Nigeria** and **Ghana**, paying monthly or every two weeks.
+Payroll works for companies in **Nigeria**, paying monthly or every two weeks.
 
 ## Switch it on
 
@@ -141,7 +141,7 @@ Payroll is off until an owner switches on **Run payroll in StaffPilot** in **Set
 
 ## Statutory rules
 
-**Statutory rules** shows the tax bands and contribution rates payroll uses, by country: PAYE, pension, NHF and NSITF in Nigeria; PAYE and SSNIT in Ghana. New versions are added when the law changes; past payslips keep the rules they used.
+**Statutory rules** shows the tax bands and contribution rates payroll uses for Nigeria: PAYE, pension, NHF and NSITF. New versions are added when the law changes; past payslips keep the rules they used.
 
 ## Putting people in payroll
 
@@ -199,7 +199,7 @@ A payroll that is not yet approved can be **cancelled**. Approved payrolls canno
   {
     slug: "payroll-files",
     title: "Payroll files and statutory schedules",
-    summary: "The payroll register, bank payment file, and PAYE, pension, NHF and SSNIT schedules.",
+    summary: "The payroll register, bank payment file, and PAYE, pension and NHF schedules.",
     audience: PAY,
     paths: [],
     body: `
@@ -211,7 +211,6 @@ On the payroll page, each file downloads as **Excel** or **CSV**.
   - **PAYE**: tax by person, for the state or revenue authority.
   - **Pension**: employee and employer contributions, with pension PINs and providers.
   - **NHF**: National Housing Fund contributions (Nigeria).
-  - **SSNIT**: social security contributions (Ghana).
 
 > The bank file is a general layout. Check it against your bank's upload format before sending.
 `,
@@ -262,8 +261,8 @@ For each person in the pay group, a payroll works out:
 
 ## Deductions
 
-- **PAYE** income tax, after reliefs (pension, NHF, rent relief and life insurance in Nigeria). In Nigeria, people earning the national minimum wage or less pay no tax.
-- **Pension** (Nigeria: 8% employee and 10% employer, on basic, housing and transport), **NHF** (2.5% of basic), and **SSNIT** in Ghana (5.5% employee, 13% employer, on basic).
+- **PAYE** income tax, after reliefs (pension, NHF, rent relief and life insurance). People earning the national minimum wage or less pay no tax.
+- **Pension** (8% employee and 10% employer, on basic, housing and transport) and **NHF** (2.5% of basic).
 - **Loan and advance repayments**, and other deductions on their payroll details.
 
 ## Paid back on top

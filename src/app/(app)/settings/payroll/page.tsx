@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { faPen, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
@@ -184,7 +185,8 @@ export default function PayrollSettingsPage() {
       {tab === "groups" && (
         <>
           <SettingsIntro actions={<Button icon={<FontAwesomeIcon icon={faPlus} />} onClick={() => setEditing({ group: null })}>New pay group</Button>}>
-            Who is paid together, how often and when. Put people in groups from Payroll → People.
+            Who is paid together, how often and when. Put people in groups from{" "}
+            <Link href="/payroll?tab=people" className="font-medium text-brand-ink hover:underline">Payroll → People</Link>.
           </SettingsIntro>
           <Card flush>
             {data.payGroups.length ? (

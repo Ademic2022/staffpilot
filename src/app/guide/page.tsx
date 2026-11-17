@@ -7,7 +7,7 @@ import { SITE, siteUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: { absolute: `User guide: how to use ${SITE.name}` },
-  description: `Step-by-step help for ${SITE.name}: leave, payslips, clocking in, timesheets, expenses, reviews, setting up the company and running payroll in Nigeria and Ghana.`,
+  description: `Step-by-step help for ${SITE.name}: leave, payslips, clocking in, timesheets, expenses, reviews, setting up the company and running payroll in Nigeria.`,
   alternates: { canonical: "/guide" },
   robots: { index: true, follow: true },
   openGraph: { type: "website", url: "/guide", title: `${SITE.name} user guide`, siteName: SITE.name },

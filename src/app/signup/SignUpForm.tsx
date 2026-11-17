@@ -5,7 +5,6 @@ import { useDeferredValue, useState, type FormEvent } from "react";
 import { useMutation, useQuery } from "urql";
 
 import { AuthAlert, AuthButton, AuthField, AuthInput, AuthShell, PasswordInput } from "@/components/auth/AuthShell";
-import { Select } from "@/components/ui";
 import { graphql } from "@/gql";
 import { errorMessage } from "@/lib/api";
 import { useMounted } from "@/lib/session";
@@ -28,11 +27,6 @@ const EmailCheckDocument = graphql(`
   }
 `);
 
-const COUNTRIES: [string, string, string][] = [
-  ["NG", "Nigeria", "NGN"], ["GH", "Ghana", "GHS"], ["KE", "Kenya", "KES"], ["ZA", "South Africa", "ZAR"],
-  ["EG", "Egypt", "EGP"], ["RW", "Rwanda", "RWF"], ["UG", "Uganda", "UGX"], ["TZ", "Tanzania", "TZS"],
-  ["GB", "United Kingdom", "GBP"], ["US", "United States", "USD"],
-];
 
 const toSlug = (v: string) => v.toLowerCase().replace(/\b(ltd|limited|plc|inc|llc)\b\.?/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40);
 
@@ -63,8 +57,8 @@ export function SignUpForm({ addressSuffix }: { addressSuffix: string }) {
     setFormError(undefined);
     setNotice(undefined);
     setBusy(true);
-    const currency = COUNTRIES.find((c) => c[0] === v.country)?.[2] ?? "USD";
-    const result = await signUp({ input: { ...v, currency, ...extra } });
+    // Nigerian companies only for now: payroll, holidays and the time zone assume it.
+    const result = await signUp({ input: { ...v, country: "NG", currency: "NGN", ...extra } });
     const payload = result.data?.signUp;
     setBusy(false);
     if (result.error || !payload) return setFormError(errorMessage(result.error));
@@ -187,11 +181,6 @@ export function SignUpForm({ addressSuffix }: { addressSuffix: string }) {
         </AuthField>
         <AuthField label="Password" error={errors.password}>
           <PasswordInput value={v.password} autoComplete="new-password" aria-invalid={!!errors.password} onChange={(e) => set("password", e.target.value)} />
-        </AuthField>
-        <AuthField label="Country">
-          <Select value={v.country} onChange={(e) => set("country", e.target.value)} className="[&_select]:h-12">
-            {COUNTRIES.map(([code, name, currency]) => <option key={code} value={code}>{name} ({currency})</option>)}
-          </Select>
         </AuthField>
         <AuthButton type="submit" busy={busy}>Create my company</AuthButton>
         <p className="text-center text-xs text-muted">You become its owner. Your data stays separate from every other company&apos;s.</p>
