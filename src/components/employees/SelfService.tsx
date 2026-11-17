@@ -36,7 +36,7 @@ const DIRECT = [["preferredName", "Preferred name"], ["personalEmail", "Personal
 const REVIEWED = [
   ["firstName", "First name"], ["middleName", "Middle name"], ["lastName", "Last name"],
   ["bankName", "Bank"], ["bankAccountName", "Account name"], ["bankAccountNumber", "Account number"],
-  ["nationalId", "National ID"], ["taxId", "Tax ID"], ["pensionId", "Pension ID"],
+  ["nationalId", "NIN (National ID)"], ["taxId", "Tax ID"], ["pensionId", "Pension PIN"],
 ] as const;
 type Key = (typeof DIRECT)[number][0] | (typeof REVIEWED)[number][0];
 const SECRET = ["bankAccountNumber", "nationalId", "taxId", "pensionId"] as const;

@@ -60,7 +60,7 @@ export function BankFields({ values, onChange, errors, numberHint }: {
   const options = listed && values.bankName && !banks.includes(values.bankName) ? [values.bankName, ...banks] : banks;
   return (
     <>
-      <Field label="Bank" error={errors.bankName}>
+      <Field label="Bank" optional error={errors.bankName}>
         {listed ? (
           <Select value={values.bankName} aria-invalid={!!errors.bankName} onChange={(e) => onChange("bankName", e.target.value)}>
             <option value="">Choose the bank</option>
@@ -70,12 +70,12 @@ export function BankFields({ values, onChange, errors, numberHint }: {
           <Input value={values.bankName} aria-invalid={!!errors.bankName} autoComplete="off" onChange={(e) => onChange("bankName", e.target.value)} />
         )}
       </Field>
-      <Field label="Account number" error={errors.bankAccountNumber ?? found?.problem}
+      <Field label="Account number" optional error={errors.bankAccountNumber ?? found?.problem}
         hint={checking ? "Checking with the bank…" : numberHint}>
         <Input value={values.bankAccountNumber} inputMode="numeric" maxLength={listed ? 10 : 34} autoComplete="off"
           aria-invalid={!!(errors.bankAccountNumber ?? found?.problem)} onChange={(e) => onChange("bankAccountNumber", e.target.value)} />
       </Field>
-      <Field label="Account name" error={errors.bankAccountName}
+      <Field label="Account name" optional error={errors.bankAccountName}
         hint={found?.name ? "Confirmed by the bank." : undefined}>
         <Input value={values.bankAccountName} readOnly={Boolean(found?.name)} autoComplete="off" aria-invalid={!!errors.bankAccountName}
           onChange={(e) => onChange("bankAccountName", e.target.value)} />

@@ -179,8 +179,10 @@ const SavePrivateDocument = graphql(`
 type Private = NonNullable<Employee["privateDetails"]>;
 const PRIVATE_LABELS: [keyof Omit<Private, "masked" | "__typename">, string][] = [
   ["bankName", "Bank"], ["bankAccountName", "Account name"], ["bankAccountNumber", "Account number"],
-  ["nationalId", "National ID"], ["taxId", "Tax ID"], ["pensionId", "Pension ID"],
+  ["nationalId", "NIN (National ID)"], ["taxId", "Tax ID"], ["pensionId", "Pension PIN"],
 ];
+
+const ID_HINTS: Record<string, string> = { nationalId: "11 digits, from the NIMC slip or app.", pensionId: "From their pension fund administrator." };
 
 function PrivateDialog({ employeeId, current, onClose, onSaved }: {
   employeeId: string; current: Private; onClose: () => void; onSaved: () => void;
@@ -223,7 +225,7 @@ function PrivateDialog({ employeeId, current, onClose, onSaved }: {
           {PRIVATE_LABELS.filter(([key]) => !key.startsWith("bank")).map(([key, label]) => {
             const secret = !["bankName", "bankAccountName"].includes(key);
             return (
-              <Field key={key} label={label} error={errors[key]} hint={secret && current[key] ? `On file: ${current[key]}` : undefined}>
+              <Field key={key} label={label} optional error={errors[key]} hint={secret && current[key] ? `On file: ${current[key]}` : ID_HINTS[key]}>
                 <Input value={v[key] ?? ""} aria-invalid={!!errors[key]} inputMode={key === "bankAccountNumber" ? "numeric" : undefined}
                   autoComplete="off" onChange={(e) => setV((s) => ({ ...s, [key]: e.target.value }))} />
               </Field>
