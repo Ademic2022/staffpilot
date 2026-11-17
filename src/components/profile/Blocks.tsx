@@ -8,7 +8,7 @@ import { ChangeJobDialog, ChangePayDialog, ChangeStatusDialog, OVERTIME, PAY_SCH
 import { IconPlus, IconTrash } from "@/components/icons";
 import { inDays } from "@/components/home/Reminders";
 import { AdjustBalanceDialog, BalanceCards, EmployeeLeaveDocument, RequestLeaveDialog } from "@/components/leave/Leave";
-import { Badge, Button, Dialog, ErrorNote, Field, IconButton, Input, Notice, StatusBadge, Table, TD, TH, Textarea } from "@/components/ui";
+import { ActionDialog, Badge, Button, Dialog, ErrorNote, Field, IconButton, Input, Notice, StatusBadge, Table, TD, TH, Textarea } from "@/components/ui";
 import { graphql } from "@/gql";
 import { errorMessage } from "@/lib/api";
 import { formatDate, formatFrequency, formatMoney, humanize } from "@/lib/format";
@@ -126,8 +126,16 @@ export function JobHistoryBlock({ e, title, icon, onSaved, canManage }: BlockPro
 const label = <T extends string>(list: { value: T; label: string }[], value: T | null | undefined) =>
   list.find((o) => o.value === value)?.label ?? "—";
 
+const DeleteCompensationDocument = graphql(`
+  mutation DeleteCompensation($id: ID!) { deleteCompensation(id: $id) { errors { message } } }
+`);
+
 export function PayBlock({ e, title, icon, onSaved, canManagePay, currency }: BlockProps & { canManagePay: boolean; currency: string }) {
   const [open, setOpen] = useState<"pay" | "bonus" | null>(null);
+  // An upcoming entry (not started, so never paid) can still be edited or removed.
+  const [editing, setEditing] = useState<Profile["compensationHistory"][number] | null>(null);
+  const [removing, setRemoving] = useState<Profile["compensationHistory"][number] | null>(null);
+  const [, deletePay] = useMutation(DeleteCompensationDocument);
   // The API returns pay only to people allowed to see it.
   if (!e.compensation && !e.compensationHistory.length && !canManagePay) return null;
   const payCurrency = e.compensation?.currency ?? currency;
@@ -143,6 +151,7 @@ export function PayBlock({ e, title, icon, onSaved, canManagePay, currency }: Bl
               <tr>
                 <TH>Effective</TH><TH className="hidden md:table-cell">Pay schedule</TH><TH className="hidden sm:table-cell">Pay type</TH>
                 <TH align="right">Pay rate</TH><TH className="hidden lg:table-cell">Overtime</TH><TH className="hidden md:table-cell">Reason</TH>
+                {canManagePay && <TH><span className="sr-only">Actions</span></TH>}
               </tr>
             </thead>
             <tbody>
@@ -163,12 +172,35 @@ export function PayBlock({ e, title, icon, onSaved, canManagePay, currency }: Bl
                     {c.reason || "—"}
                     {c.comment && <span className="block text-xs">{c.comment}</span>}
                   </TD>
+                  {canManagePay && (
+                    <TD align="right" className="whitespace-nowrap">
+                      {c.effectiveDate > today() && e.status !== "TERMINATED" && (
+                        <span className="inline-flex gap-1">
+                          <Button size="sm" variant="ghost" onClick={() => setEditing(c)}>Edit</Button>
+                          <Button size="sm" variant="ghost" onClick={() => setRemoving(c)}>Remove</Button>
+                        </span>
+                      )}
+                    </TD>
+                  )}
                 </tr>
               ))}
             </tbody>
           </Table>
         )}
         {open === "pay" && <ChangePayDialog employee={e} currency={currency} onClose={() => setOpen(null)} onSaved={() => { setOpen(null); onSaved("Pay change recorded."); }} />}
+        {editing && <ChangePayDialog employee={e} currency={currency} entry={editing} onClose={() => setEditing(null)}
+          onSaved={(message) => { setEditing(null); onSaved(message ?? "Upcoming pay updated."); }} />}
+        {removing && (
+          <ActionDialog open onClose={() => setRemoving(null)} title="Remove this upcoming pay?" tone="danger" confirmLabel="Remove"
+            description={`${formatMoney(removing.amount, removing.currency)} ${formatFrequency(removing.frequency)} from ${formatDate(removing.effectiveDate)}. It has not started, so nothing was paid at this rate. The audit log keeps that it was removed.`}
+            onConfirm={async () => {
+              const r = await deletePay({ id: removing.id });
+              const problem = errorMessage(r.error) ?? r.data?.deleteCompensation.errors[0]?.message;
+              if (problem) throw new Error(problem);
+              setRemoving(null);
+              onSaved("Upcoming pay removed.");
+            }} />
+        )}
       </ProfileSection>
       {target && (
         <ProfileSection title="Potential bonus" icon="star"

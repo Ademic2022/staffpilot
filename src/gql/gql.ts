@@ -275,6 +275,7 @@ type Documents = {
     "\n  query EmployeeBenefits($employeeId: ID!) {\n    employeeBenefits(employeeId: $employeeId) {\n      id status startDate endDate memberNumber coverage dependants note\n      plan { id name kind provider employeeRate employerRate basis statutory }\n    }\n    benefitPlans { id name kind provider employeeRate employerRate basis statutory isActive }\n  }\n": typeof types.EmployeeBenefitsDocument,
     "\n  mutation SaveBenefitEnrollment($input: SaveEnrollmentInput!) {\n    saveBenefitEnrollment(input: $input) { enrollment { id } errors { field message } }\n  }\n": typeof types.SaveBenefitEnrollmentDocument,
     "\n  mutation DeleteBenefitEnrollment($id: ID!) {\n    deleteBenefitEnrollment(id: $id)\n  }\n": typeof types.DeleteBenefitEnrollmentDocument,
+    "\n  mutation DeleteCompensation($id: ID!) { deleteCompensation(id: $id) { errors { message } } }\n": typeof types.DeleteCompensationDocument,
     "\n  mutation SetBonusTarget($input: BonusTargetInput!) {\n    setBonusTarget(input: $input) { employee { id } errors { field message } }\n  }\n": typeof types.SetBonusTargetDocument,
     "\n  mutation AddEmployeeNote($employeeId: ID!, $body: String!, $remindOn: Date) {\n    addEmployeeNote(employeeId: $employeeId, body: $body, remindOn: $remindOn) { note { id } errors { field message } }\n  }\n": typeof types.AddEmployeeNoteDocument,
     "\n  mutation DeleteEmployeeNote($id: ID!) {\n    deleteEmployeeNote(id: $id)\n  }\n": typeof types.DeleteEmployeeNoteDocument,
@@ -595,6 +596,7 @@ const documents: Documents = {
     "\n  query EmployeeBenefits($employeeId: ID!) {\n    employeeBenefits(employeeId: $employeeId) {\n      id status startDate endDate memberNumber coverage dependants note\n      plan { id name kind provider employeeRate employerRate basis statutory }\n    }\n    benefitPlans { id name kind provider employeeRate employerRate basis statutory isActive }\n  }\n": types.EmployeeBenefitsDocument,
     "\n  mutation SaveBenefitEnrollment($input: SaveEnrollmentInput!) {\n    saveBenefitEnrollment(input: $input) { enrollment { id } errors { field message } }\n  }\n": types.SaveBenefitEnrollmentDocument,
     "\n  mutation DeleteBenefitEnrollment($id: ID!) {\n    deleteBenefitEnrollment(id: $id)\n  }\n": types.DeleteBenefitEnrollmentDocument,
+    "\n  mutation DeleteCompensation($id: ID!) { deleteCompensation(id: $id) { errors { message } } }\n": types.DeleteCompensationDocument,
     "\n  mutation SetBonusTarget($input: BonusTargetInput!) {\n    setBonusTarget(input: $input) { employee { id } errors { field message } }\n  }\n": types.SetBonusTargetDocument,
     "\n  mutation AddEmployeeNote($employeeId: ID!, $body: String!, $remindOn: Date) {\n    addEmployeeNote(employeeId: $employeeId, body: $body, remindOn: $remindOn) { note { id } errors { field message } }\n  }\n": types.AddEmployeeNoteDocument,
     "\n  mutation DeleteEmployeeNote($id: ID!) {\n    deleteEmployeeNote(id: $id)\n  }\n": types.DeleteEmployeeNoteDocument,
@@ -1712,6 +1714,10 @@ export function graphql(source: "\n  mutation SaveBenefitEnrollment($input: Save
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation DeleteBenefitEnrollment($id: ID!) {\n    deleteBenefitEnrollment(id: $id)\n  }\n"): (typeof documents)["\n  mutation DeleteBenefitEnrollment($id: ID!) {\n    deleteBenefitEnrollment(id: $id)\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation DeleteCompensation($id: ID!) { deleteCompensation(id: $id) { errors { message } } }\n"): (typeof documents)["\n  mutation DeleteCompensation($id: ID!) { deleteCompensation(id: $id) { errors { message } } }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

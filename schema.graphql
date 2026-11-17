@@ -298,6 +298,11 @@ input ChangeCompensationInput {
   paySchedule: PaySchedule = null
   overtime: OvertimeStatus = null
   comment: String = null
+
+  """
+  Edit this upcoming pay entry instead of adding one (pay that has not started yet).
+  """
+  replaces: ID = null
 }
 
 input ChangeJobInput {
@@ -1946,6 +1951,9 @@ type Mutation {
   requestPayChange(input: ChangeCompensationInput!): EmployeePayload!
   changeEmployeeJob(input: ChangeJobInput!): JobChangePayload!
   changeEmployeeCompensation(input: ChangeCompensationInput!): EmployeePayload!
+
+  """Remove an upcoming pay entry (one that has not started yet)."""
+  deleteCompensation(id: ID!): EmployeePayload!
 
   """Set or clear an employee's potential bonus."""
   setBonusTarget(input: BonusTargetInput!): EmployeePayload!

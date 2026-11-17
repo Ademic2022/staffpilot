@@ -338,13 +338,25 @@ const paySchema = z.object({
 
 type PayValues = z.infer<typeof paySchema>;
 
-export function ChangePayDialog({ employee: e, currency, onClose, onSaved, request = false }: DialogProps & { currency: string; request?: boolean }) {
+type PayEntry = NonNullable<ProfileEmployee>["compensationHistory"][number];
+
+/**
+ * A new pay record, or (with `entry`) an edit of one that has not started yet: the server
+ * replaces it, through approval when pay changes need one.
+ */
+export function ChangePayDialog({ employee: e, currency, onClose, onSaved, request = false, entry }: DialogProps & {
+  currency: string; request?: boolean; entry?: PayEntry;
+}) {
   const [, makePay] = useMutation(ChangePayDocument);
   const [, askPay] = useMutation(RequestPayDocument);
   const [formError, setFormError] = useState<string>();
   const { register, handleSubmit, setError, formState: { errors, isSubmitting } } = useForm<PayValues>({
     resolver: zodResolver(paySchema),
-    defaultValues: {
+    defaultValues: entry ? {
+      amount: String(entry.amount), frequency: entry.frequency, payType: entry.payType ?? "SALARY",
+      paySchedule: entry.paySchedule ?? "", overtime: entry.overtime ?? "",
+      effectiveDate: entry.effectiveDate, reason: entry.reason ?? "", comment: entry.comment ?? "",
+    } : {
       amount: "", frequency: e.compensation?.frequency ?? "MONTHLY", payType: e.compensation?.payType ?? "SALARY",
       paySchedule: e.compensation?.paySchedule ?? "", overtime: e.compensation?.overtime ?? "",
       effectiveDate: today(), reason: "", comment: "",
@@ -355,7 +367,7 @@ export function ChangePayDialog({ employee: e, currency, onClose, onSaved, reque
     setFormError(undefined);
     const input = { id: e.id, amount: v.amount, frequency: v.frequency, effectiveDate: v.effectiveDate, reason: v.reason || null,
       currency: e.compensation?.currency ?? currency, payType: v.payType, paySchedule: v.paySchedule || null,
-      overtime: v.overtime || null, comment: v.comment || null };
+      overtime: v.overtime || null, comment: v.comment || null, replaces: entry?.id ?? null };
     const result = request ? await askPay({ input }) : await makePay({ input });
     const payload = result.data && ("requestPayChange" in result.data ? result.data.requestPayChange : result.data.changeEmployeeCompensation);
     const waiting = payload?.waitingForApproval;
@@ -365,7 +377,8 @@ export function ChangePayDialog({ employee: e, currency, onClose, onSaved, reque
   }
 
   return (
-    <Dialog open onClose={onClose} title="Change pay" description="Adds a new pay record. Earlier records stay in the pay history."
+    <Dialog open onClose={onClose} title={entry ? "Edit upcoming pay" : "Change pay"}
+      description={entry ? "It has not started yet, so it can still be changed. The change is kept in the audit log." : "Adds a new pay record. Earlier records stay in the pay history."}
       footer={<>
         <Button variant="secondary" onClick={onClose} disabled={isSubmitting}>Cancel</Button>
         <Button type="submit" form="pay-form" busy={isSubmitting}>Save pay</Button>
