@@ -91,6 +91,7 @@ How the PAYE is worked out:
 - **Warnings** on payslips: no salary record, joined or left mid-period, unpaid leave or absences taken off, deductions more than pay, final settlements.
 - **Changes since last payroll**: each person's net pay against the previous payroll. Moves of 10% or more, new people and people missing since last time are flagged.
 - **Records to complete** on Home lists anyone without bank details, a tax ID or a pension PIN. Fix those before approving.
+- **Bank checks**: choose the bank from the list and type the ten-digit account number; the **account name** is filled in by the bank itself. A number the bank does not know cannot be saved. The payroll warns before approval about anyone with **no bank account**, or whose account is **in someone else's name**.
 
 ## What payroll gives you
 

@@ -155,6 +155,15 @@ type AuditPage {
   hasMore: Boolean!
 }
 
+type BankLookup {
+  """
+  False when the name cannot be checked: no Paystack, or a bank not on the list.
+  """
+  available: Boolean!
+  accountName: String
+  message: String
+}
+
 enum BenefitBasis {
   BASIC
   BHT
@@ -1993,6 +2002,11 @@ type Mutation {
   savePrivateDetails(input: PrivateDetailsInput!): PrivateDetailsPayload!
 
   """
+  Ask the bank for the name on an account (Nigerian banks, through Paystack). Limited per person.
+  """
+  lookUpBankAccount(bankName: String!, accountNumber: String!): BankLookup!
+
+  """
   The bank and ID numbers in full. Each reveal is written to the audit log.
   """
   revealPrivateDetails(employeeId: ID!): PrivateDetails!
@@ -2639,6 +2653,11 @@ type PayrollRun {
   People paid in this run with no bank account on their record (checked now, not when it was worked out).
   """
   missingBank: [String!]!
+
+  """
+  People whose bank-confirmed account name does not match their own name.
+  """
+  bankNameMismatch: [String!]!
   canApprove: Boolean!
   payslips: [Payslip!]!
 
@@ -2955,6 +2974,11 @@ type Query {
 
   """Documents expired or expiring within the given days. HR only."""
   expiringDocuments(withinDays: Int! = 30): [EmployeeDocument!]!
+
+  """
+  Nigerian banks to choose from, when bank checks are set up (empty otherwise: type the bank).
+  """
+  banks: [String!]!
 
   """The tenant's custom fields. HR-only fields need employees.manage."""
   customFields(includeInactive: Boolean! = false): [CustomField!]!

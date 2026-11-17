@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-const UPDATED = "4 November 2026";
+const UPDATED = "17 November 2026";
 
 export default function PrivacyPage() {
   const mail = <a href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a>;
@@ -73,6 +73,7 @@ export default function PrivacyPage() {
           <li>Cloudflare, whose R2 service stores uploaded files such as photos, documents, receipts and payslips.</li>
           <li>Mailjet, which delivers the service&apos;s emails.</li>
           <li>Groq, which drafts text when you ask for writing help, such as a job description. Only the job title and the notes you typed are sent, never records about people.</li>
+          <li>Paystack, which confirms the name on a Nigerian bank account when bank details are entered, so pay goes to the right person. Only the bank and account number are sent.</li>
           <li>Namecheap, which hosts our support mailbox.</li>
         </ul>
         <p>

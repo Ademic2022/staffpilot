@@ -7,6 +7,8 @@ import { IconEye, IconLock, IconPlus } from "@/components/icons";
 import { ActionDialog, Badge, Button, Card, Checkbox, cardFrame, FrameSlot, type Frame, Dialog, ErrorNote, Field, Input, Select, Textarea } from "@/components/ui";
 import { ListInput } from "@/components/settings/OptionLists";
 import { graphql } from "@/gql";
+
+import { BankFields } from "./BankFields";
 import type { EmployeeProfileQuery } from "@/gql/graphql";
 import { errorMessage } from "@/lib/api";
 import { formatDate } from "@/lib/format";
@@ -214,7 +216,11 @@ function PrivateDialog({ employeeId, current, onClose, onSaved }: {
       <form id="private-form" onSubmit={submit} noValidate className="space-y-4">
         {formError && <ErrorNote error={formError} />}
         <div className="grid gap-4 sm:grid-cols-2">
-          {PRIVATE_LABELS.map(([key, label]) => {
+          <BankFields errors={errors}
+            values={{ bankName: v.bankName ?? "", bankAccountNumber: v.bankAccountNumber ?? "", bankAccountName: v.bankAccountName ?? "" }}
+            onChange={(key, value) => setV((s) => ({ ...s, [key]: value }))}
+            numberHint={current.bankAccountNumber ? `On file: ${current.bankAccountNumber}` : undefined} />
+          {PRIVATE_LABELS.filter(([key]) => !key.startsWith("bank")).map(([key, label]) => {
             const secret = !["bankName", "bankAccountName"].includes(key);
             return (
               <Field key={key} label={label} error={errors[key]} hint={secret && current[key] ? `On file: ${current[key]}` : undefined}>

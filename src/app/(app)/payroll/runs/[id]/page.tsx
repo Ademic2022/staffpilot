@@ -18,7 +18,7 @@ const RunDocument = graphql(`
   query PayrollRunDetail($id: ID!) {
     payrollRun(id: $id) {
       id payGroup currency periodStart periodEnd payDate status offCycle note createdBy submittedBy approvedBy published
-      headcount gross deductions net employerCost warnings missingBank canApprove
+      headcount gross deductions net employerCost warnings missingBank bankNameMismatch canApprove
       payslips { id employeeName employeeNumber gross totalDeductions net employerCost lines workings warnings daysPaid daysInPeriod rulePack }
       variance { employeeId employeeName net previous change percent flag }
     }
@@ -80,7 +80,7 @@ export default function PayrollRunPage() {
         actions={<>
           {manage && ["draft", "review"].includes(run.status) && <Button variant="secondary" busy={fetching} onClick={() => run_("recalc", "Worked out again.")}>Work out again</Button>}
           {manage && run.status === "draft" && <Button onClick={() => run_("submit", "Sent for approval.")}>Send for approval</Button>}
-          {run.canApprove && <Button onClick={() => run.missingBank.length
+          {run.canApprove && <Button onClick={() => run.missingBank.length || run.bankNameMismatch.length
             ? setConfirmApprove(true) : run_("approve", "Approved. Publish payslips and make the bank file next.")}>Approve</Button>}
           {approver && ["approved", "paid"].includes(run.status) && !run.published && <Button onClick={() => run_("publish", "Payslips published; everyone has been told.")}>Publish payslips</Button>}
           {approver && run.status === "approved" && <Button variant="secondary" onClick={() => run_("paid", "Marked as paid.")}>Mark as paid</Button>}
@@ -109,8 +109,18 @@ export default function PayrollRunPage() {
           The bank file leaves them out until you do; nothing needs working out again.
         </Notice>
       )}
-      <ActionDialog open={confirmApprove} onClose={() => setConfirmApprove(false)} title="Approve without everyone's bank account?"
-        description={`${run.missingBank.join(", ")} ${run.missingBank.length === 1 ? "has" : "have"} no bank account, so the bank file cannot pay them. Approve anyway if you will pay them another way or add their accounts before paying.`}
+      {["draft", "review", "approved"].includes(run.status) && run.bankNameMismatch.length > 0 && (
+        <Notice tone="warning" title="Account in someone else's name">
+          The bank says these accounts belong to someone else: {run.bankNameMismatch.join("; ")}. Make sure that is expected
+          (a joint or business account) before paying, since pay sent to the wrong account is hard to get back.
+        </Notice>
+      )}
+      <ActionDialog open={confirmApprove} onClose={() => setConfirmApprove(false)} title="Approve with bank details to check?"
+        description={[
+          run.missingBank.length ? `No bank account: ${run.missingBank.join(", ")}. The bank file cannot pay them.` : "",
+          run.bankNameMismatch.length ? `Account in someone else's name: ${run.bankNameMismatch.join("; ")}.` : "",
+          "Approve anyway if you have checked these.",
+        ].filter(Boolean).join(" ")}
         confirmLabel="Approve anyway" onConfirm={async () => {
           setConfirmApprove(false);
           await run_("approve", "Approved. Publish payslips and make the bank file next.");

@@ -5,6 +5,8 @@ import { useMutation, useQuery } from "urql";
 
 import { Button, Dialog, ErrorNote, Field, Input, Notice } from "@/components/ui";
 import { graphql } from "@/gql";
+
+import { BankFields } from "./BankFields";
 import type { EmployeeProfileQuery } from "@/gql/graphql";
 import { errorMessage } from "@/lib/api";
 import { formatDate } from "@/lib/format";
@@ -97,7 +99,12 @@ export function MyDetailsDialog({ employee, onClose, onSaved }: { employee: Empl
           <legend className="text-[13px] font-semibold text-ink">Checked by HR first</legend>
           <p className="text-xs text-muted">Your legal name, bank details and ID numbers feed payroll and tax filings, so HR approves changes before they apply.</p>
           <div className="grid gap-4 sm:grid-cols-3">
-            {REVIEWED.map(([k, l]) => field(k, l, isSecret(k) && p?.[k] ? `On file: ${p[k]}. Leave empty to keep.` : undefined))}
+            {REVIEWED.filter(([k]) => !k.startsWith("bank")).map(([k, l]) => field(k, l, isSecret(k) && p?.[k] ? `On file: ${p[k]}. Leave empty to keep.` : undefined))}
+          </div>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <BankFields errors={errors} values={{ bankName: v.bankName, bankAccountNumber: v.bankAccountNumber, bankAccountName: v.bankAccountName }}
+              onChange={(key, value) => setV((s) => ({ ...s, [key]: value }))}
+              numberHint={p?.bankAccountNumber ? `On file: ${p.bankAccountNumber}. Leave empty to keep.` : undefined} />
           </div>
         </fieldset>
       </form>
