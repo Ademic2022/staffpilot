@@ -7,7 +7,7 @@ import { Fragment, useState } from "react";
 import { useMutation, useQuery } from "urql";
 
 import { RUN_STATUS } from "@/components/payroll/status";
-import { Badge, Button, Card, ErrorNote, Input, Loading, Notice, PageHeader, Stat, Tabs } from "@/components/ui";
+import { ActionDialog, Badge, Button, Card, ErrorNote, Input, Loading, Notice, PageHeader, Stat, Tabs } from "@/components/ui";
 import { graphql } from "@/gql";
 import { errorMessage } from "@/lib/api";
 import { formatDate, formatMoney } from "@/lib/format";
@@ -18,7 +18,7 @@ const RunDocument = graphql(`
   query PayrollRunDetail($id: ID!) {
     payrollRun(id: $id) {
       id payGroup currency periodStart periodEnd payDate status offCycle note createdBy submittedBy approvedBy published
-      headcount gross deductions net employerCost warnings canApprove
+      headcount gross deductions net employerCost warnings missingBank canApprove
       payslips { id employeeName employeeNumber gross totalDeductions net employerCost lines workings warnings daysPaid daysInPeriod rulePack }
       variance { employeeId employeeName net previous change percent flag }
     }
@@ -52,6 +52,7 @@ export default function PayrollRunPage() {
   const [tab, setTab] = useState<"payslips" | "changes" | "files">("payslips");
   const [open, setOpen] = useState<string | null>(null);
   const [note, setNote] = useState("");
+  const [confirmApprove, setConfirmApprove] = useState(false);
   const [message, setMessage] = useState<{ ok: boolean; text: string }>();
   if (error) return <ErrorNote error={errorMessage(error)} />;
   if (!data) return <Loading shape="table" />;
@@ -79,7 +80,8 @@ export default function PayrollRunPage() {
         actions={<>
           {manage && ["draft", "review"].includes(run.status) && <Button variant="secondary" busy={fetching} onClick={() => run_("recalc", "Worked out again.")}>Work out again</Button>}
           {manage && run.status === "draft" && <Button onClick={() => run_("submit", "Sent for approval.")}>Send for approval</Button>}
-          {run.canApprove && <Button onClick={() => run_("approve", "Approved. Publish payslips and make the bank file next.")}>Approve</Button>}
+          {run.canApprove && <Button onClick={() => run.missingBank.length
+            ? setConfirmApprove(true) : run_("approve", "Approved. Publish payslips and make the bank file next.")}>Approve</Button>}
           {approver && ["approved", "paid"].includes(run.status) && !run.published && <Button onClick={() => run_("publish", "Payslips published; everyone has been told.")}>Publish payslips</Button>}
           {approver && run.status === "approved" && <Button variant="secondary" onClick={() => run_("paid", "Marked as paid.")}>Mark as paid</Button>}
           {manage && ["draft", "review"].includes(run.status) && <Button variant="ghost" onClick={() => run_("cancel", "Payroll cancelled.")}>Cancel</Button>}
@@ -101,6 +103,18 @@ export default function PayrollRunPage() {
         <Stat label="Net pay" value={money(run.net)} />
         <Stat label="Cost to employer" value={money(run.employerCost)} />
       </div>
+      {["draft", "review", "approved"].includes(run.status) && run.missingBank.length > 0 && (
+        <Notice tone="warning" title={`${run.missingBank.length} ${run.missingBank.length === 1 ? "person has" : "people have"} no bank account`}>
+          They cannot be paid by bank transfer: {run.missingBank.join(", ")}. Add their account on each profile (Personal → Bank and ID details).
+          The bank file leaves them out until you do; nothing needs working out again.
+        </Notice>
+      )}
+      <ActionDialog open={confirmApprove} onClose={() => setConfirmApprove(false)} title="Approve without everyone's bank account?"
+        description={`${run.missingBank.join(", ")} ${run.missingBank.length === 1 ? "has" : "have"} no bank account, so the bank file cannot pay them. Approve anyway if you will pay them another way or add their accounts before paying.`}
+        confirmLabel="Approve anyway" onConfirm={async () => {
+          setConfirmApprove(false);
+          await run_("approve", "Approved. Publish payslips and make the bank file next.");
+        }} />
       {["draft", "review"].includes(run.status) && (run.warnings > 0 || flagged.length > 0) && (
         <Notice tone="warning" title="Check before approving">
           {run.warnings > 0 && <>{run.warnings} payslip{run.warnings === 1 ? " has" : "s have"} notes (joiners, leavers, unpaid leave or missing pay). </>}
